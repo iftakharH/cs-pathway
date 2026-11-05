@@ -1,0 +1,601 @@
+modules:
+  - id: f-git
+    phase: F
+    order: 1
+    title: "Git: changes you can undo"
+    summary: Version control is not a save button. Learn the small set of commands that let you make a change, review it, and recover when it goes wrong.
+    objectives:
+      - Create a repository, stage a focused change and write a commit message another person can act on.
+      - Resolve a merge conflict by reading both sides instead of discarding one.
+      - Recover a commit after a reset or a bad rebase using the reflog.
+      - Explain when to merge, when to rebase, and when to revert.
+    prerequisites: []
+    estHours: { min: 6, max: 9 }
+    claimIds: []
+    resources:
+      - title: Pro Git (2nd edition)
+        publisher: Scott Chacon and Ben Straub, published by Apress
+        url: https://git-scm.com/book/en/v2
+        format: book
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: The reference book linked from git-scm.com, free to read online.
+      - title: Introduction to GitHub
+        publisher: GitHub Skills
+        url: https://skills.github.com/
+        format: course
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: Short hands-on exercises for branches, commits and pull requests.
+    cheatsheetIds:
+      [git-init-clone, git-stage-commit, git-amend, git-undo, git-rebase-merge, git-conflict, git-stash, git-reflog, git-ignore, git-tags]
+    quiz:
+      - id: f-git-q1
+        question: Which command creates a new, empty Git repository in the current directory?
+        choices: [git init, git clone, git remote add, git branch]
+        answerIndex: 0
+        explanation: git init creates the local repository metadata. It does not create a remote or an initial commit.
+        sourceUrl: https://git-scm.com/docs/git-init
+      - id: f-git-q2
+        question: You forgot a file in the most recent commit, which has not been pushed. What is the smallest correct fix?
+        choices:
+          - git add the file, then git commit --amend
+          - git add the file, then git commit --amend --no-edit
+          - Delete the commit with git reset --hard
+          - Create an empty commit with git commit --allow-empty
+        answerIndex: 1
+        explanation: Staging the missing file and amending folds it into the previous commit without opening the editor.
+        sourceUrl: https://git-scm.com/docs/git-commit#Documentation/git-commit.txt---amend
+      - id: f-git-q3
+        question: A reset removed commits you still need. Which command shows where HEAD was before the reset?
+        choices: [git status, git reflog, git log --all, git fsck]
+        answerIndex: 1
+        explanation: The reflog records local HEAD movements, including the position before a reset.
+        sourceUrl: https://git-scm.com/docs/git-reflog
+      - id: f-git-q4
+        question: Which command creates a new commit that reverses the effect of an older, already-pushed commit?
+        choices: [git reset --hard, git restore, git revert, git checkout]
+        answerIndex: 2
+        explanation: git revert records a new commit with the inverse change, so shared history is not rewritten.
+        sourceUrl: https://git-scm.com/docs/git-revert
+      - id: f-git-q5
+        question: What does git stash push -u include that a plain git stash push does not?
+        choices: [staged files only, untracked files, ignored files, remote branches]
+        answerIndex: 1
+        explanation: The -u flag adds untracked files to the stash. Ignored files still stay out.
+        sourceUrl: https://git-scm.com/docs/git-stash
+    proof:
+      title: A history you can recover
+      brief: Create a repository with two branches and at least eight commits. Deliberately cause a merge conflict and resolve it without discarding either side. Then reset the branch with git reset --hard, recover it through the reflog, and write a short RECOVERY.md that records the commands and what each one did.
+      evidence: A link to the repository, the conflict resolution commit, and RECOVERY.md showing the reflog output used.
+      rubric:
+        - criterion: Commit quality
+          levels:
+            0: Commits are absent or use messages such as "update".
+            1: Commits exist but mix unrelated changes.
+            2: Each commit is one concern with a clear summary.
+            3: History is reviewable, messages explain why, and one commit is amended cleanly.
+        - criterion: Conflict resolution
+          levels:
+            0: One side was discarded wholesale or markers remain.
+            1: The conflict was resolved but the result is not explained.
+            2: Both sides were considered and the result is coherent.
+            3: The resolution is explained in the commit or RECOVERY.md, with tests run afterwards.
+        - criterion: Recovery evidence
+          levels:
+            0: No evidence of a reset or recovery.
+            1: Commands are listed without output.
+            2: Reflog output shows the lost commit and the recovery.
+            3: The write-up explains how the reflog made recovery possible and what would have made it impossible.
+    playbookIds: [pb-plan-feature]
+    whyItMatters: Every later phase assumes you can make a change without fear. Undo is the skill that makes small, frequent commits safe.
+    riskNote: Commands that rewrite history are dangerous once other people have pulled the branch.
+
+  - id: f-terminal
+    phase: F
+    order: 2
+    title: "Terminal: files, pipes and processes"
+    summary: The terminal is the interface every server, CI job and deploy target assumes. Learn navigation, search, redirection and process control well enough to debug without a GUI.
+    objectives:
+      - Find a file or a string in a repository without opening an editor.
+      - Combine commands with pipes and save output for later.
+      - Read file permissions and fix an executable or an over-readable key.
+      - Find the process holding a port and stop it with the right signal.
+    prerequisites: []
+    estHours: { min: 4, max: 6 }
+    claimIds: []
+    resources:
+      - title: bash(1) manual page
+        publisher: man7.org
+        url: https://man7.org/linux/man-pages/man1/bash.1.html
+        format: docs
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: The reference for shell syntax, redirection and built-ins.
+      - title: The Linux Command Line
+        publisher: William Shotts
+        url: https://linuxcommand.org/tlcl.php
+        format: book
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: false
+        why: A free book that teaches the shell through small exercises.
+    cheatsheetIds:
+      [term-navigate, term-search, term-pipes, term-permissions, term-processes, term-ssh, term-env, term-curl]
+    quiz:
+      - id: f-term-q1
+        question: Which command returns you to the previous working directory?
+        choices: [cd ~, cd .., cd -, cd /]
+        answerIndex: 2
+        explanation: cd - switches to the previous directory and prints its path.
+        sourceUrl: https://man7.org/linux/man-pages/man1/bash.1.html
+      - id: f-term-q2
+        question: What does 2>&1 do in a shell command?
+        choices:
+          - Sends standard error to the same place as standard output
+          - Sends standard output to standard error
+          - Runs the command twice
+          - Suppresses all output
+        answerIndex: 0
+        explanation: File descriptor 2 is standard error; &1 refers to standard output.
+        sourceUrl: https://man7.org/linux/man-pages/man1/bash.1.html
+      - id: f-term-q3
+        question: What does chmod 600 allow?
+        choices:
+          - Everyone can read and write
+          - Owner can read and write; group and others have no access
+          - Owner can execute only
+          - Group can read; others can write
+        answerIndex: 1
+        explanation: 6 is read and write for the owner, and 00 removes access for group and others.
+        sourceUrl: https://man7.org/linux/man-pages/man1/chmod.1.html
+      - id: f-term-q4
+        question: Which signal asks a process to shut down cleanly and is the default for kill?
+        choices: [SIGKILL, SIGTERM, SIGHUP, SIGSTOP]
+        answerIndex: 1
+        explanation: SIGTERM can be caught so the process can clean up. SIGKILL cannot be caught.
+        sourceUrl: https://man7.org/linux/man-pages/man1/kill.1.html
+      - id: f-term-q5
+        question: What does grep -n add to each matching line?
+        choices: [the file name, the line number, the byte offset, the owner]
+        answerIndex: 1
+        explanation: "-n prefixes each match with its line number."
+        sourceUrl: https://man7.org/linux/man-pages/man1/grep.1.html
+    proof:
+      title: A setup script someone else can run
+      brief: Write a shell script that sets up and runs a small project from a clean checkout. It must check for required tools, fail with a useful message, and be safe to run twice. Add a DEBUG.md with three real problems you hit and the command that identified each one.
+      evidence: The script, a transcript of a clean run, and DEBUG.md with the diagnostic commands.
+      rubric:
+        - criterion: Reproducibility
+          levels:
+            0: The script only works on your machine or assumes unstated state.
+            1: It runs once but fails on a second run.
+            2: It checks prerequisites and is safe to re-run.
+            3: A second person ran it successfully from a clean checkout.
+        - criterion: Failure messages
+          levels:
+            0: Failures are silent or print a raw stack trace.
+            1: Some errors are checked, others are not.
+            2: Missing tools and failed steps produce actionable messages.
+            3: Messages name the command to run next and the script exits non-zero.
+        - criterion: Debugging log
+          levels:
+            0: No log.
+            1: Problems are described without the command used.
+            2: Each problem includes the diagnostic command and its finding.
+            3: The log explains why the command revealed the cause.
+    playbookIds: []
+    whyItMatters: A GUI hides the state that a server exposes. When a deploy fails, the terminal is the only interface that is still there.
+    riskNote: Commands copied from the internet can delete data. Read the path before running rm or a recursive chmod.
+
+  - id: f-http
+    phase: F
+    order: 3
+    title: "HTTP: the contract between browser and server"
+    summary: Every app you build is a set of HTTP requests. Learn methods, status codes, headers, CORS and caching so a failing request has a nameable cause.
+    objectives:
+      - Choose a method based on safety and idempotency rather than habit.
+      - Read a status code and decide whether the client or server is at fault.
+      - Diagnose a CORS failure from the preflight request and response headers.
+      - Set a cache policy that is safe for private data and fast for static assets.
+    prerequisites: [f-terminal]
+    estHours: { min: 4, max: 6 }
+    claimIds: [C5]
+    resources:
+      - title: HTTP reference
+        publisher: MDN Web Docs
+        url: https://developer.mozilla.org/en-US/docs/Web/HTTP
+        format: docs
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: false
+        why: Clear reference pages for methods, status codes, headers and CORS.
+      - title: RFC 9110 — HTTP Semantics
+        publisher: IETF
+        url: https://www.rfc-editor.org/rfc/rfc9110.html
+        format: docs
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: The standards document when a blog post and a browser disagree.
+    cheatsheetIds: [http-methods, http-status, http-headers, http-cors, http-caching, rest-conventions]
+    quiz:
+      - id: f-http-q1
+        question: Which method is idempotent and replaces the entire target resource?
+        choices: [POST, PUT, PATCH, CONNECT]
+        answerIndex: 1
+        explanation: PUT replaces the resource and repeating the same request has the same effect.
+        sourceUrl: https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods
+      - id: f-http-q2
+        question: A request returns 401. What does the code mean?
+        choices:
+          - The server crashed
+          - The client is not authenticated
+          - The resource does not exist
+          - The client is authenticated but forbidden
+        answerIndex: 1
+        explanation: 401 means the request lacks valid authentication credentials, despite the name "Unauthorized".
+        sourceUrl: https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/401
+      - id: f-http-q3
+        question: What does status 307 preserve that 302 does not guarantee?
+        choices: [the response body, the request method, the cookies, the cache lifetime]
+        answerIndex: 1
+        explanation: 307 tells the client to repeat the request with the same method; 302 historically allowed a change to GET.
+        sourceUrl: https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/307
+      - id: f-http-q4
+        question: Which response header tells a browser how long a response stays fresh?
+        choices: [ETag, Cache-Control, Vary, Last-Modified]
+        answerIndex: 1
+        explanation: max-age inside Cache-Control defines the freshness lifetime in seconds.
+        sourceUrl: https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Caching
+      - id: f-http-q5
+        question: Why does the same failing request often succeed in curl but fail in a browser?
+        choices:
+          - curl uses a different DNS
+          - CORS is enforced by the browser, not the server
+          - curl ignores status codes
+          - Browsers cannot send JSON
+        answerIndex: 1
+        explanation: A browser blocks a cross-origin response unless the server sends the allow headers. curl does not enforce CORS.
+        sourceUrl: https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS
+    proof:
+      title: A field guide to one real API
+      brief: Pick a public HTTP API with documentation. Make at least ten requests with curl and record the method, status, and the headers that changed the behaviour. Include one deliberate 4xx, one cached response, and one cross-origin request with its preflight. Write up what you expected, what happened, and why.
+      evidence: A transcript of the curl commands and the written explanation, with links to the API documentation sections you used.
+      rubric:
+        - criterion: Method correctness
+          levels:
+            0: Methods are used interchangeably.
+            1: Methods are named but the choice is not justified.
+            2: Each request uses a method that matches its effect.
+            3: The write-up explains safety and idempotency for the endpoints used.
+        - criterion: Evidence
+          levels:
+            0: Claims without request or response output.
+            1: Some output is pasted without context.
+            2: Requests, statuses and relevant headers are shown.
+            3: Output is annotated and includes a failure you caused and diagnosed.
+        - criterion: Explanation
+          levels:
+            0: Only restates the status code list.
+            1: Explains what happened but not why.
+            2: Connects each result to a header, a method or a server rule.
+            3: Predicts the next result correctly and states what would falsify the explanation.
+    playbookIds: []
+    whyItMatters: Most "the API is broken" bugs are a method, a status or a header. Naming the layer cuts debugging time more than any framework.
+    riskNote: Do not send write requests to a public API without reading its terms and using a test account.
+
+  - id: f-sql
+    phase: F
+    order: 4
+    title: "SQL: questions a database can answer"
+    summary: SQL is the second most-used language in the 2026 Stack Overflow survey. Learn joins, grouping, CTEs, window functions, indexes and transactions on a schema you built.
+    objectives:
+      - Write a join that keeps unmatched rows when the question requires it.
+      - Use a CTE and a window function to answer a multi-step question.
+      - Read an EXPLAIN plan and say whether an index was used.
+      - Wrap two dependent writes in a transaction and roll back on failure.
+    prerequisites: []
+    estHours: { min: 6, max: 10 }
+    claimIds: [C5]
+    resources:
+      - title: PostgreSQL documentation
+        publisher: PostgreSQL Global Development Group
+        url: https://www.postgresql.org/docs/current/
+        format: docs
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: The reference used for every SQL snippet in this module.
+      - title: SQLBolt
+        publisher: SQLBolt
+        url: https://sqlbolt.com/
+        format: course
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: false
+        why: Short interactive lessons for joins and grouping if you are starting from zero.
+    cheatsheetIds: [sql-joins, sql-group-having, sql-cte, sql-window, sql-transactions, sql-index, sql-explained]
+    quiz:
+      - id: f-sql-q1
+        question: Which join keeps rows from the left table that have no match on the right?
+        choices: [INNER JOIN, LEFT JOIN, CROSS JOIN, FULL JOIN]
+        answerIndex: 1
+        explanation: A left join keeps every left row and fills right-side columns with null when there is no match.
+        sourceUrl: https://www.postgresql.org/docs/current/queries-table-expressions.html
+      - id: f-sql-q2
+        question: What is the difference between WHERE and HAVING?
+        choices:
+          - WHERE filters rows before grouping; HAVING filters groups after aggregation
+          - HAVING is faster
+          - WHERE only works with numbers
+          - They are interchangeable
+        answerIndex: 0
+        explanation: Aggregates cannot be used in WHERE because grouping has not happened yet.
+        sourceUrl: https://www.postgresql.org/docs/current/queries-table-expressions.html#QUERIES-GROUP
+      - id: f-sql-q3
+        question: How does rank() treat two rows with the same value?
+        choices:
+          - It assigns consecutive numbers
+          - It gives both the same rank and leaves a gap afterwards
+          - It returns null for the second row
+          - It sorts them randomly
+        answerIndex: 1
+        explanation: rank() leaves gaps after ties; dense_rank() does not.
+        sourceUrl: https://www.postgresql.org/docs/current/tutorial-window.html
+      - id: f-sql-q4
+        question: What does EXPLAIN ANALYZE do that EXPLAIN alone does not?
+        choices:
+          - It formats the plan as JSON
+          - It executes the statement and reports actual times
+          - It creates an index
+          - It commits the transaction
+        answerIndex: 1
+        explanation: ANALYZE runs the statement, so actual row counts and timings are available.
+        sourceUrl: https://www.postgresql.org/docs/current/sql-explain.html
+      - id: f-sql-q5
+        question: Does PostgreSQL automatically create an index on the referencing column of a foreign key?
+        choices:
+          - Yes, always
+          - Yes, but only for small tables
+          - No, it does not
+          - Only for composite keys
+        answerIndex: 2
+        explanation: PostgreSQL does not create an index on the referencing side; add one if you filter or join on it.
+        sourceUrl: https://www.postgresql.org/docs/current/ddl-constraints.html#DDL-CONSTRAINTS-FK
+    proof:
+      title: A query notebook with a before-and-after plan
+      brief: Design a small schema with at least three related tables and seed it with your own test data. Write eight queries covering a join, a grouped filter, a CTE, a window function and a transaction. Then add an index for one slow query and show the EXPLAIN plan before and after. Explain each result in one sentence.
+      evidence: The schema and seed script, the eight queries with results, and both EXPLAIN plans.
+      rubric:
+        - criterion: Correctness
+          levels:
+            0: Queries error or return wrong rows.
+            1: Queries run but some answers do not match the question.
+            2: Every query answers its question and handles empty results.
+            3: Edge cases such as nulls and duplicate rows are handled deliberately.
+        - criterion: Performance evidence
+          levels:
+            0: No plan or index.
+            1: An index exists without a plan.
+            2: Plans show the scan type before and after.
+            3: The write-up explains why the planner changed, including row estimates.
+        - criterion: Transaction safety
+          levels:
+            0: No transaction.
+            1: A transaction is used but failure is not handled.
+            2: A rollback path is demonstrated.
+            3: A failed statement is shown aborting the transaction and the recovery is explained.
+    playbookIds: []
+    whyItMatters: AI tools can generate a query, but only you can tell whether the result answers the business question. SQL is the checking layer for every data claim.
+    riskNote: Run experiments on a local or throwaway database. EXPLAIN ANALYZE on a write statement changes data.
+
+  - id: f-js
+    phase: F
+    order: 5
+    title: "JavaScript and TypeScript: code you can review"
+    summary: Learn the language features that appear in every React and Node codebase, then add the type system that catches mistakes before a test does.
+    objectives:
+      - Write an async function that handles rejection instead of leaving a floating promise.
+      - Transform data with filter, map and reduce without mutating the source.
+      - Narrow a union so TypeScript accepts only the fields that exist.
+      - Use generics and utility types to keep types in sync with data.
+    prerequisites: [f-git]
+    estHours: { min: 8, max: 12 }
+    claimIds: [E1]
+    resources:
+      - title: TypeScript Handbook
+        publisher: Microsoft
+        url: https://www.typescriptlang.org/docs/handbook/intro.html
+        format: docs
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: The official guide to narrowing, generics and utility types.
+      - title: JavaScript Guide
+        publisher: MDN Web Docs
+        url: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide
+        format: docs
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: false
+        why: Reliable explanations of arrays, promises, modules and syntax.
+    cheatsheetIds:
+      [js-async-await, js-array-methods, js-destructuring, js-modules, ts-narrowing, ts-generics, ts-utility-types, cs-big-o, regex-essentials]
+    quiz:
+      - id: f-js-q1
+        question: What does await do inside an async function?
+        choices:
+          - It blocks the entire process
+          - It pauses that function until the promise settles
+          - It converts a promise into a callback
+          - It retries the request
+        answerIndex: 1
+        explanation: await suspends the async function and resumes it with the resolved value or throws the rejection.
+        sourceUrl: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function
+      - id: f-js-q2
+        question: Which array method returns a new array with one output element for every input element?
+        choices: [filter, map, reduce, find]
+        answerIndex: 1
+        explanation: map preserves length. filter can return fewer elements and find returns one element.
+        sourceUrl: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
+      - id: f-js-q3
+        question: In array destructuring, what does the rest element collect?
+        choices:
+          - The first element
+          - The remaining elements as a new array
+          - All nested arrays flattened
+          - Only undefined values
+        answerIndex: 1
+        explanation: The rest element collects the remaining values into a new array.
+        sourceUrl: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring
+      - id: f-js-q4
+        question: Which TypeScript utility type makes every property optional?
+        choices: [Required, Partial, Readonly, Pick]
+        answerIndex: 1
+        explanation: Partial<T> maps every property of T to an optional property.
+        sourceUrl: https://www.typescriptlang.org/docs/handbook/utility-types.html
+      - id: f-js-q5
+        question: What does a discriminated union use to let TypeScript narrow the type?
+        choices:
+          - A shared literal property
+          - A code comment
+          - The interface name
+          - A type assertion
+        answerIndex: 0
+        explanation: A common literal field such as ok or kind lets a check narrow every member of the union.
+        sourceUrl: https://www.typescriptlang.org/docs/handbook/2/narrowing.html
+    proof:
+      title: A typed utility module with tests
+      brief: Build a small TypeScript module for a real task, such as paginating a list, formatting a date range, or merging two records by id. It must have no any, strict types, and at least ten tests covering empty input, duplicates and invalid values. Export a short README with the public API and one example per function.
+      evidence: Repository link, test output, and the README API section.
+      rubric:
+        - criterion: Type quality
+          levels:
+            0: any or ts-ignore is used.
+            1: Types exist but allow invalid states.
+            2: Inputs and outputs are precise, with no casts.
+            3: The types make an invalid call a compile error, demonstrated in a test or example.
+        - criterion: Tests
+          levels:
+            0: No tests.
+            1: Happy path only.
+            2: Edge cases and failures are covered.
+            3: A regression test exists for a bug you found while building.
+        - criterion: API clarity
+          levels:
+            0: No documentation.
+            1: Function names only.
+            2: Each export has a usage example.
+            3: The README explains one trade-off and one case the module refuses to handle.
+    playbookIds: []
+    whyItMatters: The agent writes code quickly; the type system and tests are how you check it without rereading every line.
+    riskNote: A type assertion silences the compiler without making the value safe.
+
+  - id: f-python
+    phase: F
+    order: 6
+    title: "Python: scripts, types and tests"
+    summary: Python is the language of data work, ML and quick automation. Learn the project layout, type hints, dataclasses, async basics and pytest so a script can become a tool.
+    objectives:
+      - Create an isolated environment and record dependencies.
+      - Model a record with type hints and a dataclass instead of a loose dictionary.
+      - Write a pytest suite that covers an error path, not only the happy path.
+      - Explain when async helps and when a blocking call defeats it.
+    prerequisites: [f-terminal]
+    estHours: { min: 6, max: 9 }
+    claimIds: []
+    resources:
+      - title: The Python Tutorial
+        publisher: Python Software Foundation
+        url: https://docs.python.org/3/tutorial/
+        format: docs
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: The official introduction to the language and standard library.
+      - title: Automate the Boring Stuff with Python
+        publisher: Al Sweigart
+        url: https://automatetheboringstuff.com/
+        format: book
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: false
+        why: Free to read online, with practical file and scripting exercises.
+    cheatsheetIds: [py-venv, py-typing, py-dataclass, py-async, py-pytest, py-comprehensions]
+    quiz:
+      - id: f-py-q1
+        question: Which command creates a virtual environment in a .venv folder?
+        choices: [python -m venv .venv, pip install venv, python .venv, virtualenv --global]
+        answerIndex: 0
+        explanation: The venv module is part of the standard library and creates an isolated environment.
+        sourceUrl: https://docs.python.org/3/library/venv.html
+      - id: f-py-q2
+        question: What does frozen=True do on a dataclass?
+        choices:
+          - Prevents attribute assignment after construction
+          - Makes every field optional
+          - Serialises the object to JSON
+          - Freezes the module import
+        answerIndex: 0
+        explanation: A frozen dataclass raises when an attribute is assigned after creation.
+        sourceUrl: https://docs.python.org/3/library/dataclasses.html
+      - id: f-py-q3
+        question: What does asyncio.gather return?
+        choices:
+          - The first completed result
+          - A list of results in input order
+          - A single coroutine
+          - None
+        answerIndex: 1
+        explanation: gather waits for all awaitables and returns their results in the order they were passed.
+        sourceUrl: https://docs.python.org/3/library/asyncio-task.html
+      - id: f-py-q4
+        question: What happens if the code inside pytest.raises does not raise the expected exception?
+        choices:
+          - The test passes
+          - The test fails
+          - pytest skips the test
+          - The test is retried
+        answerIndex: 1
+        explanation: pytest.raises asserts that the exception occurs, so no exception means a failure.
+        sourceUrl: https://docs.pytest.org/en/stable/how-to/assert.html
+      - id: f-py-q5
+        question: What does a dict comprehension produce when two rows share the same key?
+        choices:
+          - A list of both values
+          - The last value overwrites the earlier one
+          - A syntax error
+          - The first value is kept
+        answerIndex: 1
+        explanation: A dictionary cannot hold duplicate keys, so the later assignment replaces the earlier value.
+        sourceUrl: https://docs.python.org/3/tutorial/datastructures.html#dictionaries
+    proof:
+      title: A command-line tool with tests
+      brief: Build a small CLI that reads a data file and produces a useful summary, such as counting records by category or validating a CSV. Use a virtual environment, type hints, a dataclass for each record, and at least six pytest tests including malformed input. Add a README with one command that reproduces your output.
+      evidence: Repository link, a clean test run, and the README command with its output.
+      rubric:
+        - criterion: Project hygiene
+          levels:
+            0: Dependencies are installed globally and unrecorded.
+            1: A requirements file exists but is incomplete.
+            2: The environment and dependencies are reproducible from the README.
+            3: A second person ran the tool from a clean clone without asking a question.
+        - criterion: Typing and modelling
+          levels:
+            0: Everything is a dictionary with string keys.
+            1: Some functions have hints.
+            2: Public functions are typed and records use a dataclass.
+            3: Invalid input is rejected at the boundary with a clear error.
+        - criterion: Tests
+          levels:
+            0: No tests.
+            1: Only the happy path is tested.
+            2: Malformed input and empty input are tested.
+            3: A bug found during development has a named regression test.
+    playbookIds: []
+    whyItMatters: Data work and ML both start as Python scripts. The difference between a script and a tool is a boundary, types and tests.
+    riskNote: Never run an unread script against data you cannot restore. Read file writes and deletions first.

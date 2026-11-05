@@ -1,0 +1,626 @@
+modules:
+  - id: p1-react
+    phase: "1"
+    order: 1
+    title: React interfaces that hold up
+    summary: Components, state and effects are easy to start and easy to misuse. Learn the patterns that survive a real user, a slow network and a keyboard.
+    objectives:
+      - Put state in the smallest component that needs it and derive the rest.
+      - Use an effect only for an external system, with cleanup and an abort signal.
+      - Build a form that keeps input, shows field errors and is operable by keyboard.
+      - Cover loading, empty, error and success states on a data-driven screen.
+    prerequisites: [f-js]
+    estHours: { min: 8, max: 12 }
+    claimIds: [E1]
+    resources:
+      - title: React documentation — Learn
+        publisher: React
+        url: https://react.dev/learn
+        format: docs
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: The official guide, including the chapters on effects and accessibility.
+      - title: Vite guide
+        publisher: Vite
+        url: https://vite.dev/guide/
+        format: docs
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: The build tool used in this path, with the dev-server and build commands.
+    cheatsheetIds: [react-usestate, react-useeffect, react-forms, react-data-fetching, react-a11y]
+    quiz:
+      - id: p1-react-q1
+        question: Which hook holds a value that changes over time and causes a re-render when updated?
+        choices: [useState, useEffect, useRef, useMemo]
+        answerIndex: 0
+        explanation: useState returns the current value and a setter that schedules a re-render.
+        sourceUrl: https://react.dev/reference/react/useState
+      - id: p1-react-q2
+        question: When does an effect with no dependency array run?
+        choices: [Only once, After every render, Only on unmount, Only when props change]
+        answerIndex: 1
+        explanation: With no dependency array, the effect runs after every commit. An empty array runs it once after mount.
+        sourceUrl: https://react.dev/reference/react/useEffect
+      - id: p1-react-q3
+        question: What is a cleanup function for?
+        choices:
+          - It runs before the effect runs again and when the component unmounts
+          - It resets all component state
+          - It makes the effect run faster
+          - It replaces the dependency array
+        answerIndex: 0
+        explanation: Cleanup removes subscriptions, timers and listeners before the next run or unmount.
+        sourceUrl: https://react.dev/reference/react/useEffect
+      - id: p1-react-q4
+        question: Why should a clickable control be a button rather than a div with onClick?
+        choices:
+          - A button is keyboard-focusable and handles Enter and Space by default
+          - A div cannot have an onClick handler
+          - A button is faster to render
+          - A div cannot be styled
+        answerIndex: 0
+        explanation: Native elements provide focus, keyboard activation and semantics that assistive technology understands.
+        sourceUrl: https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Accessibility/HTML
+      - id: p1-react-q5
+        question: A component fetches data when an id prop changes. What prevents an old response from overwriting the new one?
+        choices:
+          - Abort the previous request in the effect cleanup
+          - Store the response in a global variable
+          - Remove the dependency array
+          - Call setState during render
+        answerIndex: 0
+        explanation: The cleanup runs before the next effect, so aborting cancels the stale request.
+        sourceUrl: https://react.dev/learn/synchronizing-with-effects#fetching-data
+    proof:
+      title: A screen with four states
+      brief: Build one product screen that loads data from an API and renders loading, empty, error and success states. Include a form with a labelled input and a field-level error. Make every action reachable with the keyboard, and add at least four component tests, including the error path.
+      evidence: A deployed or locally runnable screen, the test output, and a short note on how you tested the keyboard path.
+      rubric:
+        - criterion: State handling
+          levels:
+            0: Only the happy path renders.
+            1: Loading is handled but errors are not.
+            2: Loading, empty, error and success are all visible and distinct.
+            3: Each state has a recovery action and is covered by a test.
+        - criterion: Accessibility
+          levels:
+            0: Inputs have no labels and focus is invisible.
+            1: Labels exist but the custom controls are not keyboard operable.
+            2: Labels, focus styles and keyboard operation work.
+            3: Screen-reader semantics were checked and one issue found in review was fixed.
+        - criterion: Effect discipline
+          levels:
+            0: Effects run on every render or fetch without cancellation.
+            1: Dependencies exist but cleanup is missing.
+            2: The effect cleans up and cancels stale work.
+            3: A test proves that changing the key does not show the old result.
+    playbookIds: [pb-plan-feature]
+    whyItMatters: Most UI bugs are a missing state, a stale effect or an unlabelled control. These are reviewable habits, not taste.
+    riskNote: Do not put secrets in a Vite bundle; anything prefixed with VITE_ is public.
+
+  - id: p1-node
+    phase: "1"
+    order: 2
+    title: An API with a contract
+    summary: Express is small enough to learn in an afternoon and easy to leave unvalidated. Build four endpoints with a single error shape and tests that call them.
+    objectives:
+      - Order middleware so parsing, CORS and auth run before the handler that needs them.
+      - Validate every request body with Zod and return field-level errors.
+      - Return one error envelope and the right status code for caller and server faults.
+      - Test handlers without starting a browser.
+    prerequisites: [f-js, f-http]
+    estHours: { min: 6, max: 10 }
+    claimIds: []
+    resources:
+      - title: Express 5 documentation
+        publisher: Express
+        url: https://expressjs.com/
+        format: docs
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: Routing, middleware and the error-handling guide used in this module.
+      - title: Node.js documentation
+        publisher: OpenJS Foundation
+        url: https://nodejs.org/docs/latest/api/
+        format: docs
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: The runtime reference for process, environment and HTTP behaviour.
+    cheatsheetIds: [express-routing, express-middleware, express-errors, express-zod, express-env]
+    quiz:
+      - id: p1-node-q1
+        question: Where does Express store a dynamic segment such as :id in a route path?
+        choices: [request.query, request.params, request.body, request.headers]
+        answerIndex: 1
+        explanation: Path parameters are in request.params; query strings are in request.query.
+        sourceUrl: https://expressjs.com/en/guide/routing.html
+      - id: p1-node-q2
+        question: Why must express.json() be mounted before the route that reads request.body?
+        choices:
+          - Middleware runs in registration order
+          - JSON parsing only works on GET
+          - It must be mounted after the error handler
+          - Express parses bodies automatically
+        answerIndex: 0
+        explanation: Middleware executes in the order it is added, so a parser mounted later never runs for that route.
+        sourceUrl: https://expressjs.com/en/guide/using-middleware.html
+      - id: p1-node-q3
+        question: How does Express recognise an error-handling middleware?
+        choices:
+          - It has four arguments, starting with the error
+          - It returns a promise
+          - It is named errorHandler
+          - It is mounted at the end of the app
+        answerIndex: 0
+        explanation: Express identifies error handlers by the four-argument signature (error, request, response, next).
+        sourceUrl: https://expressjs.com/en/guide/error-handling.html
+      - id: p1-node-q4
+        question: In Express 5, what happens to a rejected promise returned by an async route handler?
+        choices:
+          - It is forwarded to the error handler
+          - It crashes the process
+          - It returns a 200 with an empty body
+          - It must be caught manually or Express ignores it
+        answerIndex: 0
+        explanation: Express 5 forwards rejected promises from async handlers to the error middleware.
+        sourceUrl: https://expressjs.com/en/guide/migrating-5.html
+      - id: p1-node-q5
+        question: Which Zod method returns a result object instead of throwing on invalid input?
+        choices: [parse, safeParse, validate, check]
+        answerIndex: 1
+        explanation: safeParse returns success or error; parse throws.
+        sourceUrl: https://zod.dev/basics
+    proof:
+      title: Four endpoints and one error shape
+      brief: Build a small API with list, read, create and delete endpoints for one resource. Validate every body, return a consistent error envelope, and add tests for the happy path, a validation failure and an unauthorised request. Include a request log that shows the middleware order.
+      evidence: Repository link, test output, and a sample error response for each class of failure.
+      rubric:
+        - criterion: Contract
+          levels:
+            0: Endpoints return different shapes for the same kind of error.
+            1: Status codes are used but the body shape varies.
+            2: Every error has the same envelope and a useful status.
+            3: The contract is documented and a test asserts it.
+        - criterion: Validation
+          levels:
+            0: Request bodies are trusted.
+            1: Some fields are checked ad hoc.
+            2: A schema validates each write and returns field paths.
+            3: Invalid nested input is covered by a test and cannot reach the database.
+        - criterion: Tests
+          levels:
+            0: No tests.
+            1: Only the happy path is tested.
+            2: Success, validation and auth failures are tested.
+            3: A regression test exists for a bug found while building.
+    playbookIds: [pb-plan-feature]
+    whyItMatters: The API is the trust boundary. Validation here prevents bad data from becoming a database problem you have to clean up later.
+    riskNote: A body parser with no size limit is an easy denial-of-service target.
+
+  - id: p1-postgres
+    phase: "1"
+    order: 3
+    title: Postgres and the shape of the data
+    summary: Design a schema with constraints, migrations and a transaction, then query it through a pooled connection without N+1 surprises.
+    objectives:
+      - Choose types and constraints that make invalid rows impossible.
+      - Generate, read and apply a migration, with a rollback plan.
+      - Write a transaction that locks the rows it changes.
+      - Explain why app traffic and migrations use different connection strings.
+    prerequisites: [f-sql]
+    estHours: { min: 6, max: 10 }
+    claimIds: [N1]
+    resources:
+      - title: PostgreSQL documentation
+        publisher: PostgreSQL Global Development Group
+        url: https://www.postgresql.org/docs/current/
+        format: docs
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: The reference for data types, constraints, transactions and EXPLAIN.
+      - title: Drizzle ORM documentation
+        publisher: Drizzle Team
+        url: https://orm.drizzle.team/docs/overview
+        format: docs
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: The typed query builder and migration tool used in this path.
+    cheatsheetIds: [pg-schema, pg-migrations, pg-relations, pg-transactions, pg-pooling]
+    quiz:
+      - id: p1-pg-q1
+        question: Which type should store a timestamp that a user or server records?
+        choices: [timestamp, timestamptz, date, text]
+        answerIndex: 1
+        explanation: timestamptz stores an instant and converts to the session time zone; timestamp has no zone.
+        sourceUrl: https://www.postgresql.org/docs/current/datatype-datetime.html
+      - id: p1-pg-q2
+        question: What does a CHECK constraint do?
+        choices:
+          - Rejects rows that do not satisfy a boolean expression
+          - Creates an index automatically
+          - Encrypts a column
+          - Links two tables
+        answerIndex: 0
+        explanation: A check constraint rejects an insert or update when the expression is false or null.
+        sourceUrl: https://www.postgresql.org/docs/current/ddl-constraints.html#DDL-CONSTRAINTS-CHECK-CONSTRAINTS
+      - id: p1-pg-q3
+        question: Does PostgreSQL create an index on the referencing column of a foreign key automatically?
+        choices:
+          - "Yes, always"
+          - "Yes, but only for small tables"
+          - "No, it does not"
+          - "Only for composite keys"
+        answerIndex: 2
+        explanation: The referenced column needs a unique or primary key, but the referencing column is not indexed automatically.
+        sourceUrl: https://www.postgresql.org/docs/current/ddl-constraints.html#DDL-CONSTRAINTS-FK
+      - id: p1-pg-q4
+        question: Why use the unpooled connection string for migrations?
+        choices:
+          - The pooled endpoint may not support every session feature a migration needs
+          - The unpooled endpoint is faster for queries
+          - Migrations cannot run over TLS
+          - The pooled endpoint deletes data
+        answerIndex: 0
+        explanation: Poolers can restrict session-level behaviour; migrations use a direct connection. App traffic uses the pooled one.
+        sourceUrl: https://neon.com/docs/connect/connection-pooling
+      - id: p1-pg-q5
+        question: What does SELECT ... FOR UPDATE do inside a transaction?
+        choices:
+          - Locks the selected rows until the transaction ends
+          - Deletes the rows after the transaction
+          - Prevents other transactions from reading the table forever
+          - Creates a snapshot without locks
+        answerIndex: 0
+        explanation: FOR UPDATE takes a row-level lock so concurrent writers wait or fail.
+        sourceUrl: https://www.postgresql.org/docs/current/explicit-locking.html
+    proof:
+      title: A schema with a rollback story
+      brief: Design three related tables with real constraints, generate a migration, and seed them with test data. Add one query that would be slow without an index, then add the index and show both plans. Demonstrate a failed transaction rolling back.
+      evidence: The migration files, seed script, both EXPLAIN plans, and the rollback transcript.
+      rubric:
+        - criterion: Schema design
+          levels:
+            0: Tables have no keys or constraints.
+            1: Primary keys exist but relationships are unenforced.
+            2: Keys, foreign keys and checks enforce the rules.
+            3: Nullability and cascade behaviour are chosen deliberately and explained.
+        - criterion: Migration safety
+          levels:
+            0: The schema was changed by hand.
+            1: A migration exists but has not been reviewed.
+            2: The migration is reviewed and reversible.
+            3: A restore point or branch was taken before applying it.
+        - criterion: Query evidence
+          levels:
+            0: No plans or measurements.
+            1: EXPLAIN output is pasted without interpretation.
+            2: Before and after plans show the index being used.
+            3: The write-up explains the planner decision in terms of rows and selectivity.
+    playbookIds: [pb-db-work]
+    whyItMatters: Data outlives the UI. Constraints and migrations are how a change stays reversible when the app around it is rewritten.
+    riskNote: A destructive migration on a production database can lose data permanently. Branch or back up first.
+
+  - id: p1-auth
+    phase: "1"
+    order: 4
+    title: Authentication you can defend
+    summary: Sessions, OAuth, cookies, CSRF and XSS are one system. Learn the defaults, then verify each check is still on.
+    objectives:
+      - Explain why a database session is revocable and a bare JWT is not.
+      - Trace an OAuth authorisation-code flow and the purpose of state and PKCE.
+      - Configure secure cookies, origin checks and rate limiting without disabling them.
+      - Write a test proving one user cannot read another user's row.
+    prerequisites: [p1-node, p1-postgres]
+    estHours: { min: 8, max: 12 }
+    claimIds: [B1]
+    resources:
+      - title: Better Auth security reference
+        publisher: Better Auth
+        url: https://www.better-auth.com/docs/reference/security
+        format: docs
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: The source for scrypt hashing, session storage, CSRF and rate-limit behaviour.
+      - title: OWASP Authentication Cheat Sheet
+        publisher: OWASP
+        url: https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html
+        format: docs
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: false
+        why: A vendor-neutral checklist for login, password and session decisions.
+    cheatsheetIds: [auth-sessions-vs-jwt, auth-oauth-flow, auth-csrf, auth-xss, auth-cookies]
+    quiz:
+      - id: p1-auth-q1
+        question: What can a database session do that a bare signed JWT cannot?
+        choices:
+          - Be revoked immediately on the server
+          - Be read by the browser
+          - Avoid a database entirely
+          - Expire automatically
+        answerIndex: 0
+        explanation: A session row can be deleted or marked invalid; a JWT stays valid until it expires unless you add a denylist.
+        sourceUrl: https://www.better-auth.com/docs/concepts/session-management
+      - id: p1-auth-q2
+        question: What is the purpose of PKCE in an OAuth authorisation-code flow?
+        choices:
+          - Bind the code exchange to the client that started the flow
+          - Encrypt the access token
+          - Replace the client secret permanently
+          - Store the session in a cookie
+        answerIndex: 0
+        explanation: The code verifier proves that the client exchanging the code is the one that started the flow.
+        sourceUrl: https://www.better-auth.com/docs/concepts/oauth
+      - id: p1-auth-q3
+        question: Why is disabling origin checks a bad fix for a failing login?
+        choices:
+          - It also disables CSRF protection and allows untrusted redirects
+          - It makes the database slower
+          - It breaks password hashing
+          - It removes the session table
+        answerIndex: 0
+        explanation: Better Auth's origin checks cover CSRF and callback validation; disabling them opens both.
+        sourceUrl: https://www.better-auth.com/docs/reference/security
+      - id: p1-auth-q4
+        question: Which cookie attribute keeps the session value out of client-side JavaScript?
+        choices: [HttpOnly, SameSite, Path, Max-Age]
+        answerIndex: 0
+        explanation: HttpOnly prevents document.cookie from reading the value.
+        sourceUrl: https://www.better-auth.com/docs/concepts/cookies
+      - id: p1-auth-q5
+        question: Which algorithm does Better Auth use to hash passwords by default?
+        choices: [scrypt, MD5, SHA-256, bcrypt]
+        answerIndex: 0
+        explanation: Better Auth hashes passwords with scrypt by default; the hash function is configurable.
+        sourceUrl: https://www.better-auth.com/docs/reference/security
+    proof:
+      title: Auth you can defend
+      brief: Add email and password sign-in plus one OAuth provider. Protect a page and an API route. Then write a test that creates two users and proves user A cannot read user B's data. Paste the cookie flags, the trusted origins and the rate-limit configuration into a SECURITY.md, with a note on what you deliberately did not disable.
+      evidence: Repository link, the cross-user test passing, and SECURITY.md with the actual configuration.
+      rubric:
+        - criterion: Session security
+          levels:
+            0: A token is stored in localStorage.
+            1: A cookie is used without HttpOnly or Secure.
+            2: The session cookie is HttpOnly, Secure in production and SameSite=Lax.
+            3: Session revocation and sign-out of other devices are demonstrated.
+        - criterion: Authorization
+          levels:
+            0: Pages are hidden but the API trusts any request.
+            1: The API checks a session but not row ownership.
+            2: Every query filters by the session user.
+            3: A cross-user test exists for each private resource.
+        - criterion: Configuration evidence
+          levels:
+            0: No record of the security settings.
+            1: Settings are described from memory.
+            2: SECURITY.md lists the real values and dates.
+            3: A test or config assertion prevents a future edit from disabling CSRF or origin checks.
+    playbookIds: [pb-auth]
+    whyItMatters: Auth is the part of the product where a small convenience becomes a data breach. The defaults are good; the job is not to turn them off.
+    riskNote: No email provider means no password reset. State that plainly on the sign-up page instead of pretending it works.
+
+  - id: p1-ship
+    phase: "1"
+    order: 5
+    title: Ship it with a pipeline
+    summary: A deployment is a repeatable process, not a manual upload. Containerise the app, run the checks on every push and deploy with a rollback path.
+    objectives:
+      - Build a small multi-stage image that runs as a non-root user.
+      - Run lint, types, tests and build in CI with a lockfile install.
+      - Choose a deployment target and record its limits with a date.
+      - Write a rollback note that another person could follow.
+    prerequisites: [p1-react, p1-node]
+    estHours: { min: 6, max: 10 }
+    claimIds: [V1]
+    resources:
+      - title: Docker documentation — Dockerfile reference
+        publisher: Docker
+        url: https://docs.docker.com/reference/dockerfile/
+        format: docs
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: The reference for multi-stage builds, users and build context.
+      - title: GitHub Actions documentation
+        publisher: GitHub
+        url: https://docs.github.com/en/actions
+        format: docs
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: Workflow syntax, permissions and the package caching used in the CI example.
+    cheatsheetIds: [docker-file, docker-compose, gh-actions, vitest]
+    quiz:
+      - id: p1-ship-q1
+        question: Why does npm ci fail when package.json and package-lock.json disagree?
+        choices:
+          - It installs exactly from the lockfile and refuses to invent a resolution
+          - It requires a network connection
+          - It only works on Linux
+          - It is slower than npm install
+        answerIndex: 0
+        explanation: npm ci is reproducible by design and fails on a lockfile mismatch.
+        sourceUrl: https://docs.npmjs.com/cli/v11/commands/npm-ci
+      - id: p1-ship-q2
+        question: What is the main benefit of a multi-stage Docker build?
+        choices:
+          - The runtime image contains only what it needs to run
+          - It makes the database faster
+          - It removes the need for a lockfile
+          - It runs the tests twice
+        answerIndex: 0
+        explanation: Build tools and dev dependencies stay in the build stage; the final image is smaller and has less attack surface.
+        sourceUrl: https://docs.docker.com/build/building/multi-stage/
+      - id: p1-ship-q3
+        question: Why run a container as a non-root user?
+        choices:
+          - A compromised process gets fewer privileges inside the container
+          - It makes the image smaller
+          - It enables HTTPS
+          - It is required for npm
+        answerIndex: 0
+        explanation: Least privilege limits the damage a compromised process can do.
+        sourceUrl: https://docs.docker.com/build/building/best-practices/#user
+      - id: p1-ship-q4
+        question: What should the permissions block in a GitHub Actions workflow start with?
+        choices:
+          - "contents: read"
+          - "contents: write"
+          - "everything: write"
+          - No permissions block
+        answerIndex: 0
+        explanation: Start read-only and add the narrowest permission a job needs.
+        sourceUrl: https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#permissions
+      - id: p1-ship-q5
+        question: What does a health check endpoint let a platform do?
+        choices:
+          - Decide whether an instance should receive traffic
+          - Migrate the database
+          - Rotate secrets
+          - Build the image
+        answerIndex: 0
+        explanation: A health check reports readiness; a failing instance can be removed from rotation.
+        sourceUrl: https://docs.docker.com/reference/dockerfile/#healthcheck
+    proof:
+      title: One push, one deploy
+      brief: Add a CI workflow that runs lint, typecheck, tests and build on every push. Deploy the app to a free host, record the plan limits with the date checked, and write a ROLLBACK.md with the exact steps and the command you would run. Trigger one deliberately failing check to prove the pipeline blocks it.
+      evidence: A link to the running app, the green CI run, the red run that blocked a bad change, and ROLLBACK.md.
+      rubric:
+        - criterion: Pipeline
+          levels:
+            0: Deploys are manual and undocumented.
+            1: CI runs some checks but not the build.
+            2: Lint, typecheck, tests and build run on every push.
+            3: A failing check blocked a real change, with the run linked.
+        - criterion: Runtime hygiene
+          levels:
+            0: The app runs as root with a floating base tag.
+            1: A Dockerfile exists but copies secrets into the image.
+            2: Multi-stage, non-root and a pinned base are used, or the platform equivalent is documented.
+            3: Image size and start time were measured and improved.
+        - criterion: Rollback
+          levels:
+            0: No rollback path.
+            1: “Redeploy the old version” with no detail.
+            2: The previous deployment and the exact steps are identified.
+            3: A rollback was tested, or a restore point was verified.
+    playbookIds: [pb-db-work]
+    whyItMatters: Shipping is a skill you can rehearse. A pipeline makes the checks boring, which is what you want when a deadline is close.
+    riskNote: Vercel Hobby is non-commercial personal use only. Do not attach payments or ads to this project without changing plans.
+
+  - id: p1-agents
+    phase: "1"
+    order: 6
+    title: Working with coding agents
+    summary: An agent is a fast collaborator with no memory of your rules and no fear of production. Learn to specify, constrain and verify its work.
+    objectives:
+      - Write an AGENTS.md with commands, boundaries and a verification rule.
+      - Turn a request into a plan with a file limit and a test list before any edit.
+      - Review a small diff for scope creep, invented dependencies and missing tests.
+      - Treat tool output and third-party skills as untrusted input.
+    prerequisites: [f-git]
+    estHours: { min: 4, max: 8 }
+    claimIds: [C1, C3]
+    resources:
+      - title: Agent Skills specification
+        publisher: Agent Skills
+        url: https://agentskills.io/specification
+        format: docs
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: The folder and SKILL.md contract, including the name and description limits.
+      - title: Model Context Protocol specification
+        publisher: Model Context Protocol
+        url: https://modelcontextprotocol.io/specification/2026-07-28
+        format: docs
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: The current protocol for exposing tools and context to an agent.
+    cheatsheetIds: [agents-md, agent-spec-prompt]
+    quiz:
+      - id: p1-agent-q1
+        question: What belongs first in an AGENTS.md file?
+        choices:
+          - The install, check and build commands
+          - A long product history
+          - A list of every dependency
+          - The deployment provider's pricing
+        answerIndex: 0
+        explanation: The agent needs the commands it will run before it needs context about the product.
+        sourceUrl: https://agents.md/
+      - id: p1-agent-q2
+        question: Why ask an agent for a plan before it edits files?
+        choices:
+          - A bad plan is cheaper to reject than a bad diff
+          - A plan makes the model faster
+          - Plans are required by Git
+          - It removes the need for tests
+        answerIndex: 0
+        explanation: The plan exposes scope, file count and risks before any code is written.
+        sourceUrl: https://agents.md/
+      - id: p1-agent-q3
+        question: Which instruction produces the most reviewable change?
+        choices:
+          - Touch at most four files and list the tests first
+          - Make the code better
+          - Rewrite the module however you think is best
+          - Add anything else you notice
+        answerIndex: 0
+        explanation: A file limit and a test list constrain the diff and make review possible.
+        sourceUrl: https://www.deeplearning.ai/the-batch/the-ai-engineering-skills-map
+      - id: p1-agent-q4
+        question: What should you do before accepting a dependency the agent added?
+        choices:
+          - Verify the package exists, is maintained and has the licence you expect
+          - Trust the import because the build passed
+          - Rename it
+          - Add it to the lockfile without reading it
+        answerIndex: 0
+        explanation: A plausible package name can be a typosquat or an abandoned project. Check the registry and the repository.
+        sourceUrl: https://agents.md/
+      - id: p1-agent-q5
+        question: Why is tool output treated as untrusted input?
+        choices:
+          - It can contain instructions aimed at the agent
+          - It is always encrypted
+          - It cannot be displayed
+          - It is slower than user input
+        answerIndex: 0
+        explanation: A web page or document can carry prompt injection. Instructions in data must not be followed as if they came from the user.
+        sourceUrl: https://modelcontextprotocol.io/specification/2026-07-28
+    proof:
+      title: A supervised agent change
+      brief: Use an agent on a real task in a repository with an AGENTS.md. Save the prompt, the plan it returned, the final diff and the test run. Reject or revise at least one suggestion and explain why. Include one check that would have caught a wrong dependency or a scope expansion.
+      evidence: The prompt, plan, diff, test output, and the rejection note.
+      rubric:
+        - criterion: Specification
+          levels:
+            0: The prompt was “build the feature”.
+            1: A goal is stated but no constraints or tests.
+            2: Goal, file limit, constraints and verification are stated.
+            3: The plan was reviewed and changed before implementation.
+        - criterion: Review
+          levels:
+            0: The diff was merged without reading it.
+            1: The diff was read but scope creep was accepted.
+            2: The diff stays in scope and the tests cover the change.
+            3: At least one suggestion was rejected with a reason and a safer alternative.
+        - criterion: Verification
+          levels:
+            0: No command was run.
+            1: The build passes but no test covers the change.
+            2: A test failed before and passes after.
+            3: A dependency or security check is included in the evidence.
+    playbookIds: [pb-plan-feature, pb-docs-lookup]
+    whyItMatters: Agents amplify both speed and mistakes. The skill is not prompting harder; it is constraining scope and verifying the result.
+    riskNote: Never give an agent production credentials or auto-approve a write, deploy or payment.

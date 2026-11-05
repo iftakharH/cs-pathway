@@ -1,0 +1,443 @@
+entries:
+  - id: ml-linear-algebra
+    phase: "3"
+    topic: ML math
+    title: Read the shapes before the formula
+    whenToUse: When a matrix multiplication fails or a model expects a shape you did not expect.
+    snippets:
+      - lang: text
+        caption: The four identities used most often
+        runnable: false
+        checked: docs
+        code: |
+          dot(a, b)        = sum(a_i * b_i)            # scalar, same length
+          (m x n) @ (n x p) = (m x p)                  # inner dimensions match
+          X @ w + b         = predictions              # X: (samples, features)
+          ||v||_2           = sqrt(sum(v_i^2))         # length of a vector
+    notes:
+      - Write the shapes of every input and output before writing the code.
+      - A bias vector broadcasts across the batch dimension.
+      - Transpose when the inner dimensions do not match, and say why.
+    gotchas:
+      - Elementwise multiplication and matrix multiplication are different operations.
+      - A (n,) array and an (n, 1) array behave differently in broadcasting.
+    seeAlso: [pytorch-shapes, ml-probability]
+    tool: { name: Mathematics for Machine Learning, version: 'free book', verifiedOn: 2026-11-05 }
+    sourceUrl: https://mml-book.github.io/
+    tags: [math, linear-algebra, shapes, ml]
+
+  - id: ml-probability
+    phase: "3"
+    topic: ML math
+    title: Apply Bayes to a base rate
+    whenToUse: When a test looks accurate but the population is mostly negative, and the reported probability feels wrong.
+    snippets:
+      - lang: python
+        caption: A positive test with a 1% base rate
+        runnable: true
+        checked: executed
+        expectStdout: "0.154"
+        code: |
+          prevalence = 0.01
+          sensitivity = 0.90
+          false_positive_rate = 0.05
+
+          p_positive = sensitivity * prevalence + false_positive_rate * (1 - prevalence)
+          posterior = sensitivity * prevalence / p_positive
+
+          print(f"{posterior:.3f}")
+    notes:
+      - P(A|B) = P(B|A) P(A) / P(B).
+      - The base rate matters as much as the test accuracy.
+      - Write the denominator as all the ways a positive result can happen.
+    gotchas:
+      - Confusing P(test positive | disease) with P(disease | test positive) is the classic error.
+      - A 99% accurate test on a 1% base rate still produces many false positives.
+    seeAlso: [ml-metrics, ml-linear-algebra]
+    tool: { name: Python, version: '3.11.15', verifiedOn: 2026-11-05 }
+    sourceUrl: https://mml-book.github.io/
+    tags: [math, probability, bayes, ml]
+
+  - id: ml-metrics
+    phase: "3"
+    topic: ML metrics
+    title: Compute precision, recall and F1 by hand
+    whenToUse: When a classification report is ambiguous and you need to know what each number counts.
+    snippets:
+      - lang: python
+        caption: The three formulas on a confusion matrix
+        runnable: true
+        checked: executed
+        expectStdout: "0.80 0.67 0.73"
+        code: |
+          true_positive = 8
+          false_positive = 2
+          false_negative = 4
+
+          precision = true_positive / (true_positive + false_positive)
+          recall = true_positive / (true_positive + false_negative)
+          f1 = 2 * precision * recall / (precision + recall)
+
+          print(f"{precision:.2f} {recall:.2f} {f1:.2f}")
+    notes:
+      - Precision asks how many predicted positives are real.
+      - Recall asks how many real positives were found.
+      - F1 is the harmonic mean; it punishes a lopsided pair.
+      - Report the base rate and the confusion matrix, not only one score.
+    gotchas:
+      - Accuracy hides failure on the minority class.
+      - A threshold change trades precision for recall; report the threshold.
+    seeAlso: [ml-bias-variance, ml-probability]
+    tool: { name: Python, version: '3.11.15', verifiedOn: 2026-11-05 }
+    sourceUrl: https://scikit-learn.org/stable/modules/model_evaluation.html
+    tags: [metrics, classification, precision, recall]
+
+  - id: ml-bias-variance
+    phase: "3"
+    topic: ML metrics
+    title: Check for leakage before tuning the model
+    whenToUse: When validation scores look too good and the model disappoints after deployment.
+    snippets:
+      - lang: text
+        caption: The leakage checklist
+        runnable: false
+        checked: docs
+        code: |
+          [ ] Split before any scaling, imputation or feature selection.
+          [ ] Fit the transformer on the training fold only.
+          [ ] Remove the target and any proxy for it from the features.
+          [ ] Group rows by user or time when the split must not leak identity.
+          [ ] Use time-based splits for forecasting, never a random shuffle.
+          [ ] Re-check after adding a new column; leaks often arrive with a join.
+    notes:
+      - Leakage is a pipeline bug, not a model bug.
+      - Cross-validation reduces variance in the estimate; it does not remove leakage.
+      - A high score on the first attempt is a reason to look for a leak.
+    gotchas:
+      - Scaling before splitting leaks the validation distribution into training.
+      - Randomly splitting time series lets the model see the future.
+    seeAlso: [sklearn-pipeline, train-split]
+    tool: { name: scikit-learn, version: '1.9.1', verifiedOn: 2026-11-05 }
+    sourceUrl: https://scikit-learn.org/stable/common_pitfalls.html
+    tags: [ml, leakage, validation, overfitting]
+
+  - id: sklearn-pipeline
+    phase: "3"
+    topic: scikit-learn
+    title: Keep preprocessing inside the pipeline
+    whenToUse: When numeric and categorical columns need different transforms and cross-validation must refit them per fold.
+    snippets:
+      - lang: python
+        caption: A column transformer inside a pipeline
+        runnable: false
+        checked: docs
+        code: |
+          from sklearn.compose import ColumnTransformer
+          from sklearn.linear_model import LogisticRegression
+          from sklearn.pipeline import Pipeline
+          from sklearn.preprocessing import OneHotEncoder, StandardScaler
+
+          numeric = ["age", "spend"]
+          categorical = ["plan"]
+
+          preprocess = ColumnTransformer([
+              ("num", StandardScaler(), numeric),
+              ("cat", OneHotEncoder(handle_unknown="ignore"), categorical),
+          ])
+
+          model = Pipeline([
+              ("preprocess", preprocess),
+              ("classifier", LogisticRegression(max_iter=1000)),
+          ])
+
+          model.fit(X_train, y_train)
+          score = model.score(X_val, y_val)
+    notes:
+      - The pipeline fits the scaler and encoder inside each cross-validation fold.
+      - "`handle_unknown=\"ignore\"` keeps a new category from crashing inference."
+      - Start with a simple baseline before a gradient-boosted model.
+    gotchas:
+      - Fitting the scaler on all data before splitting leaks information.
+      - A pipeline with a custom function is not automatically serialisable; check the version.
+    seeAlso: [train-split, ml-bias-variance]
+    tool: { name: scikit-learn, version: '1.9.1', verifiedOn: 2026-11-05 }
+    sourceUrl: https://scikit-learn.org/stable/modules/compose.html
+    tags: [sklearn, pipeline, preprocessing, ml]
+
+  - id: pandas-ops
+    phase: "3"
+    topic: scikit-learn
+    title: Group and join a dataframe without losing rows
+    whenToUse: When a feature or a report needs one row per category and the merge changes the row count.
+    snippets:
+      - lang: python
+        caption: Named aggregation and a left join
+        runnable: false
+        checked: docs
+        code: |
+          import pandas as pd
+
+          summary = (
+              orders.groupby("category", as_index=False)
+              .agg(revenue=("amount", "sum"), orders=("id", "count"))
+              .sort_values("revenue", ascending=False)
+          )
+
+          enriched = orders.merge(customers, on="customer_id", how="left", validate="many_to_one")
+    notes:
+      - Print the row count before and after a merge.
+      - Use `validate=` so an unexpected many-to-many join raises.
+      - "`as_index=False` keeps the group key as a column."
+    gotchas:
+      - A duplicated key on the right side multiplies rows and inflates totals.
+      - A left join can introduce nulls that break a numeric feature.
+    seeAlso: [sql-joins, sklearn-pipeline]
+    tool: { name: pandas, version: '3.1.1', verifiedOn: 2026-11-05 }
+    sourceUrl: https://pandas.pydata.org/docs/user_guide/merging.html
+    tags: [pandas, data, joins, aggregation]
+
+  - id: train-split
+    phase: "3"
+    topic: scikit-learn
+    title: Split train, validation and test once
+    whenToUse: When you need a validation set for decisions and a test set you touch only at the end.
+    snippets:
+      - lang: python
+        caption: Two stratified splits, one random seed
+        runnable: false
+        checked: docs
+        code: |
+          from sklearn.model_selection import train_test_split
+
+          X_train, X_temp, y_train, y_temp = train_test_split(
+              X, y, test_size=0.30, random_state=42, stratify=y
+          )
+
+          X_val, X_test, y_val, y_test = train_test_split(
+              X_temp, y_temp, test_size=0.50, random_state=42, stratify=y_temp
+          )
+
+          print(X_train.shape, X_val.shape, X_test.shape)
+    notes:
+      - Validation is for choosing; test is for reporting once.
+      - Stratify classification targets to keep the class ratio in each split.
+      - Fix the random seed so a rerun is comparable.
+    gotchas:
+      - Reusing the test set to tune turns it into a validation set.
+      - A random split on grouped data puts the same user on both sides.
+    seeAlso: [ml-bias-variance, sklearn-pipeline]
+    tool: { name: scikit-learn, version: '1.9.1', verifiedOn: 2026-11-05 }
+    sourceUrl: https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.train_test_split.html
+    tags: [sklearn, split, validation, ml]
+
+  - id: pytorch-training-loop
+    phase: "3"
+    topic: PyTorch
+    title: Write the training loop in the right order
+    whenToUse: When a model does not learn and the loss is flat or the gradients are wrong.
+    snippets:
+      - lang: python
+        caption: Train, evaluate and do not forget zero_grad
+        runnable: false
+        checked: docs
+        code: |
+          model.train()
+          for inputs, targets in train_loader:
+              inputs = inputs.to(device)
+              targets = targets.to(device)
+
+              optimizer.zero_grad()
+              logits = model(inputs)
+              loss = criterion(logits, targets)
+              loss.backward()
+              optimizer.step()
+
+          model.eval()
+          correct = 0
+          total = 0
+          with torch.no_grad():
+              for inputs, targets in val_loader:
+                  inputs, targets = inputs.to(device), targets.to(device)
+                  predictions = model(inputs).argmax(dim=1)
+                  correct += (predictions == targets).sum().item()
+                  total += targets.size(0)
+
+          print(f"accuracy {correct / total:.3f}")
+    notes:
+      - "`zero_grad` clears the previous gradients before the new backward pass."
+      - "`model.eval()` changes dropout and batch-norm behaviour."
+      - "`torch.no_grad()` saves memory during evaluation."
+      - Move inputs and targets to the same device as the model.
+    gotchas:
+      - Forgetting `zero_grad` accumulates gradients across batches.
+      - Evaluating without `eval()` gives a different and usually worse number.
+    seeAlso: [pytorch-shapes, pytorch-save-load]
+    tool: { name: PyTorch, version: '2.15.0', verifiedOn: 2026-11-05 }
+    sourceUrl: https://pytorch.org/tutorials/beginner/basics/optimization_tutorial.html
+    tags: [pytorch, training, loop, ml]
+
+  - id: pytorch-shapes
+    phase: "3"
+    topic: PyTorch
+    title: Read a tensor shape before the error
+    whenToUse: When a model complains about dimensions and the stack trace points at a layer, not the real cause.
+    snippets:
+      - lang: python
+        caption: Name each dimension and reduce deliberately
+        runnable: false
+        checked: docs
+        code: |
+          x = torch.randn(32, 3, 224, 224)   # batch, channels, height, width
+          print(x.shape)
+
+          features = x.mean(dim=(2, 3))       # [32, 3]
+          flattened = x.flatten(start_dim=1)  # [32, 150528]
+
+          # A linear layer expects [batch, features].
+          linear = torch.nn.Linear(3 * 224 * 224, 10)
+          logits = linear(flattened)
+    notes:
+      - Write the intended shape as a comment next to every tensor operation.
+      - "`dim` removes or reduces one axis; `keepdim=True` keeps it."
+      - The first dimension is the batch unless your data loader says otherwise.
+    gotchas:
+      - A missing batch dimension makes a (3, 224, 224) image look like 3 samples.
+      - "`view` requires contiguous memory; `reshape` copies when needed."
+    seeAlso: [pytorch-training-loop, ml-linear-algebra]
+    tool: { name: PyTorch, version: '2.15.0', verifiedOn: 2026-11-05 }
+    sourceUrl: https://pytorch.org/docs/stable/notes/broadcasting.html
+    tags: [pytorch, tensors, shapes, debugging]
+
+  - id: pytorch-save-load
+    phase: "3"
+    topic: PyTorch
+    title: Save weights, not the whole model object
+    whenToUse: When a trained model must be reloaded in another process or served behind an API.
+    snippets:
+      - lang: python
+        caption: state_dict round trip
+        runnable: false
+        checked: docs
+        code: |
+          torch.save(model.state_dict(), "model.pt")
+
+          # Recreate the architecture first, then load the weights.
+          model = build_model()
+          state = torch.load("model.pt", map_location=device)
+          model.load_state_dict(state)
+          model.eval()
+    notes:
+      - Save the state dict; it is smaller and less coupled to the class path.
+      - Record the architecture and preprocessing version with the weights.
+      - "`map_location` lets a GPU-trained model load on CPU."
+    gotchas:
+      - Loading a full pickled model executes code from the file; do not load untrusted checkpoints.
+      - A changed layer name makes `load_state_dict` fail or silently miss keys.
+    seeAlso: [pytorch-training-loop]
+    tool: { name: PyTorch, version: '2.15.0', verifiedOn: 2026-11-05 }
+    sourceUrl: https://pytorch.org/tutorials/beginner/saving_loading_models.html
+    tags: [pytorch, saving, serving, ml]
+
+  - id: transformers-attention
+    phase: "3"
+    topic: Transformers
+    title: Read the attention formula
+    whenToUse: When a paper or a model card mentions attention weights and you want to know what is being scaled and masked.
+    snippets:
+      - lang: text
+        caption: Scaled dot-product attention
+        runnable: false
+        checked: docs
+        code: |
+          Attention(Q, K, V) = softmax( (Q K^T) / sqrt(d_k) + mask ) V
+
+          Q: queries   (sequence, d_k)
+          K: keys      (sequence, d_k)
+          V: values    (sequence, d_v)
+          mask: -inf for positions that must not be attended to
+    notes:
+      - The dot product measures how much each query matches each key.
+      - Dividing by sqrt(d_k) keeps the logits from growing with dimension.
+      - A causal mask prevents a token from seeing later tokens.
+      - Multi-head attention runs several learned projections in parallel, then concatenates.
+    gotchas:
+      - A mask applied after softmax is too late; it must be added to the logits.
+      - Attention weights are not a complete explanation of a model's output.
+    seeAlso: [hf-tokenizer, lora-peft]
+    tool: { name: Attention Is All You Need, version: 'arXiv 1706.03762', verifiedOn: 2026-11-05 }
+    sourceUrl: https://arxiv.org/abs/1706.03762
+    tags: [transformers, attention, theory, ml]
+
+  - id: hf-tokenizer
+    phase: "3"
+    topic: Transformers
+    title: Tokenise a batch without truncation surprises
+    whenToUse: When a model rejects an input, a batch has ragged lengths, or a long document is silently cut.
+    snippets:
+      - lang: python
+        caption: Padding, truncation and the token count
+        runnable: false
+        checked: docs
+        code: |
+          from transformers import AutoTokenizer
+
+          tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased")
+
+          batch = tokenizer(
+              ["A short sentence.", "A much longer sentence that may need truncation."],
+              padding=True,
+              truncation=True,
+              max_length=128,
+              return_tensors="pt",
+          )
+
+          print(batch["input_ids"].shape)
+          print(sum(mask == 1 for mask in batch["attention_mask"][0]))
+    notes:
+      - "`padding=True` pads to the longest item in the batch; a fixed max length is more predictable."
+      - "`truncation=True` without a max length uses the model limit, which may still be too long."
+      - Use the tokenizer that belongs to the checkpoint; vocabularies differ.
+    gotchas:
+      - Counting words is not counting tokens.
+      - A truncation warning that is ignored silently drops the end of the document.
+    seeAlso: [transformers-attention, lora-peft]
+    tool: { name: Transformers, version: '5.22.1', verifiedOn: 2026-11-05 }
+    sourceUrl: https://huggingface.co/docs/transformers/main_classes/tokenizer
+    tags: [transformers, tokenizer, nlp, ml]
+
+  - id: lora-peft
+    phase: "3"
+    topic: Transformers
+    title: Understand LoRA parameters before tuning them
+    whenToUse: When fine-tuning a model is the proposed answer and you need to know what the adapter actually changes.
+    snippets:
+      - lang: python
+        caption: An adapter configuration with named parameters
+        runnable: false
+        checked: docs
+        code: |
+          from peft import LoraConfig, get_peft_model
+
+          config = LoraConfig(
+              r=8,
+              lora_alpha=16,
+              target_modules=["q_proj", "v_proj"],
+              lora_dropout=0.05,
+              bias="none",
+              task_type="CAUSAL_LM",
+          )
+
+          model = get_peft_model(base_model, config)
+          model.print_trainable_parameters()
+    notes:
+      - "`r` is the rank of the low-rank update; a larger rank adds capacity and parameters."
+      - "`lora_alpha` scales the update; the ratio to `r` is often more meaningful than either alone."
+      - "`target_modules` chooses which projections are adapted."
+      - LoRA trains a small adapter; the base weights stay frozen.
+    gotchas:
+      - There is no universal best rank or alpha; measure on your own eval set.
+      - Fine-tuning is usually the wrong first move when the problem is missing or stale knowledge; retrieval may be cheaper.
+    seeAlso: [transformers-attention, hf-tokenizer, eval-golden-set]
+    tool: { name: PEFT, version: '0.21.2', verifiedOn: 2026-11-05 }
+    sourceUrl: https://huggingface.co/docs/peft/developer_guides/lora
+    tags: [transformers, lora, fine-tuning, ml]

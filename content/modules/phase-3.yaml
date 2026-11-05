@@ -1,0 +1,533 @@
+modules:
+  - id: p3-math
+    phase: "3"
+    order: 1
+    title: The math you need, in context
+    summary: Linear algebra and probability are the vocabulary of every model card. Learn the identities that appear in code, not a full proof course.
+    objectives:
+      - Write the shape of every tensor operation before running it.
+      - Compute a dot product, a matrix product and a norm by hand.
+      - Apply Bayes' rule to a base-rate problem.
+      - Explain what a gradient is and why a learning rate can be too large.
+    prerequisites: [f-python]
+    estHours: { min: 6, max: 10 }
+    claimIds: []
+    resources:
+      - title: Mathematics for Machine Learning
+        publisher: Deisenroth, Faisal and Ong
+        url: https://mml-book.github.io/
+        format: book
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: A free book whose chapters map directly to the identities used here.
+      - title: Essence of linear algebra
+        publisher: 3Blue1Brown
+        url: https://www.3blue1brown.com/topics/linear-algebra
+        format: video
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: false
+        why: Visual explanations of vectors, matrices and transformations before the notation.
+    cheatsheetIds: [ml-linear-algebra, ml-probability]
+    quiz:
+      - id: p3-math-q1
+        question: What is the shape of the product of an (m × n) matrix and an (n × p) matrix?
+        choices: ['m × p', 'n × n', 'm × n', 'p × m']
+        answerIndex: 0
+        explanation: The inner dimensions must match; the result has the outer dimensions.
+        sourceUrl: https://mml-book.github.io/book/mml-book.pdf
+      - id: p3-math-q2
+        question: What does the dot product of two vectors produce?
+        choices: [A scalar, A matrix, A vector of the same length, A probability distribution]
+        answerIndex: 0
+        explanation: The dot product sums the elementwise products and returns a single number.
+        sourceUrl: https://mml-book.github.io/book/mml-book.pdf
+      - id: p3-math-q3
+        question: A test is 90% sensitive and has a 5% false-positive rate. Why can a positive result still be wrong most of the time?
+        choices:
+          - Because the base rate is low, so false positives outnumber true positives
+          - Because sensitivity is irrelevant
+          - Because the test is random
+          - Because Bayes' rule does not apply
+        answerIndex: 0
+        explanation: With a 1% base rate, the positive predictive value is about 15%, even with a good test.
+        sourceUrl: https://mml-book.github.io/book/mml-book.pdf
+      - id: p3-math-q4
+        question: What does the expectation of a random variable represent?
+        choices:
+          - The probability-weighted average of its values
+          - Its maximum value
+          - Its variance
+          - The most frequent value
+        answerIndex: 0
+        explanation: E[X] is the sum or integral of each value weighted by its probability.
+        sourceUrl: https://mml-book.github.io/book/mml-book.pdf
+      - id: p3-math-q5
+        question: What does a gradient point toward?
+        choices:
+          - The direction of steepest increase
+          - The direction of steepest decrease
+          - The nearest local minimum
+          - The origin
+        answerIndex: 0
+        explanation: Gradient descent moves against the gradient because the gradient points uphill.
+        sourceUrl: https://mml-book.github.io/book/mml-book.pdf
+    proof:
+      title: A derivation you can defend
+      brief: Derive the gradient of mean squared error for a linear model, implement it in plain Python, and compare the result with a numerical estimate on a small dataset. Plot or tabulate the loss over ten steps at two learning rates, one stable and one divergent.
+      evidence: The derivation, the code, the numerical comparison and the two loss traces.
+      rubric:
+        - criterion: Correctness
+          levels:
+            0: The derivation and the code disagree.
+            1: The gradient is correct but the shape handling is not.
+            2: The analytic and numerical gradients agree within a stated tolerance.
+            3: The write-up explains the tolerance and the effect of the learning rate.
+        - criterion: Implementation
+          levels:
+            0: Uses a library call without showing the maths.
+            1: Pure Python but unreadable.
+            2: The code names each shape and intermediate value.
+            3: A test covers a zero-gradient and a large-input case.
+        - criterion: Explanation
+          levels:
+            0: No explanation.
+            1: Restates the formula.
+            2: Explains why the learning rate changes the path.
+            3: Predicts the divergence threshold and shows whether the experiment matched.
+    playbookIds: []
+    whyItMatters: Without shapes and gradients, every training bug looks like a mystery. With them, the error message usually names the cause.
+    riskNote: A numerical gradient is a debugging tool, not a training method; it is too slow at scale.
+
+  - id: p3-metrics
+    phase: "3"
+    order: 2
+    title: Metrics that survive an imbalanced dataset
+    summary: Accuracy is a poor summary when one class dominates. Choose metrics from the decision the model supports, and check for leakage before tuning.
+    objectives:
+      - Read a confusion matrix and compute precision, recall and F1.
+      - Choose a threshold from the cost of a false positive versus a false negative.
+      - Explain what ROC-AUC and calibration do and do not tell you.
+      - Run a split that does not leak the target or the future.
+    prerequisites: [p3-math]
+    estHours: { min: 6, max: 10 }
+    claimIds: [E1]
+    resources:
+      - title: scikit-learn — Model evaluation
+        publisher: scikit-learn
+        url: https://scikit-learn.org/stable/modules/model_evaluation.html
+        format: docs
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: Definitions and implementations for classification and regression metrics.
+      - title: Google Machine Learning Crash Course
+        publisher: Google
+        url: https://developers.google.com/machine-learning/crash-course
+        format: course
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: false
+        why: Short lessons on classification, thresholds and generalization.
+    cheatsheetIds: [ml-metrics, ml-bias-variance, train-split]
+    quiz:
+      - id: p3-metrics-q1
+        question: A dataset has 98% negative rows. A model that predicts negative every time gets what accuracy?
+        choices: ['98%', '2%', '50%', '100%']
+        answerIndex: 0
+        explanation: Accuracy counts the majority class and hides the failure on positives.
+        sourceUrl: https://scikit-learn.org/stable/modules/model_evaluation.html
+      - id: p3-metrics-q2
+        question: What does recall measure?
+        choices:
+          - The share of real positives that were found
+          - The share of predicted positives that are real
+          - The overall accuracy
+          - The model's confidence
+        answerIndex: 0
+        explanation: Recall = TP / (TP + FN). Precision is TP / (TP + FP).
+        sourceUrl: https://scikit-learn.org/stable/modules/model_evaluation.html
+      - id: p3-metrics-q3
+        question: What does ROC-AUC summarise?
+        choices:
+          - Ranking quality across all thresholds
+          - Accuracy at one threshold
+          - The calibration of predicted probabilities
+          - The training loss
+        answerIndex: 0
+        explanation: ROC-AUC measures how well the scores rank positives above negatives, independent of a threshold.
+        sourceUrl: https://scikit-learn.org/stable/modules/model_evaluation.html
+      - id: p3-metrics-q4
+        question: Which split is invalid for a time-series forecast?
+        choices:
+          - A random shuffle across all dates
+          - A split at a fixed date
+          - A rolling-origin validation
+          - A gap between train and test
+        answerIndex: 0
+        explanation: A random shuffle lets the model see the future, which it will not have at prediction time.
+        sourceUrl: https://scikit-learn.org/stable/common_pitfalls.html
+      - id: p3-metrics-q5
+        question: What does calibration measure?
+        choices:
+          - Whether predicted probabilities match observed frequencies
+          - Whether the model is fast
+          - Whether the features are scaled
+          - Whether the model overfits
+        answerIndex: 0
+        explanation: A model that says 0.8 should be right about 80% of the time among those predictions.
+        sourceUrl: https://scikit-learn.org/stable/modules/calibration.html
+    proof:
+      title: A metric notebook for an imbalanced problem
+      brief: Take a classification dataset where the positive class is under 10%. Build a confusion matrix, report precision, recall and F1 at two thresholds, plot ROC and precision-recall curves, and check calibration. Explain which threshold you would deploy and what it costs.
+      evidence: The notebook or script, the two threshold reports, the curves and a one-paragraph recommendation.
+      rubric:
+        - criterion: Metric choice
+          levels:
+            0: Accuracy is the only metric.
+            1: Precision and recall are reported without a threshold.
+            2: Precision, recall and F1 are reported at a stated threshold.
+            3: The threshold is tied to the cost of each error type.
+        - criterion: Validation
+          levels:
+            0: The test set was used for tuning.
+            1: A split exists but leaks a feature.
+            2: A clean split and a baseline are present.
+            3: Time or group structure is respected and a leakage check is documented.
+        - criterion: Communication
+          levels:
+            0: Numbers without context.
+            1: A table with no interpretation.
+            2: The recommendation names the trade-off.
+            3: The write-up states what would change the recommendation.
+    playbookIds: []
+    whyItMatters: A model is a decision tool. The metric must match the decision, or the number is decoration.
+    riskNote: Optimising a proxy metric can harm the outcome you actually care about; state the proxy and check it.
+
+  - id: p3-sklearn
+    phase: "3"
+    order: 3
+    title: A baseline first, then a model
+    summary: Most ML work is data preparation and honest validation. Build a pipeline, compare it with a trivial baseline, and prove the split has no leakage.
+    objectives:
+      - Assemble preprocessing and a model into one pipeline.
+      - Compare against a majority-class or mean baseline.
+      - Use cross-validation without refitting on the validation fold.
+      - Diagnose an unexpected score as leakage, variance or a bug.
+    prerequisites: [p3-metrics, f-python]
+    estHours: { min: 8, max: 12 }
+    claimIds: []
+    resources:
+      - title: scikit-learn user guide
+        publisher: scikit-learn
+        url: https://scikit-learn.org/stable/user_guide.html
+        format: docs
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: Pipelines, preprocessing, model selection and common pitfalls.
+      - title: pandas user guide
+        publisher: pandas
+        url: https://pandas.pydata.org/docs/user_guide/
+        format: docs
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: Grouping, merging and reshaping the tabular data before modelling.
+    cheatsheetIds: [sklearn-pipeline, pandas-ops, train-split]
+    quiz:
+      - id: p3-sk-q1
+        question: Why must a scaler be fitted inside a pipeline during cross-validation?
+        choices:
+          - So the validation fold does not influence the scaling parameters
+          - Because pipelines are faster
+          - Because scalers cannot be fitted outside
+          - To increase the training set
+        answerIndex: 0
+        explanation: Fitting on all data leaks the validation distribution into training.
+        sourceUrl: https://scikit-learn.org/stable/common_pitfalls.html
+      - id: p3-sk-q2
+        question: What does ColumnTransformer let you do?
+        choices:
+          - Apply different preprocessing to different columns
+          - Merge two dataframes
+          - Train two models at once
+          - Encode the target
+        answerIndex: 0
+        explanation: It routes numeric, categorical and text columns to their own transformers.
+        sourceUrl: https://scikit-learn.org/stable/modules/compose.html
+      - id: p3-sk-q3
+        question: What is a majority-class baseline for?
+        choices:
+          - A floor that any real model must beat
+          - A way to improve accuracy
+          - A replacement for cross-validation
+          - A feature engineering step
+        answerIndex: 0
+        explanation: On an imbalanced dataset, the baseline shows how much of the score comes from the class distribution alone.
+        sourceUrl: https://scikit-learn.org/stable/modules/model_evaluation.html
+      - id: p3-sk-q4
+        question: What does a left merge with a duplicated key on the right do?
+        choices:
+          - Multiplies rows and can inflate aggregates
+          - Drops the duplicate
+          - Raises an error by default
+          - Sorts the result
+        answerIndex: 0
+        explanation: Each left row matches every duplicate right row, so the result has more rows.
+        sourceUrl: https://pandas.pydata.org/docs/user_guide/merging.html
+      - id: p3-sk-q5
+        question: What does k-fold cross-validation estimate?
+        choices:
+          - The variability of a score across different splits
+          - The final production accuracy
+          - The training time
+          - The number of features
+        answerIndex: 0
+        explanation: It gives a distribution of scores on held-out folds, not a guarantee about deployment.
+        sourceUrl: https://scikit-learn.org/stable/modules/cross_validation.html
+    proof:
+      title: A pipeline, a baseline and a leakage test
+      brief: Build a scikit-learn pipeline for a tabular dataset with numeric and categorical columns. Report a majority-class baseline and the pipeline score on the same split. Add a test that deliberately introduces a leaked feature, show the score jump, then remove it. Explain the final metric and its limitation.
+      evidence: The notebook or script, baseline and model scores, the leakage experiment and the explanation.
+      rubric:
+        - criterion: Pipeline
+          levels:
+            0: Preprocessing is fitted on all data.
+            1: A pipeline exists but mixes train and test.
+            2: Preprocessing and model are fitted per fold.
+            3: A test asserts the split has no shared rows or fitted state.
+        - criterion: Baseline
+          levels:
+            0: No baseline.
+            1: A baseline is mentioned but not measured.
+            2: The baseline and the model are measured on the same split.
+            3: The improvement is reported with a confidence interval or a repeat run.
+        - criterion: Diagnosis
+          levels:
+            0: The first score is accepted.
+            1: Leakage is suspected but not tested.
+            2: A leaked feature is demonstrated and removed.
+            3: The write-up distinguishes leakage from variance from a bug.
+    playbookIds: []
+    whyItMatters: A pipeline is the difference between a notebook that scores well and a model that keeps its promise on new data.
+    riskNote: A high score on the first run is a reason to look for a leak, not a reason to celebrate.
+
+  - id: p3-pytorch
+    phase: "3"
+    order: 4
+    title: PyTorch and the training loop
+    summary: Tensors, devices, gradients and checkpoints. Write the loop once, understand every line, and keep the evidence that it trained.
+    objectives:
+      - Read and assert tensor shapes at the model boundary.
+      - Write a training and evaluation loop in the correct order.
+      - Handle device placement and save a state dict safely.
+      - Diagnose a flat loss as a data, gradient or learning-rate problem.
+    prerequisites: [p3-math, f-python]
+    estHours: { min: 10, max: 14 }
+    claimIds: []
+    resources:
+      - title: PyTorch tutorials — Learn the basics
+        publisher: PyTorch
+        url: https://pytorch.org/tutorials/beginner/basics/intro.html
+        format: docs
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: A complete small training loop with datasets and optimisation.
+      - title: PyTorch documentation
+        publisher: PyTorch
+        url: https://pytorch.org/docs/stable/index.html
+        format: docs
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: Tensor, autograd and serialisation reference for the exact API.
+    cheatsheetIds: [pytorch-training-loop, pytorch-shapes, pytorch-save-load]
+    quiz:
+      - id: p3-torch-q1
+        question: Why call optimizer.zero_grad() before the backward pass?
+        choices:
+          - To clear gradients accumulated from the previous batch
+          - To reset the model weights
+          - To move tensors to the GPU
+          - To freeze the model
+        answerIndex: 0
+        explanation: PyTorch accumulates gradients; zero_grad starts each batch from zero.
+        sourceUrl: https://pytorch.org/tutorials/beginner/basics/optimization_tutorial.html
+      - id: p3-torch-q2
+        question: What changes when model.eval() is called?
+        choices:
+          - Dropout and batch-normalisation use inference behaviour
+          - Gradients are disabled everywhere
+          - The weights are saved
+          - The learning rate becomes zero
+        answerIndex: 0
+        explanation: eval() switches layers such as dropout and batch norm to inference mode.
+        sourceUrl: https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module.eval
+      - id: p3-torch-q3
+        question: What is the shape convention for a batch of images in PyTorch?
+        choices:
+          - (batch, channels, height, width)
+          - (channels, batch, height, width)
+          - (height, width, channels)
+          - (batch, height, width)
+        answerIndex: 0
+        explanation: PyTorch convolutions expect channels-first tensors with the batch dimension first.
+        sourceUrl: https://pytorch.org/docs/stable/notes/broadcasting.html
+      - id: p3-torch-q4
+        question: What does map_location do when loading a checkpoint?
+        choices:
+          - Maps storages to a chosen device such as CPU
+          - Renames the layers
+          - Converts the optimiser
+          - Changes the learning rate
+        answerIndex: 0
+        explanation: It lets a GPU-trained checkpoint load on a machine without a GPU.
+        sourceUrl: https://pytorch.org/tutorials/beginner/saving_loading_models.html
+      - id: p3-torch-q5
+        question: Why save model.state_dict() instead of the model object?
+        choices:
+          - It stores weights without pickling the class path and code
+          - It is slower
+          - It cannot be loaded again
+          - It includes the training data
+        answerIndex: 0
+        explanation: A state dict is a tensor mapping; loading it does not execute arbitrary code from the file.
+        sourceUrl: https://pytorch.org/tutorials/beginner/saving_loading_models.html
+    proof:
+      title: A training run with evidence
+      brief: Train a small PyTorch model on a dataset you can explain. Log training and validation loss per epoch, evaluate on a held-out set, save the state dict, reload it in a new process and reproduce the evaluation. Diagnose one failure you caused (flat loss, wrong shape or device mismatch) and show the fix.
+      evidence: Repository link, loss curves or a table, the reproduced evaluation and a short failure log.
+      rubric:
+        - criterion: Loop correctness
+          levels:
+            0: Gradients are not cleared or the model is never put in eval mode.
+            1: The loop runs but train and validation are mixed.
+            2: Training and evaluation are separate and the order is correct.
+            3: A test asserts the loss decreases on a tiny overfit batch.
+        - criterion: Reproducibility
+          levels:
+            0: The checkpoint cannot be reloaded.
+            1: The state dict saves but the architecture is undocumented.
+            2: The architecture and preprocessing are recorded with the weights.
+            3: A fresh process reproduces the evaluation within a stated tolerance.
+        - criterion: Diagnosis
+          levels:
+            0: The failure is not investigated.
+            1: The fix is applied without a cause.
+            2: The failure is traced to data, shape or device.
+            3: The write-up states the symptom, the cause and the check that now catches it.
+    playbookIds: []
+    whyItMatters: The training loop is short and unforgiving. Understanding each line is faster than guessing at hyperparameters.
+    riskNote: Loading a full pickled model from an untrusted source can execute code. Load state dicts only.
+
+  - id: p3-transformers
+    phase: "3"
+    order: 5
+    title: Transformers and the fine-tuning decision
+    summary: "Attention, tokenisation and the question every team gets wrong: should this be a prompt, retrieval, or a fine-tune?"
+    objectives:
+      - Explain scaled dot-product attention and the causal mask.
+      - Tokenise a batch with the correct truncation and padding.
+      - Choose between prompting, retrieval and fine-tuning using evidence.
+      - Explain what LoRA changes and why there is no universal rank.
+    prerequisites: [p3-pytorch]
+    estHours: { min: 8, max: 12 }
+    claimIds: [C1]
+    resources:
+      - title: Hugging Face LLM course
+        publisher: Hugging Face
+        url: https://huggingface.co/learn/llm-course
+        format: course
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: Practical tokenisation, fine-tuning and adapter material with runnable notebooks.
+      - title: Attention Is All You Need
+        publisher: Vaswani et al., arXiv
+        url: https://arxiv.org/abs/1706.03762
+        format: article
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: false
+        why: The primary paper for the attention formula and the transformer architecture.
+    cheatsheetIds: [transformers-attention, hf-tokenizer, lora-peft]
+    quiz:
+      - id: p3-tf-q1
+        question: Why is the dot product in attention divided by the square root of the key dimension?
+        choices:
+          - To keep the logits from growing with dimension and saturating the softmax
+          - To make the model smaller
+          - To remove the need for a mask
+          - To speed up tokenisation
+        answerIndex: 0
+        explanation: The scaling keeps the variance of the dot product stable as the dimension grows.
+        sourceUrl: https://arxiv.org/abs/1706.03762
+      - id: p3-tf-q2
+        question: What does a causal mask prevent?
+        choices:
+          - A token from attending to later tokens
+          - A token from attending to itself
+          - The softmax from running
+          - The model from training
+        answerIndex: 0
+        explanation: A causal mask sets future positions to negative infinity before the softmax.
+        sourceUrl: https://arxiv.org/abs/1706.03762
+      - id: p3-tf-q3
+        question: Why must the tokenizer match the checkpoint?
+        choices:
+          - Each checkpoint has its own vocabulary and token-to-id mapping
+          - Tokenizers are all identical
+          - The tokenizer stores the weights
+          - It changes the GPU device
+        answerIndex: 0
+        explanation: The model's embedding table is indexed by the vocabulary the tokenizer produces.
+        sourceUrl: https://huggingface.co/docs/transformers/main_classes/tokenizer
+      - id: p3-tf-q4
+        question: In LoRA, what does the rank r control?
+        choices:
+          - The size of the low-rank update matrices
+          - The number of layers in the base model
+          - The tokenizer vocabulary
+          - The learning rate schedule
+        answerIndex: 0
+        explanation: A larger rank adds trainable capacity; it is not automatically better.
+        sourceUrl: https://huggingface.co/docs/peft/developer_guides/lora
+      - id: p3-tf-q5
+        question: When is retrieval usually a better first move than fine-tuning?
+        choices:
+          - When the model lacks current or private knowledge
+          - When the output format is wrong
+          - When latency is irrelevant
+          - When the base model is too small
+        answerIndex: 0
+        explanation: Fine-tuning changes behaviour; retrieval supplies missing facts. Diagnose which one is failing.
+        sourceUrl: https://www.deeplearning.ai/the-batch/the-ai-engineering-skills-map
+    proof:
+      title: Attention in code and a fine-tuning decision
+      brief: "Implement scaled dot-product attention in plain Python or NumPy on a tiny matrix and verify it by hand. Then take a real task and write a decision memo: prompt, retrieval or fine-tune, with the evidence you would collect and the cost of each option. Include one case where fine-tuning is the wrong answer."
+      evidence: The attention implementation and hand-check, plus the one-page decision memo with a falsifiable test.
+      rubric:
+        - criterion: Attention
+          levels:
+            0: The implementation does not match the formula.
+            1: It runs but the mask or scaling is missing.
+            2: Scaling and a causal mask are implemented and tested.
+            3: A hand-worked example matches the code and the shape of each matrix is documented.
+        - criterion: Decision quality
+          levels:
+            0: Fine-tuning is chosen by default.
+            1: The options are listed without evidence.
+            2: The memo names the failure mode and the cheapest test.
+            3: A falsifiable experiment with a metric and a budget is specified.
+        - criterion: Cost awareness
+          levels:
+            0: No cost considered.
+            1: A vague mention of expense.
+            2: The memo compares latency, data and maintenance costs.
+            3: A back-of-envelope estimate is shown with its assumptions.
+    playbookIds: []
+    whyItMatters: Fine-tuning is a expensive way to teach a model facts it could have retrieved. The decision matters more than the framework.
+    riskNote: A fine-tuned model can memorise personal data. Check the dataset licence and remove sensitive records before training.

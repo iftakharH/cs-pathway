@@ -1,0 +1,22 @@
+harnesses:
+  - id: opencode
+    name: OpenCode
+    vendor: OpenCode
+    url: https://opencode.ai/docs/
+    pricingUrl: https://opencode.ai/docs/
+    skills: native
+    mcp: native
+    agentsMd: native
+    notes: An open-source terminal agent with project instructions, skills and MCP server configuration. Verify the current configuration file format before copying an example from a blog.
+    verifiedOn: 2026-11-05
+
+  - id: claude-code
+    name: Claude Code
+    vendor: Anthropic
+    url: https://docs.anthropic.com/en/docs/claude-code/overview
+    pricingUrl: https://www.anthropic.com/pricing
+    skills: native
+    mcp: native
+    agentsMd: partial
+    notes: Anthropic developed the Agent Skills format, and Claude Code supports MCP servers. Project instructions use CLAUDE.md; check the current docs for AGENTS.md support before relying on it.
+    verifiedOn: 2026-11-05

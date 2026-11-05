@@ -1,0 +1,978 @@
+entries:
+  - id: react-usestate
+    phase: "1"
+    topic: React
+    title: Keep component state in the right place
+    whenToUse: When a value changes over time and the UI must re-render, or when two components need the same value.
+    snippets:
+      - lang: tsx
+        caption: A typed state value with a functional update
+        runnable: false
+        checked: docs
+        code: |
+          import { useState } from 'react'
+
+          type Filter = 'all' | 'active' | 'done'
+
+          export function FilterBar() {
+            const [filter, setFilter] = useState<Filter>('all')
+            const [count, setCount] = useState(0)
+
+            function increment() {
+              setCount((current) => current + 1)
+            }
+
+            return (
+              <div>
+                <button onClick={() => setFilter('active')}>Active</button>
+                <button onClick={increment}>{count} clicks</button>
+              </div>
+            )
+          }
+    notes:
+      - Derive what you can from props and state instead of storing a copy.
+      - Use the functional update form when the next value depends on the previous one.
+      - Lift state to the closest common parent only when two components need it.
+    gotchas:
+      - Setting state during render causes an infinite loop.
+      - Objects and arrays are compared by reference; create a new one when changing them.
+    seeAlso: [react-useeffect, react-forms]
+    tool: { name: React, version: '19.3.1', verifiedOn: 2026-11-05 }
+    sourceUrl: https://react.dev/reference/react/useState
+    tags: [react, state, hooks]
+
+  - id: react-useeffect
+    phase: "1"
+    topic: React
+    title: Use an effect only to synchronise with the outside world
+    whenToUse: When a component must subscribe to a browser API, a timer or a network request that React does not own.
+    snippets:
+      - lang: tsx
+        caption: An effect with cleanup and an abort signal
+        runnable: false
+        checked: docs
+        code: |
+          import { useEffect, useState } from 'react'
+
+          export function OnlineStatus() {
+            const [online, setOnline] = useState(navigator.onLine)
+
+            useEffect(() => {
+              function update() {
+                setOnline(navigator.onLine)
+              }
+              window.addEventListener('online', update)
+              window.addEventListener('offline', update)
+              return () => {
+                window.removeEventListener('online', update)
+                window.removeEventListener('offline', update)
+              }
+            }, [])
+
+            return <p>{online ? 'Online' : 'Offline'}</p>
+          }
+    notes:
+      - The dependency array lists every reactive value the effect reads.
+      - Return a cleanup function for subscriptions, timers and listeners.
+      - If there is no external system, you probably do not need an effect.
+    gotchas:
+      - An empty array with a value from props captures the first value forever.
+      - React StrictMode runs effects twice in development to expose missing cleanup; that is expected.
+    seeAlso: [react-usestate, react-data-fetching]
+    tool: { name: React, version: '19.3.1', verifiedOn: 2026-11-05 }
+    sourceUrl: https://react.dev/reference/react/useEffect
+    tags: [react, effects, hooks, cleanup]
+
+  - id: react-forms
+    phase: "1"
+    topic: React
+    title: Handle a form without losing the user's input
+    whenToUse: When a form has validation, dependent fields or a submit action that can fail.
+    snippets:
+      - lang: tsx
+        caption: A controlled form with an error message
+        runnable: false
+        checked: docs
+        code: |
+          import { useState } from 'react'
+
+          export function SignupForm() {
+            const [email, setEmail] = useState('')
+            const [error, setError] = useState<string | null>(null)
+
+            async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+              event.preventDefault()
+              setError(null)
+              const response = await fetch('/api/signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email }),
+              })
+              if (!response.ok) setError('Could not create the account.')
+            }
+
+            return (
+              <form onSubmit={onSubmit} noValidate>
+                <label htmlFor="email">Email</label>
+                <input
+                  id="email"
+                  type="email"
+                  autoComplete="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  aria-invalid={Boolean(error)}
+                  aria-describedby={error ? 'email-error' : undefined}
+                />
+                {error ? <p id="email-error" role="alert">{error}</p> : null}
+                <button type="submit">Create account</button>
+              </form>
+            )
+          }
+    notes:
+      - Every input needs a label; a placeholder is not a label.
+      - Keep the value in state when the UI needs to react to every keystroke.
+      - Disable the submit button only while the request is in flight, not as a validation strategy.
+    gotchas:
+      - Calling preventDefault on the form event is required or the page reloads.
+      - A disabled input is not submitted with the form.
+    seeAlso: [react-usestate, react-a11y]
+    tool: { name: React, version: '19.3.1', verifiedOn: 2026-11-05 }
+    sourceUrl: https://react.dev/reference/react-dom/components/form
+    tags: [react, forms, validation, accessibility]
+
+  - id: react-data-fetching
+    phase: "1"
+    topic: React
+    title: Fetch data without a race condition
+    whenToUse: When a component loads data in an effect and the user can navigate or change a filter before it resolves.
+    snippets:
+      - lang: tsx
+        caption: Cancel the old request when the dependency changes
+        runnable: false
+        checked: docs
+        code: |
+          import { useEffect, useState } from 'react'
+
+          export function ModuleTitle({ id }: { id: string }) {
+            const [title, setTitle] = useState<string | null>(null)
+            const [error, setError] = useState<string | null>(null)
+
+            useEffect(() => {
+              const controller = new AbortController()
+              setError(null)
+
+              fetch(`/api/modules/${id}`, { signal: controller.signal })
+                .then((response) => {
+                  if (!response.ok) throw new Error(`HTTP ${response.status}`)
+                  return response.json()
+                })
+                .then((data: { title: string }) => setTitle(data.title))
+                .catch((cause: unknown) => {
+                  if (cause instanceof DOMException && cause.name === 'AbortError') return
+                  setError('Could not load the module.')
+                })
+
+              return () => controller.abort()
+            }, [id])
+
+            if (error) return <p role="alert">{error}</p>
+            if (title === null) return <p>Loading…</p>
+            return <h1>{title}</h1>
+          }
+    notes:
+      - Abort the previous request when the key changes.
+      - Show a loading, empty and error state; none of them should be a blank page.
+      - For production apps, a data library or framework loader removes most of this boilerplate.
+    gotchas:
+      - Setting state after unmount is a no-op in React 19, but an uncancelled request still wastes bandwidth.
+      - A missing dependency freezes the fetch on the first id.
+    seeAlso: [react-useeffect, http-status]
+    tool: { name: React, version: '19.3.1', verifiedOn: 2026-11-05 }
+    sourceUrl: https://react.dev/learn/synchronizing-with-effects#fetching-data
+    tags: [react, fetch, async, errors]
+
+  - id: react-a11y
+    phase: "1"
+    topic: React
+    title: Make a component keyboard-operable
+    whenToUse: When a custom control is built from divs, or when a modal or menu traps focus incorrectly.
+    snippets:
+      - lang: tsx
+        caption: Use the native element first
+        runnable: false
+        checked: docs
+        code: |
+          // Prefer this
+          <button type="button" onClick={save}>Save</button>
+
+          // Over this: a div needs role, tabIndex and key handlers
+          <div role="button" tabIndex={0} onClick={save} onKeyDown={handleKey}>
+            Save
+          </div>
+    notes:
+      - Use button, a, input, select and textarea before adding ARIA.
+      - A visible focus style is required; do not remove the outline without replacing it.
+      - Announce async errors with role="alert" or an aria-live region.
+      - Test with Tab, Shift+Tab, Enter, Space and Escape.
+    gotchas:
+      - aria-label on a button replaces the visible text for screen readers; keep them consistent.
+      - Hiding content with display none also hides it from assistive technology.
+    seeAlso: [react-forms, http-status]
+    tool: { name: React, version: '19.3.1', verifiedOn: 2026-11-05 }
+    sourceUrl: https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Accessibility/HTML
+    tags: [react, accessibility, keyboard]
+
+  - id: express-routing
+    phase: "1"
+    topic: Node.js
+    title: Route a request and read its parameters
+    whenToUse: When adding an endpoint to an Express API and you need the path, query and body in one place.
+    snippets:
+      - lang: ts
+        caption: A router with a path parameter and a validated body
+        runnable: false
+        checked: docs
+        code: |
+          import { Router } from 'express'
+
+          const router = Router()
+
+          router.get('/modules/:id', (request, response) => {
+            const { id } = request.params
+            const limit = Number(request.query.limit ?? 20)
+            response.json({ id, limit })
+          })
+
+          router.post('/modules/:id/notes', (request, response) => {
+            response.status(201).json({ moduleId: request.params.id, body: request.body })
+          })
+
+          export default router
+    notes:
+      - Mount the router under a base path so the route file does not repeat it.
+      - "`request.params` is a string map; convert numbers explicitly."
+      - Return early with a status code instead of nesting conditions.
+    gotchas:
+      - Route order matters; a wildcard before a specific route can swallow it.
+      - A body parser must run before the handler that reads request.body.
+    seeAlso: [express-middleware, express-zod]
+    tool: { name: Express, version: '5.3.0', verifiedOn: 2026-11-05 }
+    sourceUrl: https://expressjs.com/en/guide/routing.html
+    tags: [express, api, routing, node]
+
+  - id: express-middleware
+    phase: "1"
+    topic: Node.js
+    title: Order middleware so auth and parsing run first
+    whenToUse: When a request reaches a handler without a parsed body or a user, or when CORS and auth disagree.
+    snippets:
+      - lang: ts
+        caption: The order that avoids most surprises
+        runnable: false
+        checked: docs
+        code: |
+          import express from 'express'
+          import cors from 'cors'
+          import { requireUser } from './auth.js'
+
+          const app = express()
+
+          app.use(cors({ origin: ['http://localhost:5173'], credentials: true }))
+          app.use(express.json({ limit: '100kb' }))
+          app.use((request, _response, next) => {
+            request.startedAt = Date.now()
+            next()
+          })
+
+          app.get('/health', (_request, response) => response.json({ ok: true }))
+          app.use('/api', requireUser, apiRouter)
+          app.use(errorHandler)
+    notes:
+      - CORS and body parsing apply to every route, so mount them before the routers.
+      - Auth can be applied to a router instead of each handler.
+      - The error handler must be last and must declare four arguments.
+    gotchas:
+      - A middleware that never calls next() hangs the request.
+      - Mounting express.json() after a route means that route sees an empty body.
+    seeAlso: [express-routing, express-errors]
+    tool: { name: Express, version: '5.3.0', verifiedOn: 2026-11-05 }
+    sourceUrl: https://expressjs.com/en/guide/using-middleware.html
+    tags: [express, middleware, cors, node]
+
+  - id: express-errors
+    phase: "1"
+    topic: Node.js
+    title: Return one error shape from every endpoint
+    whenToUse: When the client has to tell a validation error from an auth error from a server fault.
+    snippets:
+      - lang: ts
+        caption: A typed error and a four-argument handler
+        runnable: false
+        checked: docs
+        code: |
+          class HttpError extends Error {
+            constructor(public status: number, message: string) {
+              super(message)
+            }
+          }
+
+          app.get('/api/items/:id', async (request, response) => {
+            const item = await db.items.findById(request.params.id)
+            if (!item) throw new HttpError(404, 'Item not found')
+            response.json(item)
+          })
+
+          app.use((error: unknown, _request: Request, response: Response, _next: NextFunction) => {
+            const status = error instanceof HttpError ? error.status : 500
+            const message = error instanceof HttpError ? error.message : 'Internal server error'
+            response.status(status).json({ error: { message } })
+          })
+    notes:
+      - Express 5 forwards a rejected promise from an async handler to the error handler.
+      - Log the stack on the server; send a short message to the client.
+      - 4xx for caller mistakes, 5xx for server faults.
+    gotchas:
+      - A handler with three arguments is treated as normal middleware, not an error handler.
+      - Sending a response and then throwing causes “headers already sent”.
+    seeAlso: [express-routing, express-middleware, http-status]
+    tool: { name: Express, version: '5.3.0', verifiedOn: 2026-11-05 }
+    sourceUrl: https://expressjs.com/en/guide/error-handling.html
+    tags: [express, errors, api]
+
+  - id: express-zod
+    phase: "1"
+    topic: Node.js
+    title: Validate a request body before it reaches the database
+    whenToUse: When an endpoint accepts JSON and a missing or wrong-typed field would cause a bad write.
+    snippets:
+      - lang: ts
+        caption: Parse once at the boundary and return field errors
+        runnable: true
+        checked: executed
+        expectStdout: "1 400"
+        code: |
+          import { z } from 'zod'
+
+          const NoteInput = z.object({
+            moduleId: z.string().min(2),
+            body: z.string().min(1).max(5000),
+          })
+
+          const result = NoteInput.safeParse({ moduleId: 'f-git', body: '' })
+          if (!result.success) {
+            console.log(result.error.issues.length, 400)
+          }
+    notes:
+      - Parse at the HTTP boundary, then pass the typed value inward.
+      - Return the field path with the message so the form can highlight it.
+      - Reuse the same schema on the client only if the trust boundary is clear.
+    gotchas:
+      - "`safeParse` does not throw; `parse` does."
+      - Casting `request.body as NoteInput` skips validation entirely.
+    seeAlso: [express-routing, express-errors]
+    tool: { name: Zod, version: '4.6.7', verifiedOn: 2026-11-05 }
+    sourceUrl: https://zod.dev/basics
+    tags: [express, validation, zod, api]
+
+  - id: express-env
+    phase: "1"
+    topic: Node.js
+    title: Fail at startup when configuration is missing
+    whenToUse: When a deploy succeeds but the first request fails because an environment variable is absent.
+    snippets:
+      - lang: ts
+        caption: Validate the environment once, then import the typed config
+        runnable: false
+        checked: docs
+        code: |
+          import { z } from 'zod'
+
+          const Env = z.object({
+            NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
+            DATABASE_URL: z.string().url(),
+            PORT: z.coerce.number().int().default(3000),
+          })
+
+          const parsed = Env.safeParse(process.env)
+          if (!parsed.success) {
+            console.error('Invalid environment', parsed.error.issues.map((issue) => issue.path))
+            process.exit(1)
+          }
+
+          export const env = parsed.data
+    notes:
+      - Validate once at process start and fail loudly.
+      - Keep server-only values out of any module imported by the client bundle.
+      - Document every name in .env.example, with no values.
+    gotchas:
+      - Environment variables are strings; coerce numbers and booleans.
+      - NEXT_PUBLIC_ or VITE_ prefixes expose a value to the browser.
+    seeAlso: [express-routing, term-env]
+    tool: { name: Node.js, version: '22.21.0', verifiedOn: 2026-11-05 }
+    sourceUrl: https://nodejs.org/api/process.html#processenv
+    tags: [node, environment, config, twelve-factor]
+
+  - id: pg-schema
+    phase: "1"
+    topic: PostgreSQL
+    title: Create a table with constraints that protect the data
+    whenToUse: When designing a table and you want the database to reject impossible rows, not only the app.
+    snippets:
+      - lang: sql
+        caption: Primary key, foreign key, check and timestamps
+        runnable: true
+        checked: executed
+        expectRows: [['ada', 12]]
+        code: |
+          create temporary table users (
+            id uuid primary key default gen_random_uuid(),
+            email text not null unique,
+            hours_per_week int not null check (hours_per_week between 1 and 80),
+            created_at timestamptz not null default now()
+          );
+
+          create temporary table notes (
+            id uuid primary key default gen_random_uuid(),
+            user_id uuid not null references users(id) on delete cascade,
+            body text not null check (length(body) <= 5000),
+            created_at timestamptz not null default now()
+          );
+
+          insert into users (email, hours_per_week) values ('ada@example.com', 12);
+          select split_part(email, '@', 1) as name, hours_per_week from users;
+    notes:
+      - Use `timestamptz`, not `timestamp`, for anything a user or server records.
+      - A check constraint is cheaper than a bug that reaches production.
+      - Index the foreign key column if you join or filter on it.
+    gotchas:
+      - A unique constraint treats nulls as distinct unless you use `nulls not distinct`.
+      - "`on delete cascade` can delete far more than intended; confirm the ownership."
+    seeAlso: [pg-migrations, pg-relations]
+    tool: { name: PostgreSQL, version: '17', verifiedOn: 2026-11-05 }
+    sourceUrl: https://www.postgresql.org/docs/current/ddl-constraints.html
+    tags: [postgres, schema, constraints]
+
+  - id: pg-migrations
+    phase: "1"
+    topic: PostgreSQL
+    title: Ship a schema change as a migration
+    whenToUse: When a table or column must change and more than one environment has to agree on the result.
+    snippets:
+      - lang: bash
+        caption: Generate SQL, review it, then apply it
+        runnable: false
+        checked: docs
+        code: |
+          npx drizzle-kit generate
+          # read the generated SQL in ./drizzle
+          npx drizzle-kit migrate
+    notes:
+      - "Treat the generated SQL as code: read it before applying it."
+      - Run migrations against the direct connection, not the pooled one.
+      - Back up or branch the database before a destructive change.
+    gotchas:
+      - Editing a migration that already ran in production makes environments disagree.
+      - A migration that locks a large table can take the app down.
+    seeAlso: [pg-schema, pg-transactions, pg-pooling]
+    tool: { name: Drizzle Kit, version: '0.45.4', verifiedOn: 2026-11-05 }
+    sourceUrl: https://orm.drizzle.team/docs/migrations
+    tags: [postgres, drizzle, migrations, deploy]
+
+  - id: pg-relations
+    phase: "1"
+    topic: PostgreSQL
+    title: Query related rows without N+1 queries
+    whenToUse: When a list endpoint shows child data and the logs show one query per row.
+    snippets:
+      - lang: sql
+        caption: One join instead of a query per parent
+        runnable: true
+        checked: executed
+        expectRows: [['f-git', 2], ['f-http', 0]]
+        code: |
+          with modules(id, title) as (
+            values ('f-git', 'Git'), ('f-http', 'HTTP')
+          ), notes(module_id) as (
+            values ('f-git'), ('f-git')
+          )
+          select m.id, count(n.module_id)::int as notes
+          from modules m
+          left join notes n on n.module_id = m.id
+          group by m.id
+          order by m.id;
+    notes:
+      - One join with a group is usually cheaper than N+1 round trips.
+      - Select only the columns the response needs.
+      - Add an index on the child foreign key.
+    gotchas:
+      - Joining two child tables multiplies rows; aggregate before joining or use separate queries.
+      - A left join with a `where` on the child turns into an inner join.
+    seeAlso: [sql-joins, pg-schema]
+    tool: { name: PostgreSQL, version: '17', verifiedOn: 2026-11-05 }
+    sourceUrl: https://www.postgresql.org/docs/current/queries-table-expressions.html
+    tags: [postgres, relations, joins, performance]
+
+  - id: pg-transactions
+    phase: "1"
+    topic: PostgreSQL
+    title: Group writes in an application transaction
+    whenToUse: When an operation creates a parent and children, or moves value between two rows.
+    snippets:
+      - lang: ts
+        caption: Drizzle transaction with an explicit rollback
+        runnable: false
+        checked: docs
+        code: |
+          await db.transaction(async (tx) => {
+            const [account] = await tx
+              .select()
+              .from(accounts)
+              .where(eq(accounts.id, fromId))
+              .for('update')
+
+            if (!account || account.balance < amount) {
+              throw new Error('Insufficient funds')
+            }
+
+            await tx.update(accounts).set({ balance: sql`${accounts.balance} - ${amount}` }).where(eq(accounts.id, fromId))
+            await tx.update(accounts).set({ balance: sql`${accounts.balance} + ${amount}` }).where(eq(accounts.id, toId))
+          })
+    notes:
+      - Keep the transaction short; do not call a slow external API inside it.
+      - Throw to roll back; returning a value commits.
+      - "`for update` locks the rows you are about to change."
+    gotchas:
+      - Two transactions that lock rows in opposite order can deadlock.
+      - A caught error inside the callback can still commit the earlier writes.
+    seeAlso: [sql-transactions, pg-schema]
+    tool: { name: Drizzle ORM, version: '0.45.4', verifiedOn: 2026-11-05 }
+    sourceUrl: https://orm.drizzle.team/docs/transactions
+    tags: [postgres, drizzle, transaction, consistency]
+
+  - id: pg-pooling
+    phase: "1"
+    topic: PostgreSQL
+    title: Use the pooled connection for app traffic
+    whenToUse: When deploying to a serverless platform and every request opens a new database connection.
+    snippets:
+      - lang: ts
+        caption: Two URLs with two jobs
+        runnable: false
+        checked: docs
+        code: |
+          // App traffic: pooled host
+          DATABASE_URL=postgres://user:pass@ep-xxx-pooler.region.aws.neon.tech/db?sslmode=require
+
+          // Migrations: direct host, no "-pooler"
+          DATABASE_URL_UNPOOLED=postgres://user:pass@ep-xxx.region.aws.neon.tech/db?sslmode=require
+    notes:
+      - The pooled endpoint multiplexes many clients onto fewer Postgres connections.
+      - Migrations and long-running admin work use the direct connection.
+      - Reuse a client across invocations when the runtime allows it.
+    gotchas:
+      - Serverless functions can freeze between requests; a connection pool may not survive.
+      - Prepared statements can behave differently through a transaction-mode pooler.
+    seeAlso: [pg-migrations, pg-transactions]
+    tool: { name: Neon, version: 'pooled endpoint', verifiedOn: 2026-11-05 }
+    sourceUrl: https://neon.com/docs/connect/connection-pooling
+    tags: [postgres, neon, pooling, serverless]
+
+  - id: auth-sessions-vs-jwt
+    phase: "1"
+    topic: Authentication
+    title: Choose a database session or a JWT
+    whenToUse: When deciding how a signed-in user is remembered across requests, and whether revocation matters.
+    snippets:
+      - lang: text
+        caption: The trade-off in one table
+        runnable: false
+        checked: docs
+        code: |
+          Database session                  Signed JWT
+          --------------------------------  --------------------------------
+          state lives in the database       state lives in the token
+          revoke immediately                valid until expiry
+          one lookup per request            no lookup (until you add one)
+          simple to invalidate all devices  needs a denylist to revoke
+    notes:
+      - For a normal web app, a database session is the safer default.
+      - A JWT is useful when a service must verify a token without database access.
+      - Whichever you choose, store the credential in a secure, HttpOnly cookie.
+    gotchas:
+      - A JWT in localStorage is readable by any script on the page.
+      - A long-lived JWT with no revocation path is a permanent key.
+    seeAlso: [auth-oauth-flow, auth-cookies, auth-csrf]
+    tool: { name: Better Auth, version: '1.7.17', verifiedOn: 2026-11-05 }
+    sourceUrl: https://www.better-auth.com/docs/concepts/session-management
+    tags: [auth, sessions, jwt, cookies]
+
+  - id: auth-oauth-flow
+    phase: "1"
+    topic: Authentication
+    title: Read an OAuth authorisation-code flow
+    whenToUse: When adding Google or GitHub sign-in and you need to know which value goes where.
+    snippets:
+      - lang: http
+        caption: The four messages that matter
+        runnable: false
+        checked: docs
+        code: |
+          GET /authorize?client_id=...&redirect_uri=https://app.example.com/callback
+              &response_type=code&scope=openid%20email&state=<random>&code_challenge=<S256>
+
+          -> 302 https://app.example.com/callback?code=<code>&state=<same>
+
+          POST /token
+          grant_type=authorization_code&code=<code>&redirect_uri=...
+          &client_id=...&code_verifier=<verifier>
+
+          -> { access_token, id_token, refresh_token? }
+    notes:
+      - The authorisation code is exchanged on the server; the client secret never reaches the browser.
+      - PKCE protects the code exchange even for public clients.
+      - Verify `state` and the ID token issuer/audience before trusting the identity.
+    gotchas:
+      - A redirect URI that accepts any value enables token theft.
+      - Skipping state validation enables login CSRF.
+    seeAlso: [auth-sessions-vs-jwt, auth-csrf]
+    tool: { name: OAuth 2.0, version: 'RFC 6749', verifiedOn: 2026-11-05 }
+    sourceUrl: https://www.better-auth.com/docs/concepts/oauth
+    tags: [auth, oauth, oidc, security]
+
+  - id: auth-csrf
+    phase: "1"
+    topic: Authentication
+    title: Keep CSRF protection on
+    whenToUse: When a cookie authenticates a state-changing request and a test failure tempts you to disable the check.
+    snippets:
+      - lang: ts
+        caption: The defaults that matter
+        runnable: false
+        checked: docs
+        code: |
+          // Better Auth: keep these enabled in production.
+          // Do not set advanced.disableCSRFCheck or advanced.disableOriginCheck.
+
+          trustedOrigins: [
+            'https://cs-pathway.vercel.app',
+            ...(process.env.NODE_ENV === 'development' ? ['http://localhost:5173'] : []),
+          ]
+    notes:
+      - SameSite=Lax blocks most cross-site POSTs; origin checks cover the rest.
+      - Keep the localhost origin out of the production list.
+      - A CSRF token is still needed when the cookie is sent on a cross-site form post.
+    gotchas:
+      - Disabling origin checks also disables CSRF protection in Better Auth.
+      - Setting SameSite=None without Secure breaks the cookie and weakens it.
+    seeAlso: [auth-sessions-vs-jwt, auth-cookies]
+    tool: { name: Better Auth, version: '1.7.17', verifiedOn: 2026-11-05 }
+    sourceUrl: https://www.better-auth.com/docs/reference/security
+    tags: [auth, csrf, security, cookies]
+
+  - id: auth-xss
+    phase: "1"
+    topic: Authentication
+    title: Prevent script injection in user content
+    whenToUse: When rendering a note, a profile or any HTML that came from a user.
+    snippets:
+      - lang: tsx
+        caption: Render text as text
+        runnable: false
+        checked: docs
+        code: |
+          // Safe: React escapes text children.
+          <p>{note.body}</p>
+
+          // Dangerous: only with sanitised HTML from a maintained library.
+          <div dangerouslySetInnerHTML={{ __html: sanitizedHtml }} />
+    notes:
+      - React escapes strings by default; the danger is `dangerouslySetInnerHTML`.
+      - Sanitise server-side and again where it is rendered if the trust boundary changed.
+      - A Content-Security-Policy limits the damage of an injection you missed.
+    gotchas:
+      - A rich-text editor's HTML is still untrusted input.
+      - Setting innerHTML directly bypasses React's escaping.
+    seeAlso: [auth-cookies, auth-csrf]
+    tool: { name: OWASP, version: 'XSS Prevention Cheat Sheet', verifiedOn: 2026-11-05 }
+    sourceUrl: https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html
+    tags: [auth, xss, security, react]
+
+  - id: auth-cookies
+    phase: "1"
+    topic: Authentication
+    title: Set a session cookie that survives review
+    whenToUse: When configuring a session cookie or moving a token out of localStorage.
+    snippets:
+      - lang: http
+        caption: The attributes and what each one does
+        runnable: false
+        checked: docs
+        code: |
+          Set-Cookie: session=...; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=604800
+    notes:
+      - HttpOnly keeps the value out of JavaScript.
+      - Secure sends it only over HTTPS; required in production.
+      - SameSite=Lax is the default and blocks most cross-site requests.
+      - Use a short lifetime and rotate the session on privilege change.
+    gotchas:
+      - "`SameSite=None` must be paired with `Secure`, and it removes the default protection."
+      - A cookie scoped to `/` is sent to every path, including static assets.
+    seeAlso: [auth-csrf, auth-sessions-vs-jwt]
+    tool: { name: Better Auth, version: '1.7.17', verifiedOn: 2026-11-05 }
+    sourceUrl: https://www.better-auth.com/docs/concepts/cookies
+    tags: [auth, cookies, security, sessions]
+
+  - id: docker-file
+    phase: "1"
+    topic: Docker
+    title: Build a small, non-root Node image
+    whenToUse: When a project needs a reproducible container for a server, a CI job or a deploy target.
+    snippets:
+      - lang: dockerfile
+        caption: Multi-stage build with a non-root user
+        runnable: false
+        checked: docs
+        code: |
+          FROM node:22-alpine AS deps
+          WORKDIR /app
+          COPY package.json package-lock.json ./
+          RUN npm ci
+
+          FROM node:22-alpine AS build
+          WORKDIR /app
+          COPY --from=deps /app/node_modules ./node_modules
+          COPY . .
+          RUN npm run build
+
+          FROM node:22-alpine AS runtime
+          ENV NODE_ENV=production
+          WORKDIR /app
+          RUN addgroup -S app && adduser -S app -G app
+          COPY --from=build /app/dist ./dist
+          COPY --from=build /app/node_modules ./node_modules
+          COPY --from=build /app/package.json ./
+          USER app
+          EXPOSE 3000
+          CMD ["node", "dist/server.js"]
+    notes:
+      - Copy the lockfile before the source so the dependency layer is cached.
+      - Run as a non-root user.
+      - Keep the runtime image free of dev dependencies and source maps.
+    gotchas:
+      - COPY . . after npm ci can overwrite node_modules if .dockerignore is missing.
+      - A floating base tag makes the image change without a commit.
+    seeAlso: [docker-compose, gh-actions]
+    tool: { name: Docker, version: '28', verifiedOn: 2026-11-05 }
+    sourceUrl: https://docs.docker.com/reference/dockerfile/
+    tags: [docker, build, deploy, security]
+
+  - id: docker-compose
+    phase: "1"
+    topic: Docker
+    title: Run an app and its database together
+    whenToUse: When local development needs Postgres, a cache or another service without installing it globally.
+    snippets:
+      - lang: yaml
+        caption: Two services with a health check
+        runnable: false
+        checked: docs
+        code: |
+          services:
+            db:
+              image: postgres:17-alpine
+              environment:
+                POSTGRES_USER: app
+                POSTGRES_PASSWORD: app
+                POSTGRES_DB: app
+              ports:
+                - "5432:5432"
+              volumes:
+                - db-data:/var/lib/postgresql/data
+              healthcheck:
+                test: ["CMD-SHELL", "pg_isready -U app"]
+                interval: 5s
+                timeout: 3s
+                retries: 10
+
+            api:
+              build: .
+              environment:
+                DATABASE_URL: postgres://app:app@db:5432/app
+              ports:
+                - "3000:3000"
+              depends_on:
+                db:
+                  condition: service_healthy
+
+          volumes:
+            db-data:
+    notes:
+      - Inside the compose network, the host is the service name (`db`), not localhost.
+      - A named volume keeps data between restarts; `docker compose down -v` deletes it.
+      - "`depends_on` with a health condition waits for readiness, not just start."
+    gotchas:
+      - A host port already in use makes the container start and the port bind fail.
+      - Committing the volume is not a backup.
+    seeAlso: [docker-file, pg-pooling]
+    tool: { name: Docker Compose, version: '2.40', verifiedOn: 2026-11-05 }
+    sourceUrl: https://docs.docker.com/compose/
+    tags: [docker, compose, postgres, local-development]
+
+  - id: gh-actions
+    phase: "1"
+    topic: CI
+    title: Run the checks on every push
+    whenToUse: When a change should not merge without lint, types, tests and a build.
+    snippets:
+      - lang: yaml
+        caption: One job, cached dependencies, minimal permissions
+        runnable: false
+        checked: docs
+        code: |
+          name: ci
+          on:
+            push:
+              branches: [main]
+            pull_request:
+
+          permissions:
+            contents: read
+
+          jobs:
+            check:
+              runs-on: ubuntu-latest
+              steps:
+                - uses: actions/checkout@v4
+                - uses: actions/setup-node@v4
+                  with:
+                    node-version: 22
+                    cache: npm
+                - run: npm ci
+                - run: npm run lint
+                - run: npm run typecheck
+                - run: npm test
+                - run: npm run build
+    notes:
+      - "`npm ci` installs from the lockfile and fails if they disagree."
+      - Start with read-only permissions and add more only where needed.
+      - Pin major versions of actions and review the release notes.
+    gotchas:
+      - A workflow with no `permissions` block inherits the repository default, which may be broad.
+      - Caching node_modules instead of the npm cache can hide a broken lockfile.
+    seeAlso: [docker-file, vitest]
+    tool: { name: GitHub Actions, version: 'workflow syntax', verifiedOn: 2026-11-05 }
+    sourceUrl: https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions
+    tags: [ci, github, automation, quality]
+
+  - id: vitest
+    phase: "1"
+    topic: Testing
+    title: Test a function without starting the whole app
+    whenToUse: When a pure function or a component has rules that are easy to break and slow to check by hand.
+    snippets:
+      - lang: ts
+        caption: A test with a table of cases
+        runnable: false
+        checked: docs
+        code: |
+          import { describe, expect, it } from 'vitest'
+          import { safeOwnership } from './calculators'
+
+          describe('safeOwnership', () => {
+            it.each([
+              [375_000, 15_000_000, 0.025],
+              [0, 15_000_000, 0],
+            ])('converts %i at a %i cap', (investment, cap, expected) => {
+              expect(safeOwnership(investment, cap)).toBeCloseTo(expected)
+            })
+
+            it('rejects a zero cap', () => {
+              expect(safeOwnership(1, 0)).toBeNull()
+            })
+          })
+    notes:
+      - Test behaviour and edge cases, not implementation details.
+      - "`it.each` keeps a table readable when the same rule has many inputs."
+      - Run one file with `vitest run path/to/file.test.ts` while debugging.
+    gotchas:
+      - A test that asserts nothing always passes.
+      - Fake timers and real promises can deadlock if not advanced correctly.
+    seeAlso: [gh-actions, express-zod]
+    tool: { name: Vitest, version: '5.1.0', verifiedOn: 2026-11-05 }
+    sourceUrl: https://vitest.dev/guide/
+    tags: [testing, vitest, quality]
+
+  - id: agents-md
+    phase: "1"
+    topic: Coding agents
+    title: Write an AGENTS.md an agent can actually follow
+    whenToUse: When an agent keeps running the wrong command, editing the wrong folder or inventing a dependency.
+    snippets:
+      - lang: text
+        caption: The four sections that earn their space
+        runnable: false
+        checked: docs
+        code: |
+          # Project rules
+
+          ## Commands
+          - Install: npm ci
+          - Check: npm run lint && npm run typecheck && npm test
+          - Build: npm run build
+
+          ## Boundaries
+          - One concern per change. No drive-by refactors.
+          - Do not touch /content/_quarantine or production credentials.
+          - Ask before adding a dependency; name what it replaces.
+
+          ## Verification
+          - Every behaviour change needs a test that failed first.
+          - Report the exact commands run, or mark the check UNVERIFIED.
+    notes:
+      - Put the commands first; an agent will run them.
+      - State the forbidden actions explicitly, not only the desired ones.
+      - Keep it short enough to be read on every task.
+    gotchas:
+      - A file that describes the product but omits the build command is not enough.
+      - Instructions copied from another repository can point at paths that do not exist.
+    seeAlso: [agent-spec-prompt]
+    tool: { name: AGENTS.md, version: 'convention', verifiedOn: 2026-11-05 }
+    sourceUrl: https://agents.md/
+    tags: [agents, instructions, workflow]
+
+  - id: agent-spec-prompt
+    phase: "1"
+    topic: Coding agents
+    title: Write a prompt that produces a reviewable diff
+    whenToUse: When a task is large enough that the agent could choose the wrong scope or skip verification.
+    snippets:
+      - lang: text
+        caption: Goal, constraints, verification, output
+        runnable: false
+        checked: docs
+        code: |
+          Read AGENTS.md first. Do not edit yet.
+
+          Goal: <one user-visible outcome>
+
+          Constraints:
+          - Touch at most 4 files.
+          - Keep the public API unchanged.
+          - Do not add a dependency.
+          - List the tests you will add and the command that runs them.
+
+          Return:
+          1. A numbered plan with the files each step touches.
+          2. The risk you see in the plan.
+          3. The question a reviewer should ask.
+    notes:
+      - Plan first, approve, then implement.
+      - "Give the agent a verifier it can run: tests, a typecheck, a build."
+      - Ask for the diff summary before the code.
+    gotchas:
+      - “Make it better” gives the agent permission to rewrite everything.
+      - A prompt with no file limit invites unrelated changes.
+    seeAlso: [agents-md]
+    tool: { name: Coding agent, version: 'model-agnostic', verifiedOn: 2026-11-05 }
+    sourceUrl: https://agents.md/
+    tags: [agents, prompting, workflow, review]

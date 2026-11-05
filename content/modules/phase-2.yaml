@@ -1,0 +1,533 @@
+modules:
+  - id: p2-llm-api
+    phase: "2"
+    order: 1
+    title: LLM APIs without the magic
+    summary: A model call is an HTTP request with an unpredictable body. Learn the message shape, tool calls, structured output, streaming and the cost arithmetic.
+    objectives:
+      - Structure a request with a system rule, context and a user question.
+      - Define one tool and validate its arguments before executing it.
+      - Parse structured output with a schema and handle the failure path.
+      - Estimate cost per request from token counts and current rates.
+    prerequisites: [p1-node]
+    estHours: { min: 6, max: 10 }
+    claimIds: [C1]
+    resources:
+      - title: Anthropic API documentation
+        publisher: Anthropic
+        url: https://docs.anthropic.com/en/api/overview
+        format: docs
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: Messages, tool use and streaming, with request and response shapes.
+      - title: OpenAI platform documentation
+        publisher: OpenAI
+        url: https://platform.openai.com/docs/overview
+        format: docs
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: A second provider's reference, useful for seeing which parts are common.
+    cheatsheetIds: [llm-messages, llm-tool-calling, llm-structured-output, llm-streaming, llm-cost]
+    quiz:
+      - id: p2-llm-q1
+        question: What is a system message for?
+        choices:
+          - Rules that apply to every turn, such as grounding and tone
+          - The user's current question
+          - The model's previous answer
+          - A tool result
+        answerIndex: 0
+        explanation: The system message carries persistent instructions; the user message carries the request.
+        sourceUrl: https://docs.anthropic.com/en/api/messages
+      - id: p2-llm-q2
+        question: A model returns arguments for a tool. What should happen before the tool runs?
+        choices:
+          - Validate the arguments against a schema and check permission
+          - Execute immediately because the model chose the tool
+          - Log the arguments and skip validation
+          - Ask the model to confirm its own arguments
+        answerIndex: 0
+        explanation: Model output is untrusted. Validate and authorize before any side effect.
+        sourceUrl: https://docs.anthropic.com/en/docs/build-with-claude/tool-use
+      - id: p2-llm-q3
+        question: The model returns JSON that fails your schema. What is the safest response?
+        choices:
+          - Fail the request or retry once with the validation error, then fail
+          - Use the partial object anyway
+          - Strip the invalid fields silently
+          - Ask the user to fix the model's output
+        answerIndex: 0
+        explanation: Never pass unvalidated model output into the next step. Retry once with the error, then surface a failure.
+        sourceUrl: https://docs.anthropic.com/en/docs/build-with-claude/tool-use
+      - id: p2-llm-q4
+        question: In a server-sent event stream, what separates one event from the next?
+        choices: [A blank line, A semicolon, A comma, A single newline]
+        answerIndex: 0
+        explanation: An SSE event ends with a blank line; the data lines before it belong to that event.
+        sourceUrl: https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events
+      - id: p2-llm-q5
+        question: Which formula estimates the cost of one call?
+        choices:
+          - Input tokens × input rate + output tokens × output rate
+          - Total tokens × one rate
+          - Requests × latency
+          - Output tokens ÷ context window
+        answerIndex: 0
+        explanation: Providers price input and output separately, and sometimes cache reads differently.
+        sourceUrl: https://docs.anthropic.com/en/docs/about-claude/pricing
+    proof:
+      title: One model feature with a budget
+      brief: Build an endpoint that answers from a fixed set of notes, uses one tool or structured output, and streams the response. Record the token counts and estimated cost for ten real questions. Add a fallback for invalid structured output and show the failure path.
+      evidence: Repository link, ten recorded requests with token counts, and a cost estimate with the pricing page and date used.
+      rubric:
+        - criterion: Request design
+          levels:
+            0: One giant prompt with no separation of rules and data.
+            1: A system message exists but context and question are mixed.
+            2: Rules, context and question are separated and the output limit is set.
+            3: The prompt is versioned and a change is tied to an eval result.
+        - criterion: Failure handling
+          levels:
+            0: Any model output is trusted.
+            1: Errors are caught but the response is still used.
+            2: Invalid output and timeouts produce a clear error.
+            3: A retry is bounded and the second failure is surfaced, with a test.
+        - criterion: Cost evidence
+          levels:
+            0: No cost estimate.
+            1: A per-token price is quoted from memory.
+            2: Ten requests are measured and priced with the current page linked.
+            3: A monthly cost at a stated usage level is calculated and compared with a cheaper design.
+    playbookIds: [pb-docs-lookup]
+    whyItMatters: The API is simple; the failure modes are not. Validation, budgeting and a fallback turn a demo into a feature.
+    riskNote: Never put a provider key in the browser bundle. Proxy every call through your server.
+
+  - id: p2-rag
+    phase: "2"
+    order: 2
+    title: Retrieval that earns trust
+    summary: A model cannot cite what it never retrieved. Build chunking, hybrid search and citations, then measure retrieval before blaming the prompt.
+    objectives:
+      - Choose a chunking strategy that preserves headings and source offsets.
+      - Store embeddings in Postgres and query them with the matching distance operator.
+      - Combine keyword and vector results, and explain why the merge is not a raw score sum.
+      - Require a citation that points at the retrieved passage.
+    prerequisites: [p2-llm-api, p1-postgres]
+    estHours: { min: 8, max: 14 }
+    claimIds: [C1, E1]
+    resources:
+      - title: pgvector
+        publisher: pgvector
+        url: https://github.com/pgvector/pgvector
+        format: repository
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: The extension's README documents vector types, operators and index types.
+      - title: PostgreSQL full-text search
+        publisher: PostgreSQL Global Development Group
+        url: https://www.postgresql.org/docs/current/textsearch-controls.html
+        format: docs
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: The keyword side of a hybrid search, including ranking functions.
+    cheatsheetIds: [rag-chunking, rag-hybrid-search, pgvector]
+    quiz:
+      - id: p2-rag-q1
+        question: An answer is wrong but the prompt looks correct. What should you measure first?
+        choices:
+          - Whether the relevant passage was retrieved at all
+          - The model's temperature only
+          - The colour of the citation card
+          - The number of documents in the index
+        answerIndex: 0
+        explanation: If retrieval misses the evidence, generation cannot recover it. Measure retrieval recall first.
+        sourceUrl: https://docs.ragas.io/en/stable/concepts/metrics/
+      - id: p2-rag-q2
+        question: In pgvector, which operator computes cosine distance?
+        choices: ['<=>', '<->', '<#>', '=']
+        answerIndex: 0
+        explanation: "<=> is cosine distance, <-> is Euclidean and <#> is negative inner product."
+        sourceUrl: https://github.com/pgvector/pgvector
+      - id: p2-rag-q3
+        question: What must match between the embedding model and the vector column?
+        choices: [The vector dimension, The table name, The index type, The language]
+        answerIndex: 0
+        explanation: A vector(1536) column accepts only 1536-dimensional embeddings.
+        sourceUrl: https://github.com/pgvector/pgvector
+      - id: p2-rag-q4
+        question: What does keyword search add to a vector-only retrieval system?
+        choices:
+          - Exact identifiers and rare terms that embeddings blur
+          - Faster embeddings
+          - Lower storage cost
+          - Automatic citations
+        answerIndex: 0
+        explanation: Full-text search catches names, codes and rare words; vectors catch paraphrase.
+        sourceUrl: https://www.postgresql.org/docs/current/textsearch-controls.html
+      - id: p2-rag-q5
+        question: What should a citation point to?
+        choices:
+          - The retrieved passage and its source URL
+          - The model's confidence score
+          - The prompt version
+          - A search result page
+        answerIndex: 0
+        explanation: A citation is useful only if a reader can open the evidence that supports the answer.
+        sourceUrl: https://platform.openai.com/docs/guides/retrieval
+    proof:
+      title: Retrieval with citations and a measured recall
+      brief: Ingest at least 30 documents with headings and source URLs. Build a hybrid search that returns chunks with offsets. Write 15 questions with the expected source, measure recall@5 and MRR, then improve one part of the pipeline and show the before-and-after numbers.
+      evidence: The ingestion script, the 15-question set, both metric runs, and one answer with a working citation.
+      rubric:
+        - criterion: Chunk quality
+          levels:
+            0: Fixed-size chunks with no headings or offsets.
+            1: Chunks have text but no source metadata.
+            2: Chunks carry title, URL and offsets and respect document structure.
+            3: A retrieval failure was traced to a chunking decision and fixed.
+        - criterion: Measurement
+          levels:
+            0: No labelled questions.
+            1: A few questions with no expected source.
+            2: Recall@5 or MRR is computed on a labelled set.
+            3: Both metrics are reported before and after a change, with the set held fixed.
+        - criterion: Grounding
+          levels:
+            0: Answers have no citations.
+            1: Citations exist but point at a whole site.
+            2: Each answer cites the retrieved passage.
+            3: A test proves the system refuses to answer when the evidence is absent.
+    playbookIds: [pb-docs-lookup]
+    whyItMatters: RAG is not a way to avoid evals; it is a retrieval problem with a generation step attached. The measurement tells you which one failed.
+    riskNote: Embeddings can leak sensitive text through reconstruction or membership inference. Do not index data you would not store.
+
+  - id: p2-evals
+    phase: "2"
+    order: 3
+    title: Evals before features
+    summary: A demo is one example. An eval is a repeatable set of cases with a pass rule. Build the set first, then change the prompt.
+    objectives:
+      - Write a golden set from real questions, with expected evidence and a pass rule.
+      - Compute recall@k and MRR for retrieval.
+      - Use an LLM judge with a rubric, calibration and known-bias controls.
+      - Keep a held-out split and treat a failed eval as information.
+    prerequisites: [p2-rag]
+    estHours: { min: 6, max: 10 }
+    claimIds: [C4, C1]
+    resources:
+      - title: Ragas metrics
+        publisher: Ragas
+        url: https://docs.ragas.io/en/stable/concepts/metrics/
+        format: docs
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: Definitions for retrieval and generation metrics used in this module.
+      - title: Judging LLM-as-a-judge with MT-Bench and Chatbot Arena
+        publisher: Zheng et al., arXiv
+        url: https://arxiv.org/abs/2306.05685
+        format: article
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: false
+        why: The primary paper on position, verbosity and self-enhancement bias in model judges.
+    cheatsheetIds: [eval-golden-set, eval-retrieval-metrics, eval-llm-judge]
+    quiz:
+      - id: p2-eval-q1
+        question: What makes a set of test cases a golden set?
+        choices:
+          - Real questions with expected evidence and a stated pass rule
+          - Questions written from the documentation only
+          - Any list of prompts
+          - The model's own answers
+        answerIndex: 0
+        explanation: A golden set is labelled and fixed so two versions can be compared.
+        sourceUrl: https://platform.openai.com/docs/guides/evals
+      - id: p2-eval-q2
+        question: What does recall@5 measure?
+        choices:
+          - The share of relevant items found in the top five results
+          - The share of the top five that are relevant
+          - The average answer length
+          - The model's confidence
+        answerIndex: 0
+        explanation: Recall@k is relevant items retrieved divided by all relevant items.
+        sourceUrl: https://docs.ragas.io/en/stable/concepts/metrics/
+      - id: p2-eval-q3
+        question: What does mean reciprocal rank reward?
+        choices:
+          - Putting the first relevant result near the top
+          - Returning many results
+          - Long answers
+          - Low latency
+        answerIndex: 0
+        explanation: MRR averages 1/rank of the first relevant result across queries.
+        sourceUrl: https://docs.ragas.io/en/stable/concepts/metrics/
+      - id: p2-eval-q4
+        question: Which bias is documented for LLM judges?
+        choices:
+          - Preferring the first answer in a comparison
+          - Preferring shorter answers always
+          - Ignoring the rubric
+          - Requiring citations
+        answerIndex: 0
+        explanation: Position bias, verbosity bias and self-enhancement bias are documented in the MT-Bench paper.
+        sourceUrl: https://arxiv.org/abs/2306.05685
+      - id: p2-eval-q5
+        question: A change improves the demo but lowers the golden-set score. What should you do?
+        choices:
+          - Treat the regression as a failure and investigate before shipping
+          - Ship it because the demo looks better
+          - Delete the failing cases
+          - Lower the pass threshold
+        answerIndex: 0
+        explanation: The set exists to catch exactly this. Investigate the regression or update the set only with a documented reason.
+        sourceUrl: https://platform.openai.com/docs/guides/evals
+    proof:
+      title: A golden set and a before-and-after score
+      brief: Build a 20-case golden set from real questions for a RAG or model feature. Record the expected evidence and a pass rule. Run the current system, change one variable (prompt, chunking or retrieval), rerun the same set, and report both scores. Include one case that still fails and explain why.
+      evidence: The eval set, the runner, both score reports, and the analysis of the remaining failure.
+      rubric:
+        - criterion: Set quality
+          levels:
+            0: Cases are invented from the docs.
+            1: Real questions exist but no expected evidence.
+            2: Twenty real cases include expected sources and a pass rule.
+            3: A held-out split exists and the tuning set is identified.
+        - criterion: Measurement
+          levels:
+            0: One demo answer is treated as proof.
+            1: Scores are reported without the set or version.
+            2: The same fixed set is run before and after one change.
+            3: Retrieval and generation are scored separately.
+        - criterion: Analysis
+          levels:
+            0: Failures are ignored.
+            1: Failures are counted but not explained.
+            2: The remaining failure is traced to a concrete cause.
+            3: The next experiment is stated with a predicted result.
+    playbookIds: []
+    whyItMatters: Without an eval, “better” is an opinion. With one, a prompt change becomes a measurable decision you can defend.
+    riskNote: Do not put personal data in an eval set without consent and a retention plan.
+
+  - id: p2-agents
+    phase: "2"
+    order: 4
+    title: Agents, tools and MCP
+    summary: An agent is a loop with tools and a budget. Build one read-only tool, expose it over MCP, and make the limits visible in the design.
+    objectives:
+      - Explain when a deterministic workflow is better than an agent.
+      - Give every loop a step, time and cost budget.
+      - Expose one read-only tool through an MCP server.
+      - List the human-approval checkpoints for writes and spending.
+    prerequisites: [p2-llm-api]
+    estHours: { min: 8, max: 12 }
+    claimIds: [C7, C8, C9]
+    resources:
+      - title: Model Context Protocol specification
+        publisher: Model Context Protocol
+        url: https://modelcontextprotocol.io/specification/2026-07-28
+        format: docs
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: The current dated specification, including security principles and extensions.
+      - title: Agent Skills specification
+        publisher: Agent Skills
+        url: https://agentskills.io/specification
+        format: docs
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: The portable folder contract for packaging instructions and scripts.
+    cheatsheetIds: [agent-loop, mcp-server, prompt-injection]
+    quiz:
+      - id: p2-agent-q1
+        question: When is a deterministic workflow better than an agent?
+        choices:
+          - When the steps are known in advance and do not need model judgement
+          - When the task is long
+          - When the model is expensive
+          - When a tool is involved
+        answerIndex: 0
+        explanation: If the control flow is fixed, code it. Agents are for choosing the next step.
+        sourceUrl: https://www.anthropic.com/engineering/building-effective-agents
+      - id: p2-agent-q2
+        question: Why does every agent loop need a step budget?
+        choices:
+          - To bound cost and prevent an unbounded loop
+          - To make the model faster
+          - To remove the need for tools
+          - To increase context length
+        answerIndex: 0
+        explanation: A loop with no limit can spend money and time without reaching an answer.
+        sourceUrl: https://www.anthropic.com/engineering/building-effective-agents
+      - id: p2-agent-q3
+        question: How should an agent treat instructions found inside a retrieved document?
+        choices:
+          - As data, never as a command
+          - As a system message
+          - As a trusted developer instruction
+          - As a reason to disable approval
+        answerIndex: 0
+        explanation: Retrieved content can carry prompt injection. It is data, not authority.
+        sourceUrl: https://modelcontextprotocol.io/specification/2026-07-28
+      - id: p2-agent-q4
+        question: What does the MCP Registry verify about a publisher namespace?
+        choices:
+          - Ownership through GitHub or a domain
+          - The quality of the server code
+          - The absence of bugs
+          - The licence of every dependency
+        answerIndex: 0
+        explanation: The registry verifies namespace ownership; it delegates security scanning to package registries and aggregators.
+        sourceUrl: https://modelcontextprotocol.io/registry
+      - id: p2-agent-q5
+        question: Which action needs a human approval checkpoint?
+        choices:
+          - Sending an email on the user's behalf
+          - Reading a public page
+          - Listing the files in a repository
+          - Formatting a string
+        answerIndex: 0
+        explanation: Writes, sends and payments are consequential. Reading is not equivalent.
+        sourceUrl: https://modelcontextprotocol.io/specification/2026-07-28
+    proof:
+      title: A tool-using agent with visible limits
+      brief: Build an agent with one read-only tool exposed through MCP. Give it a step budget, a timeout and a per-run cost cap. Add an approval checkpoint for the one write action you design. Produce a transcript showing a normal run, a budget stop and a refused write.
+      evidence: Repository link, three transcripts, and a list of the permissions the server needs.
+      rubric:
+        - criterion: Control flow
+          levels:
+            0: The loop can run forever.
+            1: A step limit exists but not a cost or time limit.
+            2: Step, time and cost budgets are enforced.
+            3: The budget stop is visible to the user and tested.
+        - criterion: Tool safety
+          levels:
+            0: The tool has write access to everything.
+            1: The tool is read-only but scoped to all users.
+            2: The tool is read-only and scoped to the session user.
+            3: A refused write and its approval path are demonstrated.
+        - criterion: Observability
+          levels:
+            0: No log of the run.
+            1: Final answer only.
+            2: Each tool call is logged with inputs and results.
+            3: The transcript can replay a failure and identify the step.
+    playbookIds: [pb-db-work, pb-docs-lookup]
+    whyItMatters: "An agent's usefulness and its danger come from the same thing: it can act. Budgets and approvals are how you keep that trade-off deliberate."
+    riskNote: A third-party MCP server can read anything its token can reach. Review the source and scope the token before connecting it.
+
+  - id: p2-reliability
+    phase: "2"
+    order: 5
+    title: Reliability, cost and security
+    summary: Model calls fail, rate-limit and cost money. Treat the provider as an unreliable dependency and the model as untrusted code.
+    objectives:
+      - Retry only retryable failures, with a bound and jitter.
+      - Set timeouts and handle rate limits without a retry storm.
+      - Trace one request across the model call, tools and database.
+      - Apply a least-privilege checklist to prompt injection and data access.
+    prerequisites: [p2-llm-api]
+    estHours: { min: 5, max: 8 }
+    claimIds: [E1]
+    resources:
+      - title: OWASP Top 10 for LLM Applications
+        publisher: OWASP
+        url: https://genai.owasp.org/llm-top-10/
+        format: docs
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: The current risk list, including prompt injection and excessive agency.
+      - title: OpenAI rate limits guide
+        publisher: OpenAI
+        url: https://platform.openai.com/docs/guides/rate-limits
+        format: docs
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: Retry, backoff and limit behaviour from a provider's perspective.
+    cheatsheetIds: [llm-retries, llm-cost, prompt-injection]
+    quiz:
+      - id: p2-rel-q1
+        question: Which responses are safe to retry?
+        choices:
+          - 429 and 5xx responses on idempotent work
+          - 400 and 401 responses
+          - Any response, as long as you retry three times
+          - A 200 response with an empty body
+        answerIndex: 0
+        explanation: Retry transient failures only. A 400 or 401 will fail the same way again.
+        sourceUrl: https://platform.openai.com/docs/guides/rate-limits
+      - id: p2-rel-q2
+        question: Why add jitter to a retry delay?
+        choices:
+          - To stop many clients retrying at the same instant
+          - To make the request more expensive
+          - To remove the need for a timeout
+          - To increase the token limit
+        answerIndex: 0
+        explanation: Jitter spreads retries and avoids a thundering herd.
+        sourceUrl: https://platform.openai.com/docs/guides/rate-limits
+      - id: p2-rel-q3
+        question: What is the primary defence against prompt injection?
+        choices:
+          - Limiting what the system can do and requiring approval for actions
+          - Asking the model to ignore malicious instructions
+          - Longer system prompts
+          - A higher temperature
+        answerIndex: 0
+        explanation: Prompt wording is not a security boundary. Least privilege and approval are.
+        sourceUrl: https://genai.owasp.org/llm-top-10/
+      - id: p2-rel-q4
+        question: What makes a write safe to retry?
+        choices:
+          - An idempotency key that the server records
+          - A longer timeout
+          - A random request id
+          - Retrying only once
+        answerIndex: 0
+        explanation: The server must recognise a repeated request and return the original result instead of repeating the effect.
+        sourceUrl: https://developer.mozilla.org/en-US/docs/Glossary/Idempotent
+      - id: p2-rel-q5
+        question: Which fields make a model request traceable?
+        choices:
+          - Request id, model, token counts, latency and tool calls
+          - Only the final answer
+          - The user's password
+          - The full context window
+        answerIndex: 0
+        explanation: Metadata lets you debug cost and latency without storing sensitive content.
+        sourceUrl: https://platform.openai.com/docs/guides/production-best-practices
+    proof:
+      title: A failure drill
+      brief: Take the model feature from the previous module and add a timeout, bounded retry, rate-limit handling and a per-request cost cap. Force each failure (timeout, 429, invalid output) and capture the resulting behaviour. Add a trace with request id, latency, token counts and tool calls.
+      evidence: The three forced-failure transcripts, the trace output, and a note on what the user sees in each case.
+      rubric:
+        - criterion: Failure handling
+          levels:
+            0: Failures crash the request or hang forever.
+            1: A timeout exists but retries are unbounded or retry 4xx.
+            2: Timeout, bounded retry and rate-limit handling are implemented.
+            3: Each failure path has a test and a user-visible message.
+        - criterion: Cost control
+          levels:
+            0: No cap on tokens or spend.
+            1: A max token limit exists but not a per-user budget.
+            2: A per-request and per-user budget is enforced.
+            3: A runaway loop is stopped and the stop is logged.
+        - criterion: Trace
+          levels:
+            0: No metadata.
+            1: Latency only.
+            2: Request id, model, tokens, latency and tool calls are recorded.
+            3: A trace is used to explain one real slow or expensive request.
+    playbookIds: [pb-plan-feature]
+    whyItMatters: A model provider is an external dependency with its own failure modes. The reliability work is ordinary distributed-systems work, applied to an unpredictable output.
+    riskNote: Do not log full prompts or completions by default. They can contain personal data and secrets.

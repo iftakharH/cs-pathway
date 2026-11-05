@@ -1,0 +1,164 @@
+entries:
+  - id: pb-plan-feature
+    task: Plan a feature from a spec
+    summary: Turn a vague request into a small, testable change before an agent writes code. The output is a plan you can reject cheaply, not a diff you have to reverse.
+    risk: low
+    phase: "1"
+    tools:
+      - name: AGENTS.md
+        what: A repository-level file that tells coding agents the build commands, conventions and forbidden actions.
+        officialVendor: false
+        verified: false
+        verifiedOn: 2026-11-05
+        sourceUrl: https://agents.md/
+      - name: Plan mode in your coding agent
+        what: A read-only phase where the agent proposes steps before it is allowed to edit files.
+        officialVendor: false
+        verified: false
+        verifiedOn: 2026-11-05
+        sourceUrl: https://www.anthropic.com/engineering/claude-code-best-practices
+    agentsMd: |
+      ## Commands
+      - Install: npm ci
+      - Check: npm run lint && npm run typecheck && npm test
+      - Build: npm run build
+
+      ## Rules
+      - One concern per change. No drive-by refactors.
+      - Every behaviour change needs a test that failed before it.
+      - Never run migrations or destructive commands against production.
+      - Ask before adding a dependency; name what it replaces.
+    starterPrompt: |
+      Read AGENTS.md and the files below. Do not edit anything yet.
+
+      Goal: <one sentence describing the user-visible outcome>
+
+      Constraints:
+      - Touch at most <n> files.
+      - Keep the public API unchanged unless the spec says otherwise.
+      - List the tests you will add, and the command that runs them.
+
+      Return: a plan with numbered steps, the files each step touches,
+      the risks you see, and the question you would ask a reviewer.
+    checklist:
+      - The plan names every file it will touch.
+      - Each step has a check that proves it worked.
+      - The diff can be reverted in one commit.
+      - A dependency is added only if the plan says why.
+      - The agent has not seen production credentials.
+    pitfalls:
+      - Asking for a plan and then accepting edits in the same turn.
+      - Letting the agent choose the scope when the spec is ambiguous.
+
+  - id: pb-docs-lookup
+    task: Look up current library documentation
+    summary: Model memory goes stale. Retrieve the versioned documentation for the library you actually installed and cite the page you used.
+    risk: low
+    phase: "1"
+    tools:
+      - name: Context7
+        what: A documentation retrieval service exposed as an MCP server, used to fetch library docs inside an agent session.
+        officialVendor: false
+        verified: false
+        verifiedOn: 2026-11-05
+        sourceUrl: https://context7.com/
+      - name: Vendor documentation
+        what: The official docs for the exact version in your lockfile.
+        officialVendor: true
+        verified: true
+        verifiedOn: 2026-11-05
+        sourceUrl: https://developer.mozilla.org/en-US/docs/Web/HTTP
+    starterPrompt: |
+      Find the documentation for <library> version <version from package-lock.json>.
+      Use the official docs first. Quote the section heading and URL.
+      Then answer: <question>.
+      If the docs do not state it, say "not stated in the docs" instead of inferring.
+    checklist:
+      - The version in the answer matches the lockfile.
+      - The answer links the exact docs page, not a search result.
+      - A behaviour that changed between versions is called out.
+      - The snippet is run or explicitly marked as not executed.
+    pitfalls:
+      - Citing a blog post when the official docs are available.
+      - Mixing documentation for two major versions.
+
+  - id: pb-db-work
+    task: Change a database schema safely
+    summary: Treat schema changes as migrations with a rollback story. Inspect first, change on a branch, and never point an agent at production.
+    risk: high
+    phase: "1"
+    tools:
+      - name: Drizzle Kit
+        what: Generates SQL migrations from a typed schema and applies them with a migration runner.
+        officialVendor: true
+        verified: false
+        verifiedOn: 2026-11-05
+        sourceUrl: https://orm.drizzle.team/docs/kit-overview
+      - name: Neon branching
+        what: A copy-on-write database branch for testing a migration before it reaches the main branch.
+        officialVendor: true
+        verified: true
+        verifiedOn: 2026-11-05
+        sourceUrl: https://neon.com/docs/introduction/branching
+    starterPrompt: |
+      You are working on a development database branch, never production.
+      Read the schema and the migration history first.
+
+      Change: <what should change and why>
+
+      Before editing, answer:
+      1. Which tables and rows are affected?
+      2. Can this be done without locking a large table?
+      3. What is the rollback statement?
+      4. Which query proves the change worked?
+
+      Then write the migration and the verification query. Do not run it.
+    checklist:
+      - The connection string points at a dev branch.
+      - The migration is reversible or the rollback is written down.
+      - A backup or restore point exists.
+      - The verification query returns the expected result.
+      - No production credentials are in the agent's environment.
+    pitfalls:
+      - Running an agent with a production DATABASE_URL in scope.
+      - A destructive migration with no tested restore path.
+
+  - id: pb-auth
+    task: Add authentication without weakening it
+    summary: Use a maintained library and keep its security defaults. The dangerous changes are the ones that switch a check off to make a test pass.
+    risk: high
+    phase: "1"
+    tools:
+      - name: Better Auth
+        what: An open-source authentication library with database sessions, scrypt password hashing and built-in CSRF and rate-limit protections.
+        officialVendor: true
+        verified: true
+        verifiedOn: 2026-11-05
+        sourceUrl: https://www.better-auth.com/docs/reference/security
+      - name: OWASP Authentication Cheat Sheet
+        what: A checklist for login, session and password handling decisions.
+        officialVendor: true
+        verified: true
+        verifiedOn: 2026-11-05
+        sourceUrl: https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html
+    starterPrompt: |
+      Read the Better Auth security reference and the existing auth config.
+
+      Task: <provider or flow to add>
+
+      Constraints:
+      - Do not disable CSRF, origin checks or rate limiting.
+      - Do not log tokens, passwords or full session objects.
+      - Keep secrets server-side; list every new environment variable.
+      - Add a test for the unauthenticated case and the wrong-user case.
+
+      Return the config diff, the new env var names, and the tests.
+    checklist:
+      - CSRF and origin checks are still enabled.
+      - Rate limiting covers sign-in and sign-up.
+      - Cookies are secure in production and SameSite=Lax.
+      - A test proves user A cannot read user B's data.
+      - Password reset is either implemented properly or clearly marked unavailable.
+    pitfalls:
+      - Disabling origin checks to fix a localhost callback.
+      - Trusting a userId sent by the client.

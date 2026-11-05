@@ -1,0 +1,508 @@
+entries:
+  - id: git-init-clone
+    phase: F
+    topic: Git
+    title: Start a repository and connect a remote
+    whenToUse: When a project is not under version control yet, or when you need a local copy of an existing repository.
+    snippets:
+      - lang: bash
+        caption: Create a repository, rename the branch and add a remote
+        runnable: false
+        checked: docs
+        code: |
+          git init
+          git branch -M main
+          git remote add origin git@github.com:you/your-repo.git
+          git push -u origin main
+      - lang: bash
+        caption: Copy an existing repository and its history
+        runnable: false
+        checked: docs
+        code: |
+          git clone git@github.com:you/your-repo.git
+          cd your-repo
+          git switch -c my-change
+    notes:
+      - "`git init` creates a local repository; it does not create anything on GitHub."
+      - Push with `-u` once so later pushes only need `git push`.
+      - Prefer SSH or a credential helper over pasting a token into a remote URL.
+    gotchas:
+      - A repository created on the host with a README needs `git pull --rebase origin main` before the first push.
+      - "`git branch -M main` renames the current branch even if it has commits."
+    seeAlso: [git-stage-commit, term-ssh]
+    tool: { name: Git, version: '2.51.0', verifiedOn: 2026-11-05 }
+    sourceUrl: https://git-scm.com/book/en/v2/Git-Basics-Getting-a-Git-Repository
+    tags: [git, setup, remote]
+
+  - id: git-stage-commit
+    phase: F
+    topic: Git
+    title: Stage and commit one logical change
+    whenToUse: When you want a readable history where each commit can be reviewed or reverted on its own.
+    snippets:
+      - lang: bash
+        caption: Inspect, stage and commit
+        runnable: false
+        checked: docs
+        code: |
+          git status --short
+          git diff
+          git add src/planner.ts tests/planner.test.ts
+          git commit -m "fix: schedule modules by remaining hours"
+    notes:
+      - Stage files explicitly. `git add -A` is fine only when you have read every change.
+      - The first line of the message is the summary; leave a blank line before the body.
+    gotchas:
+      - "`git add .` also stages secrets and build output if they are not ignored."
+      - A commit records the staged snapshot; later edits stay unstaged.
+    seeAlso: [git-amend, git-ignore]
+    tool: { name: Git, version: '2.51.0', verifiedOn: 2026-11-05 }
+    sourceUrl: https://git-scm.com/docs/git-commit
+    tags: [git, commit]
+
+  - id: git-amend
+    phase: F
+    topic: Git
+    title: Fix the last commit before you push
+    whenToUse: When the most recent commit has a typo, a missing file, or a message that will confuse the next reader.
+    snippets:
+      - lang: bash
+        caption: Add a forgotten file and rewrite the message
+        runnable: false
+        checked: docs
+        code: |
+          git add forgotten.ts
+          git commit --amend -m "feat: validate module references"
+    notes:
+      - Amend only commits that are still local. Rewriting shared history forces everyone else to recover.
+      - "`--amend` without `-m` opens the editor with the previous message."
+    gotchas:
+      - Amending changes the commit hash, so a pushed branch needs a force push — and that needs a reason.
+      - If you already pushed and others pulled, create a new commit instead.
+    seeAlso: [git-stage-commit, git-reflog]
+    tool: { name: Git, version: '2.51.0', verifiedOn: 2026-11-05 }
+    sourceUrl: https://git-scm.com/docs/git-commit#Documentation/git-commit.txt---amend
+    tags: [git, commit, rewrite]
+
+  - id: git-undo
+    phase: F
+    topic: Git
+    title: Undo a change without losing the wrong thing
+    whenToUse: When you need to discard a file edit, unstage a file, reverse a pushed commit, or move a branch.
+    snippets:
+      - lang: bash
+        caption: The four undo tools, from safest to most destructive
+        runnable: false
+        checked: docs
+        code: |
+          git restore src/page.tsx              # discard unstaged edits in one file
+          git restore --staged src/page.tsx     # unstage, keep the working copy
+          git revert 4f3a2c1                    # new commit that reverses an old one
+          git reset --hard 4f3a2c1              # move branch and delete uncommitted work
+    notes:
+      - Use `git revert` on a shared branch. It preserves history and needs no force push.
+      - Use `git reset --soft HEAD~1` to undo a commit but keep its changes staged.
+      - "`git restore` is the modern spelling of the old `git checkout -- <file>`."
+    gotchas:
+      - "`git reset --hard` discards uncommitted work with no confirmation."
+      - Restoring a file cannot bring back edits that were never staged or committed.
+    seeAlso: [git-reflog, git-amend]
+    tool: { name: Git, version: '2.51.0', verifiedOn: 2026-11-05 }
+    sourceUrl: https://git-scm.com/docs/git-restore
+    tags: [git, undo, recovery]
+
+  - id: git-rebase-merge
+    phase: F
+    topic: Git
+    title: Choose rebase or merge
+    whenToUse: When your branch is behind main and you need to combine the histories before opening a pull request.
+    snippets:
+      - lang: bash
+        caption: Replay your commits on top of main, then fast-forward
+        runnable: false
+        checked: docs
+        code: |
+          git switch feature/planner
+          git fetch origin
+          git rebase origin/main
+          git switch main
+          git merge --ff-only feature/planner
+    notes:
+      - Rebase gives a linear history and one commit per idea; merge preserves when work happened.
+      - Rebase your own unpushed branch. Merge branches that other people share.
+      - Resolve conflicts once per replayed commit, not once per merge.
+    gotchas:
+      - Rebasing a shared branch rewrites commits others may have based work on.
+      - "`git pull` can merge implicitly; `git pull --rebase` makes the choice explicit."
+    seeAlso: [git-conflict, git-undo]
+    tool: { name: Git, version: '2.51.0', verifiedOn: 2026-11-05 }
+    sourceUrl: https://git-scm.com/docs/git-rebase
+    tags: [git, rebase, merge, history]
+
+  - id: git-conflict
+    phase: F
+    topic: Git
+    title: Resolve a merge conflict
+    whenToUse: When Git stops a merge, rebase or cherry-pick because two changes touch the same lines.
+    snippets:
+      - lang: bash
+        caption: Find the files, edit the markers, then continue
+        runnable: false
+        checked: docs
+        code: |
+          git status
+          # edit each file: keep the right combination, delete the markers
+          git add src/planner.ts
+          git rebase --continue
+          # for a merge instead of a rebase:
+          # git commit
+      - lang: text
+        caption: What the markers mean
+        runnable: false
+        checked: docs
+        code: |
+          <<<<<<< HEAD
+          your current branch
+          =======
+          the incoming change
+          >>>>>>> feature/planner
+    notes:
+      - Read both sides before editing. The answer is often a combination, not a choice.
+      - "`git diff --check` catches leftover conflict markers."
+      - Run the tests after resolving; a clean merge can still be logically wrong.
+    gotchas:
+      - "`git checkout --ours <file>` keeps one side wholesale and silently drops the other."
+      - "`git rebase --abort` returns to the state before the rebase, not the state before your last commit."
+    seeAlso: [git-rebase-merge, git-undo]
+    tool: { name: Git, version: '2.51.0', verifiedOn: 2026-11-05 }
+    sourceUrl: https://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging
+    tags: [git, conflict, merge]
+
+  - id: git-stash
+    phase: F
+    topic: Git
+    title: Park unfinished work
+    whenToUse: When you need a clean working tree to switch branches or pull, but the current edit is not ready to commit.
+    snippets:
+      - lang: bash
+        caption: Save, list and restore a stash
+        runnable: false
+        checked: docs
+        code: |
+          git stash push -u -m "wip: pricing form"
+          git stash list
+          git stash pop
+    notes:
+      - "`-u` includes untracked files. Without it, new files stay in the working tree."
+      - "`pop` applies and deletes the entry; `apply` keeps it."
+      - Named stashes are easier to find a week later.
+    gotchas:
+      - A stash is local and easy to forget. Commit to a temporary branch for work that must survive.
+      - Popping onto a changed branch can conflict.
+    seeAlso: [git-stage-commit, git-reflog]
+    tool: { name: Git, version: '2.51.0', verifiedOn: 2026-11-05 }
+    sourceUrl: https://git-scm.com/docs/git-stash
+    tags: [git, stash, context-switch]
+
+  - id: git-reflog
+    phase: F
+    topic: Git
+    title: Recover a commit after a bad reset or rebase
+    whenToUse: When commits seem to have disappeared and you have not yet run garbage collection.
+    snippets:
+      - lang: bash
+        caption: Find the previous position and move back to it
+        runnable: false
+        checked: docs
+        code: |
+          git reflog
+          git reset --hard HEAD@{2}
+          git switch -c rescue HEAD@{2}
+    notes:
+      - The reflog records where HEAD has been in this clone. It is the first place to look.
+      - Creating a rescue branch before resetting keeps both states recoverable.
+      - "`git fsck --lost-found` is a deeper fallback for unreachable objects."
+    gotchas:
+      - The reflog is local. A fresh clone does not have it.
+      - Entries expire after the configured retention period.
+    seeAlso: [git-undo, git-amend]
+    tool: { name: Git, version: '2.51.0', verifiedOn: 2026-11-05 }
+    sourceUrl: https://git-scm.com/docs/git-reflog
+    tags: [git, recovery, reflog]
+
+  - id: git-ignore
+    phase: F
+    topic: Git
+    title: Ignore files without ignoring secrets by accident
+    whenToUse: When build output, dependencies or local environment files keep appearing in `git status`.
+    snippets:
+      - lang: text
+        caption: A small .gitignore for a Node project
+        runnable: false
+        checked: docs
+        code: |
+          node_modules/
+          dist/
+          .env
+          .env.*
+          !.env.example
+          .DS_Store
+    notes:
+      - Patterns are relative to the .gitignore location unless they start with `/`.
+      - "`!` re-includes a file excluded by an earlier pattern."
+      - Commit `.env.example` with names only, never values.
+    gotchas:
+      - Adding a path to .gitignore does not untrack a file already committed. Use `git rm --cached <file>`.
+      - A secret that reached a commit stays in history even after deletion; rotate it.
+    seeAlso: [git-stage-commit, term-env]
+    tool: { name: Git, version: '2.51.0', verifiedOn: 2026-11-05 }
+    sourceUrl: https://git-scm.com/docs/gitignore
+    tags: [git, ignore, secrets]
+
+  - id: git-tags
+    phase: F
+    topic: Git
+    title: Tag a release
+    whenToUse: When a specific commit is a version you will deploy or support, and you need a stable name for it.
+    snippets:
+      - lang: bash
+        caption: Create an annotated tag and push it
+        runnable: false
+        checked: docs
+        code: |
+          git tag -a v1.2.0 -m "v1.2.0: planner and cheatsheet search"
+          git push origin v1.2.0
+    notes:
+      - Annotated tags carry a message, author and date; lightweight tags are just pointers.
+      - Tags do not push with a normal `git push`; push them explicitly or use `--tags`.
+      - Name tags with the same version your package or changelog uses.
+    gotchas:
+      - Moving a published tag breaks anyone who already fetched it.
+      - A tag does not deploy anything by itself.
+    seeAlso: [git-stage-commit]
+    tool: { name: Git, version: '2.51.0', verifiedOn: 2026-11-05 }
+    sourceUrl: https://git-scm.com/docs/git-tag
+    tags: [git, release, tag]
+
+  - id: term-navigate
+    phase: F
+    topic: Terminal
+    title: Move around a filesystem and find files
+    whenToUse: When you need to locate a project, a config file, or a generated file without opening a file manager.
+    snippets:
+      - lang: bash
+        caption: Print, list, change directory and find by name
+        runnable: false
+        checked: docs
+        code: |
+          pwd
+          ls -la
+          cd ..
+          cd -
+          find . -maxdepth 3 -type f -name "*.ts" | head -20
+    notes:
+      - "`cd -` returns to the previous directory."
+      - "`ls -la` shows hidden files and permissions."
+      - Quote paths with spaces.
+    gotchas:
+      - "`find` follows symlinks only with `-L`; the default can avoid loops but miss linked files."
+      - On macOS the filesystem is often case-insensitive, so a path that works locally may fail in CI.
+    seeAlso: [term-search, term-pipes]
+    tool: { name: GNU Bash, version: '5.2', verifiedOn: 2026-11-05 }
+    sourceUrl: https://man7.org/linux/man-pages/man1/bash.1.html
+    tags: [terminal, files, navigation]
+
+  - id: term-search
+    phase: F
+    topic: Terminal
+    title: Search file contents with grep
+    whenToUse: When you know a string exists somewhere in the repository and need the file and line that contains it.
+    snippets:
+      - lang: bash
+        caption: Recursive search with line numbers and context
+        runnable: false
+        checked: docs
+        code: |
+          grep -rn "createBrowserRouter" src
+          grep -rn --include="*.ts" "TODO" src
+          grep -rn -C 2 "trustedOrigins" .
+    notes:
+      - "`-r` recurses, `-n` prints line numbers, `-C` prints context."
+      - "`--include` keeps vendored or generated directories out of the result."
+      - "`grep -l` prints only filenames, which is useful for piping into an editor."
+    gotchas:
+      - Searching `node_modules` or `dist` is slow and noisy; exclude them or use `--include`.
+      - A binary file can make grep print a warning; `-I` skips binaries.
+    seeAlso: [term-pipes, term-navigate]
+    tool: { name: GNU grep, version: '3.11', verifiedOn: 2026-11-05 }
+    sourceUrl: https://man7.org/linux/man-pages/man1/grep.1.html
+    tags: [terminal, search, grep]
+
+  - id: term-pipes
+    phase: F
+    topic: Terminal
+    title: Chain commands and redirect output
+    whenToUse: When you need to filter, count, save or inspect the output of another command.
+    snippets:
+      - lang: bash
+        caption: Pipe, redirect, append and tee
+        runnable: false
+        checked: docs
+        code: |
+          npm run build > build.log 2>&1
+          npm test 2>&1 | tee test.log | tail -40
+          grep -c "error" build.log
+    notes:
+      - "`>` replaces the file; `>>` appends."
+      - "`2>&1` sends standard error to the same place as standard output."
+      - "`tee` writes to a file and passes output on."
+    gotchas:
+      - "`>` truncates before the command runs, so a failed command can leave an empty log."
+      - A pipe reports the exit status of the last command unless `pipefail` is set.
+    seeAlso: [term-search, term-processes]
+    tool: { name: GNU Bash, version: '5.2', verifiedOn: 2026-11-05 }
+    sourceUrl: https://man7.org/linux/man-pages/man1/bash.1.html
+    tags: [terminal, pipes, logs]
+
+  - id: term-permissions
+    phase: F
+    topic: Terminal
+    title: Read and change file permissions
+    whenToUse: When a script will not execute, a key is readable by other users, or a deploy step needs a specific mode.
+    snippets:
+      - lang: bash
+        caption: Inspect and set common modes
+        runnable: false
+        checked: docs
+        code: |
+          ls -l deploy.sh
+          chmod 644 config.json
+          chmod 755 deploy.sh
+          chmod 600 ~/.ssh/id_ed25519
+    notes:
+      - The three digits are user, group and other in that order.
+      - 4 is read, 2 is write, 1 is execute; add them per digit.
+      - 600 on a private key means only the owner can read or write it.
+    gotchas:
+      - "`chmod 777` gives every user write access; it is almost never the fix."
+      - Changing the owner needs `chown` and usually elevated privileges.
+    seeAlso: [term-ssh, term-navigate]
+    tool: { name: GNU coreutils, version: '9.4', verifiedOn: 2026-11-05 }
+    sourceUrl: https://man7.org/linux/man-pages/man1/chmod.1.html
+    tags: [terminal, permissions, security]
+
+  - id: term-processes
+    phase: F
+    topic: Terminal
+    title: Find and stop the process holding a port
+    whenToUse: When a dev server says the port is in use, or a background process needs to be stopped cleanly.
+    snippets:
+      - lang: bash
+        caption: Find a listener and stop it politely
+        runnable: false
+        checked: docs
+        code: |
+          lsof -i :5173
+          ps aux | grep "[n]ode"
+          kill -15 48211
+          kill -9 48211
+    notes:
+      - "`SIGTERM` (15) asks the process to shut down and clean up."
+      - "`SIGKILL` (9) cannot be caught; use it only after SIGTERM fails."
+      - "`[n]ode` stops grep from matching its own command line."
+    gotchas:
+      - Killing the wrong process on a shared machine can stop someone else's work.
+      - "`lsof` may need elevated privileges to see other users' processes."
+    seeAlso: [term-pipes, term-navigate]
+    tool: { name: lsof, version: '4.99', verifiedOn: 2026-11-05 }
+    sourceUrl: https://man7.org/linux/man-pages/man8/lsof.8.html
+    tags: [terminal, processes, ports]
+
+  - id: term-ssh
+    phase: F
+    topic: Terminal
+    title: Create an SSH key and use a host alias
+    whenToUse: When you need passwordless access to a server or GitHub without reusing one key everywhere.
+    snippets:
+      - lang: bash
+        caption: Generate an ed25519 key and copy the public key
+        runnable: false
+        checked: docs
+        code: |
+          ssh-keygen -t ed25519 -C "you@example.com"
+          ssh-copy-id user@example.com
+          ssh -T git@github.com
+      - lang: text
+        caption: A minimal ~/.ssh/config
+        runnable: false
+        checked: docs
+        code: |
+          Host staging
+            HostName 203.0.113.10
+            User deploy
+            IdentityFile ~/.ssh/id_ed25519
+    notes:
+      - Share only the `.pub` file. The private key never leaves your machine.
+      - Use one key per context if you can, so a leaked key can be revoked alone.
+      - "`ssh -T` tests authentication without opening a shell."
+    gotchas:
+      - A private key with permissions wider than 600 is rejected by OpenSSH.
+      - Adding a key to GitHub does not grant access to a repository until the account has permission.
+    seeAlso: [term-permissions, git-init-clone]
+    tool: { name: OpenSSH, version: '9.9', verifiedOn: 2026-11-05 }
+    sourceUrl: https://www.ssh.com/academy/ssh/keygen
+    tags: [terminal, ssh, keys]
+
+  - id: term-env
+    phase: F
+    topic: Terminal
+    title: Load environment variables for one command
+    whenToUse: When a script needs configuration without hard-coding values or exporting them for the rest of the session.
+    snippets:
+      - lang: bash
+        caption: Export for a session, or load a file for one command
+        runnable: false
+        checked: docs
+        code: |
+          export API_URL="http://localhost:3000"
+          printenv API_URL
+          env $(grep -v '^#' .env | xargs) node script.js
+    notes:
+      - Environment variables are strings; convert numbers explicitly in code.
+      - A `.env` file is a local convenience, not a secret store for production.
+      - Keep `.env` ignored and commit `.env.example` with names only.
+    gotchas:
+      - "`env $(cat .env)` breaks on values containing spaces or quotes."
+      - Variables set in one terminal do not exist in another.
+    seeAlso: [git-ignore, term-pipes]
+    tool: { name: GNU Bash, version: '5.2', verifiedOn: 2026-11-05 }
+    sourceUrl: https://man7.org/linux/man-pages/man1/bash.1.html
+    tags: [terminal, environment, config]
+
+  - id: term-curl
+    phase: F
+    topic: Terminal
+    title: Inspect an HTTP endpoint with curl
+    whenToUse: When an API call fails in the browser and you need to see the status, headers and body without the UI.
+    snippets:
+      - lang: bash
+        caption: Show status and headers, then send JSON
+        runnable: false
+        checked: docs
+        code: |
+          curl --fail --show-error -sS -i https://example.com/health
+          curl --fail --show-error -sS \
+            -X POST https://api.example.com/items \
+            -H "Content-Type: application/json" \
+            -d '{"name":"first"}'
+    notes:
+      - "`--fail` returns a non-zero exit code on 4xx and 5xx, which makes it usable in scripts."
+      - "`-i` includes response headers; `-sS` hides progress but still prints errors."
+      - "Add `-H \"Authorization: Bearer $TOKEN\"` rather than putting the token in the URL."
+    gotchas:
+      - Shell quoting differs between Bash and PowerShell; the line continuation character is not the same.
+      - "`-d` sets a POST body and content type by default; be explicit with `-H`."
+    seeAlso: [term-pipes, http-status]
+    tool: { name: curl, version: '8.11', verifiedOn: 2026-11-05 }
+    sourceUrl: https://curl.se/docs/manpage.html
+    tags: [terminal, http, curl, debugging]

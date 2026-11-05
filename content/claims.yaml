@@ -1,0 +1,162 @@
+claims:
+  - id: C1
+    statement: DeepLearning.AI published an AI Engineering Skills Map on 14 August 2026, based on more than 10,000 job postings, structured interviews with experts, hiring managers and recruiters, and surveys. It names four skills — building and deploying AI applications, software engineering fundamentals, using coding agents, and shaping the build — and stresses that AI outputs are unpredictable.
+    kind: observed-data
+    confidence: high
+    sourceIds: [src-dlai-skills-map]
+    scope: AI engineering skills, as described by DeepLearning.AI
+    verifiedAt: 2026-11-05
+    reviewAfter: 2027-02-05
+    phase: "2"
+    topics: [ai-engineering, careers]
+
+  - id: C2
+    statement: The 2026 Stack Overflow Developer Survey, the sixteenth edition, collected more than 30,000 responses over seven weeks.
+    kind: observed-data
+    confidence: high
+    sourceIds: [src-so-2026-survey]
+    scope: Developer survey sample, 2026
+    verifiedAt: 2026-11-05
+    reviewAfter: 2027-02-05
+    topics: [developers, survey]
+
+  - id: C3
+    statement: Among respondents who use AI, 66% use coding agents and 63% use chatbots. Among agent users, Claude Code is used by 66% and GitHub Copilot by 59%. 73% of respondents who use AI coding assistants or agents use them daily.
+    kind: observed-data
+    confidence: high
+    sourceIds: [src-so-2026-survey]
+    scope: AI tool usage in the 2026 Stack Overflow survey
+    verifiedAt: 2026-11-05
+    reviewAfter: 2027-02-05
+    phase: "2"
+    topics: [coding-agents, survey]
+
+  - id: C4
+    statement: The 2026 Stack Overflow survey reports that 93% of respondents say source attribution is required to trust what AI gives them.
+    kind: observed-data
+    confidence: medium
+    sourceIds: [src-so-2026-survey]
+    scope: Trust and source attribution, 2026 survey
+    verifiedAt: 2026-11-05
+    reviewAfter: 2027-02-05
+    topics: [trust, verification]
+
+  - id: C5
+    statement: In the 2026 Stack Overflow survey, SQL overtook HTML/CSS as the second most-used language. Rust moved up to twelfth, and the top ten was mostly unchanged.
+    kind: observed-data
+    confidence: high
+    sourceIds: [src-so-2026-survey]
+    scope: Language rankings, 2026 survey
+    verifiedAt: 2026-11-05
+    reviewAfter: 2027-02-05
+    phase: F
+    topics: [languages, sql]
+
+  - id: C7
+    statement: The 2026-07-28 Model Context Protocol specification defines JSON-RPC 2.0 messages, stateless self-contained requests, and per-request capability negotiation. It lists optional extensions including Tasks, Skills over MCP, and MCP Apps.
+    kind: spec-fact
+    confidence: high
+    sourceIds: [src-mcp-spec]
+    scope: MCP specification, revision 2026-07-28
+    verifiedAt: 2026-11-05
+    reviewAfter: 2027-02-05
+    phase: "2"
+    topics: [mcp, agents]
+
+  - id: C8
+    statement: The MCP Registry is the official centralised metadata repository for publicly accessible MCP servers. It is in preview, provides a REST API, and verifies publisher namespaces through GitHub or domain ownership.
+    kind: spec-fact
+    confidence: high
+    sourceIds: [src-mcp-registry]
+    scope: MCP Registry
+    verifiedAt: 2026-11-05
+    reviewAfter: 2027-02-05
+    phase: "2"
+    topics: [mcp, registry]
+
+  - id: C9
+    statement: An Agent Skill is a directory containing a required SKILL.md file. The format requires a name of at most 64 characters using lowercase letters, numbers and hyphens, and a description of at most 1,024 characters. Agents load skills on demand through progressive disclosure. The format was originally developed by Anthropic and released as an open standard.
+    kind: spec-fact
+    confidence: high
+    sourceIds: [src-agentskills, src-agentskills-spec]
+    scope: Agent Skills format
+    verifiedAt: 2026-11-05
+    reviewAfter: 2027-02-05
+    phase: "2"
+    topics: [skills, agents]
+
+  - id: S1
+    statement: Y Combinator's standard deal invests $500,000 — $125,000 on a post-money SAFE for 7%, plus $375,000 on an uncapped MFN SAFE. YC's own example converts the $375,000 at a $15M post-money cap into 2.5% of the company.
+    kind: spec-fact
+    confidence: high
+    sourceIds: [src-yc-deal]
+    scope: Y Combinator standard deal, 2026
+    verifiedAt: 2026-11-05
+    reviewAfter: 2027-02-05
+    phase: S
+    topics: [funding, safe]
+
+  - id: S2
+    statement: Startup Bangladesh Limited is a government-backed venture capital company that invests in Bangladeshi startups.
+    kind: spec-fact
+    confidence: high
+    sourceIds: [src-startupbd, src-tfe-startupbd]
+    scope: Startup Bangladesh Limited
+    verifiedAt: 2026-11-05
+    reviewAfter: 2027-02-05
+    phase: S
+    topics: [funding, bangladesh]
+
+  - id: S3
+    statement: On 9 June 2026, Bangladesh's ICT Minister told Parliament that Startup Bangladesh had invested about Tk 109 crore in 36 approved startups.
+    kind: observed-data
+    confidence: high
+    sourceIds: [src-bss-startupbd, src-tfe-startupbd]
+    scope: Startup Bangladesh investment total, reported June 2026
+    verifiedAt: 2026-11-05
+    reviewAfter: 2027-02-05
+    phase: S
+    topics: [funding, bangladesh]
+
+  - id: V1
+    statement: Vercel restricts Hobby teams to non-commercial personal use; all commercial usage requires a Pro or Enterprise plan.
+    kind: spec-fact
+    confidence: high
+    sourceIds: [src-vercel-fair-use]
+    scope: Vercel Hobby plan terms
+    verifiedAt: 2026-11-05
+    reviewAfter: 2027-02-05
+    phase: "1"
+    topics: [hosting, limits]
+
+  - id: N1
+    statement: Neon's Free plan requires no credit card and includes 100 projects, 100 CU-hours per project per month, autoscaling up to 2 CU, 10 branches per project, 1 GB of Postgres storage per project (20 GB per account), scale-to-zero after 5 minutes idle, a 6-hour history window, and 5 GB of public network transfer per project.
+    kind: spec-fact
+    confidence: high
+    sourceIds: [src-neon-pricing]
+    scope: Neon Free plan, pricing page last updated 2026-10-31
+    verifiedAt: 2026-11-05
+    reviewAfter: 2026-11-30
+    phase: "1"
+    topics: [database, limits]
+
+  - id: B1
+    statement: Better Auth hashes passwords with scrypt by default, stores sessions in the database or secondary storage, applies rate limits across all routes with stricter limits on riskier routes, and protects against CSRF with origin validation, SameSite=Lax cookies and Fetch Metadata checks.
+    kind: spec-fact
+    confidence: high
+    sourceIds: [src-better-auth-security]
+    scope: Better Auth security documentation
+    verifiedAt: 2026-11-05
+    reviewAfter: 2027-02-05
+    phase: "1"
+    topics: [auth, security]
+
+  - id: E1
+    statement: Verification, not generation, is becoming the scarce engineering skill. A system that can produce plausible code makes the ability to test, measure and disprove claims more valuable, not less.
+    kind: editorial
+    confidence: medium
+    sourceIds: [src-so-2026-survey, src-dlai-skills-map]
+    scope: Editorial argument on engineering skills
+    verifiedAt: 2026-11-05
+    reviewAfter: 2027-02-05
+    topics: [verification, careers]

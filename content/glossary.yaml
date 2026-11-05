@@ -1,0 +1,70 @@
+terms:
+  - term: API
+    definition: A defined boundary through which one program asks another for data or behaviour, usually over HTTP in web applications.
+    sourceTitle: MDN Glossary — API
+    sourceUrl: https://developer.mozilla.org/en-US/docs/Glossary/API
+
+  - term: Authentication
+    definition: Proving who a user is, usually with a password, a passkey, or an identity provider such as Google or GitHub.
+    sourceTitle: OWASP Authentication Cheat Sheet
+    sourceUrl: https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html
+
+  - term: Authorization
+    definition: Deciding what an authenticated user is allowed to do or read. Authentication answers who; authorization answers what.
+    sourceTitle: OWASP Authorization Cheat Sheet
+    sourceUrl: https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html
+
+  - term: Session
+    definition: Server-side state that links a browser's cookie to a signed-in user, with an expiry and a way to revoke it.
+    sourceTitle: Better Auth — Session management
+    sourceUrl: https://www.better-auth.com/docs/concepts/session-management
+
+  - term: JWT
+    definition: A signed, compact token carrying claims. It is verifiable without a database lookup, but it cannot be revoked before it expires without extra state.
+    sourceTitle: RFC 7519 — JSON Web Token
+    sourceUrl: https://www.rfc-editor.org/rfc/rfc7519.html
+
+  - term: CORS
+    definition: A browser rule that blocks a page from reading a cross-origin response unless the server explicitly allows that origin.
+    sourceTitle: MDN — Cross-Origin Resource Sharing
+    sourceUrl: https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS
+
+  - term: Database index
+    definition: A separate structure that lets the database find rows without scanning the whole table, at the cost of extra work on writes.
+    sourceTitle: PostgreSQL — Indexes
+    sourceUrl: https://www.postgresql.org/docs/current/indexes.html
+
+  - term: Transaction
+    definition: A group of database statements that either all take effect or none do, so a partial write cannot be observed.
+    sourceTitle: PostgreSQL — Transactions tutorial
+    sourceUrl: https://www.postgresql.org/docs/current/tutorial-transactions.html
+
+  - term: Embedding
+    definition: A numeric vector that represents text, an image or another item so that similar items end up close together in vector space.
+    sourceTitle: Google Machine Learning Glossary — Embedding
+    sourceUrl: https://developers.google.com/machine-learning/glossary#embedding
+
+  - term: RAG
+    definition: Retrieval-augmented generation. A system retrieves relevant documents first, then gives them to a model so the answer can be grounded in that context.
+    sourceTitle: Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks
+    sourceUrl: https://arxiv.org/abs/2005.11401
+
+  - term: Eval
+    definition: A repeatable test that measures whether a model-driven system meets a stated bar on a fixed set of cases, so a change can be compared rather than judged by impression.
+    sourceTitle: OpenAI — Evals
+    sourceUrl: https://platform.openai.com/docs/guides/evals
+
+  - term: SAFE
+    definition: A contract for converting an investment into equity later, often at a valuation cap, without pricing the round now.
+    sourceTitle: Y Combinator — SAFE documents
+    sourceUrl: https://www.ycombinator.com/documents
+
+  - term: MRR
+    definition: Monthly recurring revenue — the normalised monthly value of active subscriptions, excluding one-off charges.
+    sourceTitle: Y Combinator Startup Library
+    sourceUrl: https://www.ycombinator.com/library
+
+  - term: Idempotency
+    definition: The property that repeating the same request has the same effect as sending it once, which makes retries safe.
+    sourceTitle: MDN Glossary — Idempotent
+    sourceUrl: https://developer.mozilla.org/en-US/docs/Glossary/Idempotent

@@ -1,0 +1,406 @@
+entries:
+  - id: http-methods
+    phase: F
+    topic: HTTP
+    title: Pick the right HTTP method
+    whenToUse: When you are designing an endpoint and need to know whether it is safe to retry, cache, or call from a link.
+    snippets:
+      - lang: text
+        caption: Method semantics in one table
+        runnable: false
+        checked: docs
+        code: |
+          GET     read, no state change      safe, cacheable, retryable
+          HEAD    headers only               safe, cacheable
+          POST    create or process          not safe, not idempotent
+          PUT     replace the resource       idempotent, not safe
+          PATCH   partial update             not necessarily idempotent
+          DELETE  remove the resource        idempotent, not safe
+          OPTIONS capabilities / preflight   safe
+    notes:
+      - Idempotent means repeating the request leaves the server in the same state.
+      - Use PUT when the client sends the complete replacement.
+      - Use POST when the server decides the new resource identifier.
+    gotchas:
+      - A GET that changes data can be triggered by a crawler or a prefetch.
+      - POST retries can create duplicates unless the endpoint uses an idempotency key.
+    seeAlso: [http-status, rest-conventions]
+    tool: { name: HTTP, version: 'RFC 9110', verifiedOn: 2026-11-05 }
+    sourceUrl: https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods
+    tags: [http, api, rest]
+
+  - id: http-status
+    phase: F
+    topic: HTTP
+    title: Read a status code without guessing
+    whenToUse: When an API returns a number you did not expect and you need to decide whether the client or the server is wrong.
+    snippets:
+      - lang: text
+        caption: Codes you will actually meet
+        runnable: false
+        checked: docs
+        code: |
+          200 OK                 success with a body
+          201 Created            a new resource exists; send Location
+          204 No Content         success with no body
+          301 / 308              permanent redirect, cached
+          302 / 307              temporary redirect, keep the method
+          304 Not Modified       the cached copy is still valid
+          400 Bad Request        malformed request
+          401 Unauthorized       not authenticated (the name is misleading)
+          403 Forbidden          authenticated, not allowed
+          404 Not Found          no resource, or hidden from this user
+          409 Conflict           state conflict, e.g. duplicate email
+          422 Unprocessable      syntactically valid, semantically invalid
+          429 Too Many Requests  rate limited; read Retry-After
+          500 Internal Error     unhandled server failure
+          503 Unavailable        overloaded or in maintenance
+    notes:
+      - 4xx means the request is the problem; 5xx means the server failed to handle it.
+      - Returning 404 instead of 403 can avoid leaking which resources exist.
+      - "`Retry-After` tells a client when to try again after 429 or 503."
+    gotchas:
+      - "\"401 means unauthenticated\" is the HTTP meaning; many APIs use it for both cases."
+      - A redirect changes how clients resend a POST body; prefer 307 or 308 when the method matters.
+    seeAlso: [http-methods, http-caching]
+    tool: { name: HTTP, version: 'RFC 9110', verifiedOn: 2026-11-05 }
+    sourceUrl: https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status
+    tags: [http, status, debugging]
+
+  - id: http-headers
+    phase: F
+    topic: HTTP
+    title: Send and read the headers that matter
+    whenToUse: When you need content negotiation, auth, tracing, or to understand why a response is cached or blocked.
+    snippets:
+      - lang: http
+        caption: A request and the response headers worth checking
+        runnable: false
+        checked: docs
+        code: |
+          POST /api/items HTTP/1.1
+          Host: api.example.com
+          Content-Type: application/json
+          Accept: application/json
+          Authorization: Bearer <token>
+          Idempotency-Key: 6f1c2a9e
+
+          HTTP/1.1 201 Created
+          Content-Type: application/json
+          Location: /api/items/42
+          Cache-Control: no-store
+    notes:
+      - "`Content-Type` describes the body you sent; `Accept` describes what you can read."
+      - "`Authorization` is preferred over putting credentials in a query string."
+      - "`Cache-Control` on a response is what proxies and browsers obey."
+    gotchas:
+      - Header names are case-insensitive, but values are not.
+      - A custom header on a cross-origin request triggers a preflight unless the server allows it.
+    seeAlso: [http-cors, http-caching]
+    tool: { name: HTTP, version: 'RFC 9110', verifiedOn: 2026-11-05 }
+    sourceUrl: https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers
+    tags: [http, headers, api]
+
+  - id: http-cors
+    phase: F
+    topic: HTTP
+    title: Fix a CORS error at the server
+    whenToUse: When the browser blocks a cross-origin request and the network tab shows a preflight or a missing allow header.
+    snippets:
+      - lang: http
+        caption: What a simple cross-origin request needs back
+        runnable: false
+        checked: docs
+        code: |
+          Origin: https://app.example.com
+
+          Access-Control-Allow-Origin: https://app.example.com
+          Access-Control-Allow-Methods: GET, POST, OPTIONS
+          Access-Control-Allow-Headers: Content-Type, Authorization
+          Vary: Origin
+    notes:
+      - CORS is enforced by the browser, not the server. `curl` will not show the error.
+      - Credentials require an exact origin; `*` is rejected with cookies.
+      - Answer the OPTIONS preflight before your auth middleware rejects it.
+    gotchas:
+      - "Adding `Access-Control-Allow-Origin: *` does not fix requests that send cookies."
+      - "A missing `Vary: Origin` lets a cache serve one origin's response to another."
+    seeAlso: [http-headers, http-status]
+    tool: { name: HTTP, version: 'Fetch Standard', verifiedOn: 2026-11-05 }
+    sourceUrl: https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS
+    tags: [http, cors, browser, debugging]
+
+  - id: http-caching
+    phase: F
+    topic: HTTP
+    title: Cache a response on purpose
+    whenToUse: When you want fewer requests without serving stale data, or when a deploy keeps showing an old version.
+    snippets:
+      - lang: http
+        caption: Three common caching policies
+        runnable: false
+        checked: docs
+        code: |
+          Cache-Control: public, max-age=31536000, immutable
+          Cache-Control: no-cache
+          Cache-Control: no-store
+
+          ETag: "a3f1c9"
+          If-None-Match: "a3f1c9"
+    notes:
+      - "`max-age` is seconds. Hashed asset names can be cached for a year."
+      - "`no-cache` means revalidate before use, not \"do not store\"."
+      - "`no-store` means do not store at all; use it for private or sensitive responses."
+    gotchas:
+      - "`no-cache` is not the same as `no-store`; mixing them up can leak private data."
+      - Immutable assets must have content-hashed names, or a deploy will keep the old file.
+    seeAlso: [http-headers, http-status]
+    tool: { name: HTTP, version: 'RFC 9111', verifiedOn: 2026-11-05 }
+    sourceUrl: https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Caching
+    tags: [http, caching, performance]
+
+  - id: rest-conventions
+    phase: F
+    topic: HTTP
+    title: Design resource URLs that stay readable
+    whenToUse: When you are adding endpoints and want names that another developer can predict without documentation.
+    snippets:
+      - lang: text
+        caption: A small, consistent API surface
+        runnable: false
+        checked: docs
+        code: |
+          GET    /api/modules
+          GET    /api/modules/f-git
+          POST   /api/modules/f-git/notes
+          PATCH  /api/notes/8f2c
+          DELETE /api/notes/8f2c
+          GET    /api/notes?moduleId=f-git&limit=20
+    notes:
+      - Nouns in the path, verbs in the method.
+      - Use plural collections and stable identifiers.
+      - Put filters in the query string, not in fake path segments.
+    gotchas:
+      - Deeply nested paths become hard to authorise and rename.
+      - Returning an array with no pagination breaks when the data grows.
+    seeAlso: [http-methods, http-status]
+    tool: { name: HTTP, version: 'RFC 9110', verifiedOn: 2026-11-05 }
+    sourceUrl: https://developer.mozilla.org/en-US/docs/Glossary/REST
+    tags: [http, api, rest, design]
+
+  - id: sql-joins
+    phase: F
+    topic: SQL
+    title: Join two tables without multiplying rows
+    whenToUse: When you need related records from two tables and the totals are larger than you expect.
+    snippets:
+      - lang: sql
+        caption: A left join with a correct aggregate
+        runnable: true
+        checked: executed
+        expectRows: [['Ada', 100], ['Lin', 0], ['Sam', 15]]
+        code: |
+          with users(id, name) as (
+            values (1, 'Ada'), (2, 'Lin'), (3, 'Sam')
+          ), orders(user_id, total) as (
+            values (1, 40), (1, 60), (3, 15)
+          )
+          select u.name, coalesce(sum(o.total), 0)::int as lifetime
+          from users u
+          left join orders o on o.user_id = u.id
+          group by u.name
+          order by u.name;
+    notes:
+      - "`left join` keeps users with no orders; `inner join` drops them."
+      - Aggregate after the join, or pre-aggregate the many-side in a CTE.
+      - Join on indexed keys where the tables are large.
+    gotchas:
+      - Joining two one-to-many tables multiplies rows; aggregates then double-count.
+      - A condition in `where` on the right table turns a left join into an inner join.
+    seeAlso: [sql-group-having, sql-explained]
+    tool: { name: PostgreSQL, version: '17', verifiedOn: 2026-11-05 }
+    sourceUrl: https://www.postgresql.org/docs/current/queries-table-expressions.html
+    tags: [sql, join, aggregation]
+
+  - id: sql-group-having
+    phase: F
+    topic: SQL
+    title: Filter groups with HAVING
+    whenToUse: When a filter applies to an aggregate such as a count or sum, not to individual rows.
+    snippets:
+      - lang: sql
+        caption: Count events per user, keep users with more than one
+        runnable: true
+        checked: executed
+        expectRows: [[1, 2], [3, 2]]
+        code: |
+          with events(user_id, kind) as (
+            values (1, 'view'), (1, 'buy'), (2, 'view'), (3, 'buy'), (3, 'buy')
+          )
+          select user_id, count(*)::int as events
+          from events
+          group by user_id
+          having count(*) > 1
+          order by user_id;
+    notes:
+      - "`where` filters rows before grouping; `having` filters groups after."
+      - Every selected column must be grouped or aggregated.
+      - "`count(*)` counts rows; `count(column)` ignores nulls."
+    gotchas:
+      - Putting `where count(*) > 1` is invalid.
+      - Grouping by a nullable column puts all nulls in one group.
+    seeAlso: [sql-joins, sql-window]
+    tool: { name: PostgreSQL, version: '17', verifiedOn: 2026-11-05 }
+    sourceUrl: https://www.postgresql.org/docs/current/queries-table-expressions.html#QUERIES-GROUP
+    tags: [sql, group-by, having]
+
+  - id: sql-cte
+    phase: F
+    topic: SQL
+    title: Break a query into named steps with a CTE
+    whenToUse: When a query has several stages and a nested subquery would be hard to read or reuse.
+    snippets:
+      - lang: sql
+        caption: A recursive CTE that generates a series
+        runnable: true
+        checked: executed
+        expectRows: [[1], [2], [3], [4]]
+        code: |
+          with recursive nums(n) as (
+            select 1
+            union all
+            select n + 1 from nums where n < 4
+          )
+          select n from nums order by n;
+    notes:
+      - A CTE is a named result for one statement, not a view.
+      - "`with recursive` needs a base case and a step that moves toward it."
+      - In PostgreSQL 12+ a CTE can be inlined, so it is not automatically an optimisation fence.
+    gotchas:
+      - An unbounded recursive CTE runs until it hits a limit or memory.
+      - A trailing comma before the main select is a syntax error.
+    seeAlso: [sql-window, sql-joins]
+    tool: { name: PostgreSQL, version: '17', verifiedOn: 2026-11-05 }
+    sourceUrl: https://www.postgresql.org/docs/current/queries-with.html
+    tags: [sql, cte, recursion]
+
+  - id: sql-window
+    phase: F
+    topic: SQL
+    title: Rank rows without collapsing them
+    whenToUse: When you need a per-group ranking, running total, or previous value while keeping every row.
+    snippets:
+      - lang: sql
+        caption: Rank scores and keep ties
+        runnable: true
+        checked: executed
+        expectRows: [['Ada', 90, 1], ['Lin', 85, 2], ['Sam', 85, 2], ['Kai', 70, 4]]
+        code: |
+          with scores(player, score) as (
+            values ('Ada', 90), ('Lin', 85), ('Sam', 85), ('Kai', 70)
+          )
+          select player, score, rank() over (order by score desc)::int as rank
+          from scores
+          order by rank, player;
+    notes:
+      - "`row_number` gives 1,2,3,4; `rank` leaves gaps after ties; `dense_rank` does not."
+      - Add `partition by user_id` for a per-user ranking.
+      - A window function is evaluated after `where` and `group by`.
+    gotchas:
+      - You cannot filter on a window result in the same `where`; wrap it in a CTE.
+      - "`order by` inside `over` is separate from the final output order."
+    seeAlso: [sql-group-having, sql-cte]
+    tool: { name: PostgreSQL, version: '17', verifiedOn: 2026-11-05 }
+    sourceUrl: https://www.postgresql.org/docs/current/tutorial-window.html
+    tags: [sql, window, ranking]
+
+  - id: sql-transactions
+    phase: F
+    topic: SQL
+    title: Make two writes succeed or fail together
+    whenToUse: When a transfer, order or signup writes to more than one row and a partial result would be wrong.
+    snippets:
+      - lang: sql
+        caption: Move money in one transaction
+        runnable: true
+        checked: executed
+        expectRows: [[1, 80], [2, 70]]
+        code: |
+          create temporary table accounts(id int primary key, balance int not null);
+          insert into accounts values (1, 100), (2, 50);
+          begin;
+          update accounts set balance = balance - 20 where id = 1;
+          update accounts set balance = balance + 20 where id = 2;
+          commit;
+          select id, balance from accounts order by id;
+    notes:
+      - "`begin` starts the transaction; `commit` makes it durable; `rollback` discards it."
+      - Keep transactions short; long ones hold locks and block other writers.
+      - Check the affected row count and roll back if it is not what you expected.
+    gotchas:
+      - A failed statement inside a transaction aborts it until you `rollback`.
+      - Autocommit is on outside an explicit transaction, so each statement stands alone.
+    seeAlso: [sql-index, sql-explained]
+    tool: { name: PostgreSQL, version: '17', verifiedOn: 2026-11-05 }
+    sourceUrl: https://www.postgresql.org/docs/current/tutorial-transactions.html
+    tags: [sql, transaction, consistency]
+
+  - id: sql-index
+    phase: F
+    topic: SQL
+    title: Add an index for a real query
+    whenToUse: When a query is slow and you can show the filter and sort it uses, not because a table "looks big".
+    snippets:
+      - lang: sql
+        caption: A composite index matching a filter and an order
+        runnable: false
+        checked: docs
+        code: |
+          create index notes_user_created_idx
+            on notes (user_id, created_at desc);
+
+          select id, body
+          from notes
+          where user_id = $1
+          order by created_at desc
+          limit 20;
+    notes:
+      - Put the equality column first, then the range or sort column.
+      - An index speeds reads and slows writes; measure both.
+      - A foreign key does not create an index in PostgreSQL.
+    gotchas:
+      - "`where lower(email) = ...` cannot use an index on `email` unless the index uses the same expression."
+      - Leading wildcards such as `like '%term'` usually prevent a B-tree index from helping.
+    seeAlso: [sql-explained, sql-transactions]
+    tool: { name: PostgreSQL, version: '17', verifiedOn: 2026-11-05 }
+    sourceUrl: https://www.postgresql.org/docs/current/indexes.html
+    tags: [sql, index, performance]
+
+  - id: sql-explained
+    phase: F
+    topic: SQL
+    title: Read EXPLAIN instead of guessing
+    whenToUse: When a query is slow and you need to know whether it scans a table, uses an index, or sorts a large result.
+    snippets:
+      - lang: sql
+        caption: See the plan and the actual time
+        runnable: false
+        checked: docs
+        code: |
+          explain (analyze, buffers, format text)
+          select id, body
+          from notes
+          where user_id = 42
+          order by created_at desc
+          limit 20;
+    notes:
+      - "`analyze` actually runs the statement; it is not safe for a destructive query."
+      - Look for `Seq Scan` on a large table, large row estimates, and external sorts.
+      - Compare estimated rows with actual rows; a large gap means stale statistics.
+    gotchas:
+      - EXPLAIN ANALYZE on an UPDATE or DELETE changes data unless it is in a rolled-back transaction.
+      - Timings on a dev machine with a small table do not predict production.
+    seeAlso: [sql-index, sql-transactions]
+    tool: { name: PostgreSQL, version: '17', verifiedOn: 2026-11-05 }
+    sourceUrl: https://www.postgresql.org/docs/current/sql-explain.html
+    tags: [sql, explain, performance, debugging]

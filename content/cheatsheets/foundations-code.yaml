@@ -1,0 +1,496 @@
+entries:
+  - id: js-async-await
+    phase: F
+    topic: JavaScript
+    title: Await an async result and handle failure
+    whenToUse: When a function returns a promise and the next line needs its value, or when a rejection must not become an unhandled error.
+    snippets:
+      - lang: js
+        caption: An async function with a real try/catch
+        runnable: true
+        checked: executed
+        expectStdout: "Ada"
+        code: |
+          const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+
+          async function fetchUser() {
+            await wait(5)
+            return { id: 7, name: 'Ada' }
+          }
+
+          async function main() {
+            try {
+              const user = await fetchUser()
+              console.log(user.name)
+            } catch (error) {
+              console.error('failed:', error)
+              process.exitCode = 1
+            }
+          }
+
+          await main()
+    notes:
+      - "`await` pauses only the async function, not the whole process."
+      - "`try/catch` around `await` catches a rejected promise."
+      - Return or await every promise; a floating promise can fail after the request ends.
+    gotchas:
+      - "`array.forEach(async (item) => { await work(item) })` does not wait for the work."
+      - A missing `await` inside `try` means the rejection escapes the catch.
+    seeAlso: [js-array-methods, js-modules]
+    tool: { name: Node.js, version: '22.21.0', verifiedOn: 2026-11-05 }
+    sourceUrl: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function
+    tags: [javascript, async, promises, errors]
+
+  - id: js-array-methods
+    phase: F
+    topic: JavaScript
+    title: Transform a list with filter, map and reduce
+    whenToUse: When you need a derived list or total and a `for` loop would add bookkeeping you do not need.
+    snippets:
+      - lang: js
+        caption: Filter, map and reduce one list
+        runnable: true
+        checked: executed
+        expectStdout: "Ada,Sam 16 3"
+        code: |
+          const users = [
+            { name: 'Ada', active: true, hours: 8 },
+            { name: 'Lin', active: false, hours: 5 },
+            { name: 'Sam', active: true, hours: 3 },
+          ]
+
+          const active = users.filter((user) => user.active).map((user) => user.name)
+          const total = users.reduce((sum, user) => sum + user.hours, 0)
+          const byName = Object.fromEntries(users.map((user) => [user.name, user.hours]))
+
+          console.log(active.join(','), total, byName.Sam)
+    notes:
+      - "`filter` keeps the original elements; `map` returns a new array of the same length."
+      - Always pass an initial value to `reduce` when the type can change.
+      - Chain only while it stays readable; name the intermediate step if not.
+    gotchas:
+      - "`map` does not remove items; returning `undefined` keeps a slot."
+      - "`sort` mutates the array and compares strings by default."
+    seeAlso: [js-async-await, js-destructuring]
+    tool: { name: Node.js, version: '22.21.0', verifiedOn: 2026-11-05 }
+    sourceUrl: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array
+    tags: [javascript, arrays, functional]
+
+  - id: js-destructuring
+    phase: F
+    topic: JavaScript
+    title: Pull values out of nested data
+    whenToUse: When an API response is deeply nested and repeating the path would hide what the function actually needs.
+    snippets:
+      - lang: js
+        caption: Destructure objects, arrays and defaults
+        runnable: true
+        checked: executed
+        expectStdout: "Ada admin 1 2 true"
+        code: |
+          const response = {
+            data: { user: { name: 'Ada', roles: ['admin'] } },
+            error: null,
+          }
+
+          const {
+            data: {
+              user: {
+                name,
+                roles: [firstRole],
+              },
+            },
+          } = response
+
+          const [head, ...tail] = [1, 2, 3]
+          const merged = { ...response.data.user, active: true }
+
+          console.log(name, firstRole, head, tail.length, merged.active)
+    notes:
+      - "Rename with `{ name: displayName }` when the local name would shadow something."
+      - Defaults apply when the value is `undefined`, not when it is `null`.
+      - Spread copies one level; nested objects are still shared.
+    gotchas:
+      - Destructuring a missing intermediate object throws; default the parent, not the leaf.
+      - Rest in an object drops keys, which can silently remove data from an API payload.
+    seeAlso: [js-array-methods, ts-narrowing]
+    tool: { name: Node.js, version: '22.21.0', verifiedOn: 2026-11-05 }
+    sourceUrl: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring
+    tags: [javascript, syntax, objects]
+
+  - id: js-modules
+    phase: F
+    topic: JavaScript
+    title: Split code into modules without circular imports
+    whenToUse: When a file is doing several jobs, or when two files import each other and one value is unexpectedly undefined.
+    snippets:
+      - lang: js
+        caption: Named and default exports
+        runnable: false
+        checked: docs
+        code: |
+          // math.js
+          export const add = (a, b) => a + b
+          export default function multiply(a, b) {
+            return a * b
+          }
+
+          // app.js
+          import multiply, { add } from './math.js'
+          console.log(add(2, 3), multiply(2, 3))
+    notes:
+      - "Prefer named exports: they rename cleanly and are easier to search."
+      - A module is evaluated once, the first time it is imported.
+      - Import types with `import type` so they disappear from the bundle.
+    gotchas:
+      - A circular import can leave a binding undefined at module evaluation time.
+      - "`require` and `import` have different resolution rules; do not mix them in one file."
+    seeAlso: [js-async-await, ts-narrowing]
+    tool: { name: Node.js, version: '22.21.0', verifiedOn: 2026-11-05 }
+    sourceUrl: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules
+    tags: [javascript, modules, imports]
+
+  - id: ts-narrowing
+    phase: F
+    topic: TypeScript
+    title: Narrow a union before using its fields
+    whenToUse: When a value can be one of several shapes and TypeScript refuses a property that only exists on one of them.
+    snippets:
+      - lang: ts
+        caption: A discriminated union with an exhaustive result
+        runnable: true
+        checked: executed
+        expectStdout: "ready"
+        code: |
+          type Result = { ok: true; value: string } | { ok: false; error: string }
+
+          function unwrap(result: Result): string {
+            if (result.ok) return result.value
+            return result.error
+          }
+
+          const value: string = unwrap({ ok: true, value: 'ready' })
+          console.log(value)
+    notes:
+      - A shared literal field such as `ok` lets TypeScript narrow the whole object.
+      - "`typeof`, `in`, `instanceof` and user-defined type guards also narrow."
+      - Keep the union small; a boolean flag is usually clearer than five optional fields.
+    gotchas:
+      - A type assertion (`as`) silences the error without checking the value.
+      - Narrowing is lost after an `await` if the variable could be reassigned.
+    seeAlso: [ts-generics, ts-utility-types]
+    tool: { name: TypeScript, version: '6.0.3', verifiedOn: 2026-11-05 }
+    sourceUrl: https://www.typescriptlang.org/docs/handbook/2/narrowing.html
+    tags: [typescript, types, narrowing]
+
+  - id: ts-generics
+    phase: F
+    topic: TypeScript
+    title: Write a function that keeps its input type
+    whenToUse: When a helper should work for several types without falling back to `any` or duplicating the function.
+    snippets:
+      - lang: ts
+        caption: A generic helper and its inferred types
+        runnable: false
+        checked: docs
+        code: |
+          function first<T>(items: readonly T[]): T | undefined {
+            return items[0]
+          }
+
+          const id = first([101, 102])          // number | undefined
+          const name = first(['a', 'b'])        // string | undefined
+          const missing = first([] as string[]) // string | undefined
+    notes:
+      - Let TypeScript infer `T` from the argument; specify it only when inference cannot.
+      - "Use a constraint such as `<T extends { id: string }>` when the body needs a field."
+      - "`readonly T[]` accepts both mutable and readonly arrays."
+    gotchas:
+      - An unconstrained generic plus `as any` inside defeats the point.
+      - A default type parameter can hide a caller's mistake.
+    seeAlso: [ts-narrowing, ts-utility-types]
+    tool: { name: TypeScript, version: '6.0.3', verifiedOn: 2026-11-05 }
+    sourceUrl: https://www.typescriptlang.org/docs/handbook/2/generics.html
+    tags: [typescript, generics, types]
+
+  - id: ts-utility-types
+    phase: F
+    topic: TypeScript
+    title: Derive types instead of duplicating them
+    whenToUse: When a public type, a patch payload or a lookup map should stay in sync with a source type.
+    snippets:
+      - lang: ts
+        caption: Pick, Omit, Partial and Record
+        runnable: false
+        checked: docs
+        code: |
+          type User = { id: string; name: string; email: string; createdAt: string }
+
+          type PublicUser = Pick<User, 'id' | 'name'>
+          type UserPatch = Partial<Omit<User, 'id' | 'createdAt'>>
+          type UserMap = Record<string, User>
+
+          const patch: UserPatch = { name: 'Ada' } // email is optional too
+    notes:
+      - "`Pick` keeps a subset; `Omit` removes a subset."
+      - "`Partial` makes every remaining field optional."
+      - "`Record<K, V>` is the type for a dictionary keyed by `K`."
+    gotchas:
+      - "`Omit` on a union does not distribute over its members."
+      - An index signature (`Record<string, T>`) allows any string key, including typos.
+    seeAlso: [ts-generics, ts-narrowing]
+    tool: { name: TypeScript, version: '6.0.3', verifiedOn: 2026-11-05 }
+    sourceUrl: https://www.typescriptlang.org/docs/handbook/utility-types.html
+    tags: [typescript, types, utility]
+
+  - id: py-venv
+    phase: F
+    topic: Python
+    title: Create a virtual environment
+    whenToUse: When a project needs its own Python packages without changing the system installation.
+    snippets:
+      - lang: bash
+        caption: Create, activate and install
+        runnable: false
+        checked: docs
+        code: |
+          python -m venv .venv
+          source .venv/bin/activate          # macOS / Linux
+          .venv\Scripts\Activate.ps1         # Windows PowerShell
+          python -m pip install -r requirements.txt
+    notes:
+      - The environment lives in a folder; delete the folder to remove it.
+      - "`python -m pip` uses the pip that belongs to the active interpreter."
+      - Record direct dependencies in `requirements.txt`, or use `pyproject.toml`.
+    gotchas:
+      - Activating a venv does not change the interpreter used by your editor unless the editor is told.
+      - Committing `.venv` adds thousands of files; ignore it.
+    seeAlso: [py-typing, py-pytest]
+    tool: { name: Python, version: '3.11.15', verifiedOn: 2026-11-05 }
+    sourceUrl: https://docs.python.org/3/library/venv.html
+    tags: [python, environment, setup]
+
+  - id: py-typing
+    phase: F
+    topic: Python
+    title: Add type hints that survive a real code review
+    whenToUse: When a function's input and output are not obvious, or when an editor should catch a wrong call.
+    snippets:
+      - lang: python
+        caption: Built-in generics and an abstract input type
+        runnable: false
+        checked: docs
+        code: |
+          from collections.abc import Iterable
+
+          def average(values: list[float]) -> float:
+              if not values:
+                  raise ValueError("average of empty list")
+              return sum(values) / len(values)
+
+          def names(users: Iterable[dict[str, str]]) -> list[str]:
+              return [user["name"] for user in users]
+    notes:
+      - Python 3.9+ supports `list[float]` and `dict[str, str]` without imports.
+      - Accept the widest useful input; return the narrowest useful output.
+      - Run `mypy` or `pyright` if the hints are meant to be enforced.
+    gotchas:
+      - Hints are not checked at runtime; a wrong value still runs unless you validate.
+      - "`list` as an annotation means any list, not \"a list of anything\"."
+    seeAlso: [py-dataclass, py-venv]
+    tool: { name: Python, version: '3.11.15', verifiedOn: 2026-11-05 }
+    sourceUrl: https://docs.python.org/3/library/typing.html
+    tags: [python, types, quality]
+
+  - id: py-dataclass
+    phase: F
+    topic: Python
+    title: Model a record with a dataclass
+    whenToUse: When a dictionary with fixed keys would be clearer as a small typed object.
+    snippets:
+      - lang: python
+        caption: A frozen dataclass with a safe default list
+        runnable: true
+        checked: executed
+        expectStdout: "f-git 4.5 1"
+        code: |
+          from dataclasses import dataclass, field
+
+          @dataclass(frozen=True)
+          class Module:
+              id: str
+              hours: float
+              tags: list[str] = field(default_factory=list)
+
+          module = Module("f-git", 4.5, ["git"])
+          print(module.id, module.hours, len(module.tags))
+    notes:
+      - "`frozen=True` blocks attribute assignment after construction."
+      - Use `field(default_factory=list)` for a mutable default.
+      - "`slots=True` can reduce memory for many instances."
+    gotchas:
+      - "A bare `tags: list[str] = []` is shared across every instance and is rejected by dataclasses."
+      - Equality compares fields; two records with the same values are equal.
+    seeAlso: [py-typing, py-comprehensions]
+    tool: { name: Python, version: '3.11.15', verifiedOn: 2026-11-05 }
+    sourceUrl: https://docs.python.org/3/library/dataclasses.html
+    tags: [python, dataclass, modelling]
+
+  - id: py-async
+    phase: F
+    topic: Python
+    title: Run async work and avoid blocking the loop
+    whenToUse: When a program waits on many network calls and running them one at a time is too slow.
+    snippets:
+      - lang: python
+        caption: A coroutine, gathered tasks, and an entry point
+        runnable: true
+        checked: executed
+        expectStdout: "Ada 2"
+        code: |
+          import asyncio
+
+          async def fetch_name(delay: float, name: str) -> str:
+              await asyncio.sleep(delay)
+              return name
+
+          async def main() -> None:
+              names = await asyncio.gather(
+                  fetch_name(0.01, "Ada"),
+                  fetch_name(0.005, "Lin"),
+              )
+              print(names[0], len(names))
+
+          asyncio.run(main())
+    notes:
+      - "`asyncio.run` starts the event loop; call it once at the top level."
+      - "`gather` runs awaitables concurrently and returns results in input order."
+      - Use `asyncio.TaskGroup` when you want structured cancellation in newer Python.
+    gotchas:
+      - A blocking call such as `time.sleep` or a synchronous HTTP client stalls the whole loop.
+      - Creating a coroutine without awaiting it does nothing and warns.
+    seeAlso: [py-pytest, js-async-await]
+    tool: { name: Python, version: '3.11.15', verifiedOn: 2026-11-05 }
+    sourceUrl: https://docs.python.org/3/library/asyncio-task.html
+    tags: [python, async, concurrency]
+
+  - id: py-pytest
+    phase: F
+    topic: Python
+    title: Write a test that fails for the right reason
+    whenToUse: When a function has a rule that is easy to break, such as an empty input or an error path.
+    snippets:
+      - lang: python
+        caption: A happy path and an expected exception
+        runnable: false
+        checked: docs
+        code: |
+          # tests/test_stats.py
+          import pytest
+          from app.stats import average
+
+          def test_average():
+              assert average([2, 4]) == 3
+
+          def test_empty_input():
+              with pytest.raises(ValueError):
+                  average([])
+    notes:
+      - Test files are discovered by `test_*.py` or `*_test.py` by default.
+      - "`pytest.raises` fails if the exception is not raised."
+      - Keep one behaviour per test so the failure name tells you what broke.
+    gotchas:
+      - A test that only checks "no exception" can pass while returning the wrong value.
+      - Shared mutable fixtures leak state between tests unless they are reset.
+    seeAlso: [py-typing, py-venv]
+    tool: { name: pytest, version: '8.3', verifiedOn: 2026-11-05 }
+    sourceUrl: https://docs.pytest.org/en/stable/how-to/assert.html
+    tags: [python, testing, pytest]
+
+  - id: py-comprehensions
+    phase: F
+    topic: Python
+    title: Build a list or dict in one readable expression
+    whenToUse: When a loop only exists to build a new collection.
+    snippets:
+      - lang: python
+        caption: Filter and transform in a dict comprehension
+        runnable: true
+        checked: executed
+        expectStdout: "['Ada', 'Lin'] 16"
+        code: |
+          rows = [("Ada", 8), ("Lin", 5), ("Sam", 3)]
+          active = {name: hours for name, hours in rows if hours >= 5}
+          total = sum(hours for _, hours in rows)
+          print(sorted(active), total)
+    notes:
+      - A generator expression inside `sum` avoids building an intermediate list.
+      - Read a comprehension as "expression for item in iterable if condition".
+      - Stop at two `for` clauses; beyond that, use a named loop.
+    gotchas:
+      - A dict comprehension silently overwrites duplicate keys.
+      - A large list comprehension materialises everything; use a generator if you only iterate once.
+    seeAlso: [py-dataclass, js-array-methods]
+    tool: { name: Python, version: '3.11.15', verifiedOn: 2026-11-05 }
+    sourceUrl: https://docs.python.org/3/tutorial/datastructures.html#list-comprehensions
+    tags: [python, collections, syntax]
+
+  - id: cs-big-o
+    phase: F
+    topic: Computer science
+    title: Compare algorithm costs before optimising
+    whenToUse: When two solutions work and you need a reason to pick one, or when a function gets slow as the input grows.
+    snippets:
+      - lang: text
+        caption: The growth classes you will meet most
+        runnable: false
+        checked: docs
+        code: |
+          O(1)        hash lookup, array index
+          O(log n)    binary search, balanced tree lookup
+          O(n)        one pass over the input
+          O(n log n)  comparison sort, divide and conquer
+          O(n^2)      nested loop over the same input
+          O(2^n)      subsets, naive recursive branching
+          O(n!)      permutations
+    notes:
+      - Big-O describes growth, not seconds; constants matter for small inputs.
+      - Name both time and space. An O(n) cache can still be the wrong trade.
+      - Average and worst case can differ, especially for hash tables.
+    gotchas:
+      - A hash lookup is O(1) on average, not a guarantee under adversarial keys.
+      - An optimisation that only helps large inputs can slow the common case.
+    seeAlso: [js-array-methods, sql-explained]
+    tool: { name: Big-O notation, version: 'definition', verifiedOn: 2026-11-05 }
+    sourceUrl: https://en.wikipedia.org/wiki/Big_O_notation
+    tags: [computer-science, algorithms, complexity]
+
+  - id: regex-essentials
+    phase: F
+    topic: Computer science
+    title: Match and replace text with a small regex
+    whenToUse: When a simple pattern should be validated, extracted or replaced, and a full parser is unnecessary.
+    snippets:
+      - lang: js
+        caption: Validate, extract all matches, and replace
+        runnable: true
+        checked: executed
+        expectStdout: "true 2 true"
+        code: |
+          const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+          const text = 'contact ada@example.com and lin@example.org'
+          const found = text.match(/[^\s@]+@[^\s@]+\.[^\s@]+/g) ?? []
+          const replaced = text.replaceAll('example', 'test')
+
+          console.log(isEmail.test('ada@example.com'), found.length, replaced.includes('ada@test.com'))
+    notes:
+      - "`^` and `$` anchor the whole string; without them, a substring can match."
+      - "`g` returns all matches; `i` ignores case; `m` changes what `^` and `$` mean."
+      - Prefer a library or a parser for email, URLs, HTML and dates.
+    gotchas:
+      - A regex can backtrack catastrophically on a crafted long input.
+      - "`.` does not match a newline unless `s` is set."
+    seeAlso: [cs-big-o]
+    tool: { name: Node.js, version: '22.21.0', verifiedOn: 2026-11-05 }
+    sourceUrl: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions
+    tags: [regex, text, validation]

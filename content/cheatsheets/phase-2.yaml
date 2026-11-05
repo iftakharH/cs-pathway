@@ -1,0 +1,545 @@
+entries:
+  - id: llm-messages
+    phase: "2"
+    topic: LLM APIs
+    title: Structure a chat request
+    whenToUse: When moving a prompt from a playground into code and the model needs instructions, context and a user question in the right order.
+    snippets:
+      - lang: json
+        caption: The message array most APIs accept
+        runnable: false
+        checked: docs
+        code: |
+          {
+            "model": "<the provider's current model id>",
+            "max_tokens": 800,
+            "messages": [
+              { "role": "system", "content": "You answer only from the provided notes. If the notes do not contain the answer, say so." },
+              { "role": "user", "content": "Notes:\n<retrieved text>\n\nQuestion: <user question>" }
+            ]
+          }
+    notes:
+      - Keep the system message for rules that apply to every turn.
+      - Put retrieved context before the question so the instruction is the last thing read.
+      - Set a max output length you can afford, not the largest the model allows.
+    gotchas:
+      - A system message is not a security boundary; the user can still attempt injection.
+      - Conversation history grows cost and latency; truncate or summarise deliberately.
+    seeAlso: [llm-tool-calling, llm-cost]
+    tool: { name: Anthropic Messages API, version: 'docs', verifiedOn: 2026-11-05 }
+    sourceUrl: https://docs.anthropic.com/en/api/messages
+    tags: [llm, api, prompting, messages]
+
+  - id: llm-tool-calling
+    phase: "2"
+    topic: LLM APIs
+    title: Let a model call one tool safely
+    whenToUse: When the model needs live data or an action, and a text answer would be a guess.
+    snippets:
+      - lang: ts
+        caption: Define, validate, execute, return
+        runnable: false
+        checked: docs
+        code: |
+          const tools = [{
+            name: 'get_order',
+            description: 'Look up one order by its id. Read-only.',
+            input_schema: {
+              type: 'object',
+              properties: { orderId: { type: 'string', pattern: '^[A-Z0-9-]{4,20}$' } },
+              required: ['orderId'],
+              additionalProperties: false,
+            },
+          }]
+
+          // 1. Model returns a tool_use block with name + input.
+          // 2. Validate input against the schema before doing anything.
+          // 3. Run the tool with the user's permission and least privilege.
+          // 4. Return a tool_result block, then let the model answer.
+    notes:
+      - Describe the tool in one sentence and state whether it reads or writes.
+      - Validate the arguments even if the schema was sent to the model.
+      - Return a short, structured result; do not dump a whole database row.
+      - Require human approval for writes, payments and messages.
+    gotchas:
+      - A model can invent an argument that passes no validation you wrote.
+      - Tool descriptions are untrusted text; a malicious server can put instructions in them.
+    seeAlso: [llm-messages, agent-loop, prompt-injection]
+    tool: { name: Anthropic tool use, version: 'docs', verifiedOn: 2026-11-05 }
+    sourceUrl: https://docs.anthropic.com/en/docs/build-with-claude/tool-use
+    tags: [llm, tools, agents, security]
+
+  - id: llm-structured-output
+    phase: "2"
+    topic: LLM APIs
+    title: Get JSON you can actually parse
+    whenToUse: When the next step is code, not a human reading a paragraph.
+    snippets:
+      - lang: ts
+        caption: Validate the model output with the same schema as your types
+        runnable: true
+        checked: executed
+        expectStdout: "1 invalid"
+        code: |
+          import { z } from 'zod'
+
+          const Answer = z.object({
+            answer: z.string(),
+            citations: z.array(z.object({ url: z.string().url() })).min(1),
+          })
+
+          const parsed = Answer.safeParse({ answer: 'ok', citations: [] })
+          console.log(parsed.success ? 'valid' : parsed.error.issues.length, parsed.success ? 'valid' : 'invalid')
+    notes:
+      - Ask for JSON, then validate it. A schema is not a guarantee.
+      - Keep the schema small; nested unions are where models fail most.
+      - On failure, retry once with the validation error, then fail the request.
+    gotchas:
+      - Markdown fences around JSON break a naive `JSON.parse`.
+      - A model can return valid JSON that is factually wrong.
+    seeAlso: [llm-messages, llm-tool-calling]
+    tool: { name: Zod, version: '4.6.7', verifiedOn: 2026-11-05 }
+    sourceUrl: https://docs.anthropic.com/en/docs/build-with-claude/tool-use
+    tags: [llm, structured-output, validation]
+
+  - id: llm-streaming
+    phase: "2"
+    topic: LLM APIs
+    title: Stream tokens without breaking the UI
+    whenToUse: When a long response should appear progressively instead of after a blank wait.
+    snippets:
+      - lang: ts
+        caption: Read a server-sent event stream
+        runnable: false
+        checked: docs
+        code: |
+          const response = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ question }),
+          })
+
+          if (!response.ok || !response.body) throw new Error(`HTTP ${response.status}`)
+
+          const reader = response.body.getReader()
+          const decoder = new TextDecoder()
+          let buffer = ''
+
+          while (true) {
+            const { value, done } = await reader.read()
+            if (done) break
+            buffer += decoder.decode(value, { stream: true })
+            const events = buffer.split('\n\n')
+            buffer = events.pop() ?? ''
+            for (const event of events) {
+              const line = event.split('\n').find((item) => item.startsWith('data: '))
+              if (line && line.slice(6) !== '[DONE]') append(line.slice(6))
+            }
+          }
+    notes:
+      - Keep the partial buffer; a chunk can split an event in half.
+      - "Handle cancel: close the reader when the component unmounts."
+      - Show a stop button; streaming without a cancel is a trap.
+    gotchas:
+      - A proxy that buffers the response defeats streaming.
+      - Errors that occur after the first token need a separate UI path.
+    seeAlso: [llm-messages, llm-cost]
+    tool: { name: Server-sent events, version: 'WHATWG', verifiedOn: 2026-11-05 }
+    sourceUrl: https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events
+    tags: [llm, streaming, ui, async]
+
+  - id: llm-cost
+    phase: "2"
+    topic: LLM APIs
+    title: Calculate the cost of one call
+    whenToUse: When a feature is about to multiply token usage and you need a number before shipping.
+    snippets:
+      - lang: js
+        caption: Use the provider's current rates, never a hard-coded price
+        runnable: true
+        checked: executed
+        expectStdout: "0.0136"
+        code: |
+          // Example rates only. Replace with the provider's current pricing page.
+          const inputPerMillion = 1
+          const outputPerMillion = 2
+          const inputTokens = 12_000
+          const outputTokens = 800
+
+          const cost =
+            (inputTokens / 1_000_000) * inputPerMillion +
+            (outputTokens / 1_000_000) * outputPerMillion
+
+          console.log(cost.toFixed(4))
+    notes:
+      - Cost = input tokens × input rate + output tokens × output rate.
+      - Long context and cached tokens may have different rates; read the page.
+      - Multiply by requests per user per month before deciding it is cheap.
+    gotchas:
+      - Token counts differ from word counts and from character counts.
+      - A retry doubles the cost of the failed call.
+    seeAlso: [llm-messages, llm-retries]
+    tool: { name: Token arithmetic, version: 'formula', verifiedOn: 2026-11-05 }
+    sourceUrl: https://docs.anthropic.com/en/docs/about-claude/pricing
+    tags: [llm, cost, tokens, capacity]
+
+  - id: rag-chunking
+    phase: "2"
+    topic: RAG
+    title: Chunk documents for retrieval, not for storage
+    whenToUse: When answers miss the relevant passage or cite a fragment that starts mid-sentence.
+    snippets:
+      - lang: ts
+        caption: Split on structure first, then measure
+        runnable: false
+        checked: docs
+        code: |
+          // Prefer headings, then paragraphs, then a size limit.
+          // Keep the section title attached to every chunk.
+          const chunk = {
+            text: sectionText,
+            title: sectionTitle,
+            sourceUrl,
+            startOffset: offset,
+            endOffset: offset + sectionText.length,
+          }
+    notes:
+      - Chunk on document structure before reaching for a fixed character count.
+      - Attach the heading or document title so a fragment has context.
+      - Measure retrieval recall on a labelled set before tuning the size.
+    gotchas:
+      - A fixed size that ignores headings cuts sentences and tables.
+      - More overlap means more storage and more duplicate results.
+    seeAlso: [rag-hybrid-search, pgvector, eval-retrieval-metrics]
+    tool: { name: Retrieval design, version: 'editorial', verifiedOn: 2026-11-05 }
+    sourceUrl: https://platform.openai.com/docs/guides/retrieval
+    tags: [rag, chunking, retrieval]
+
+  - id: rag-hybrid-search
+    phase: "2"
+    topic: RAG
+    title: Combine keyword and vector search
+    whenToUse: When a vector-only search misses an exact name, code identifier or rare term.
+    snippets:
+      - lang: sql
+        caption: Rank keyword and vector results, then merge
+        runnable: false
+        checked: docs
+        code: |
+          with keyword as (
+            select id, ts_rank_cd(search_vector, websearch_to_tsquery('english', $1)) as score
+            from chunks
+            where search_vector @@ websearch_to_tsquery('english', $1)
+            order by score desc
+            limit 20
+          ), semantic as (
+            select id, 1 - (embedding <=> $2) as score
+            from chunks
+            order by embedding <=> $2
+            limit 20
+          )
+          select id, sum(score) as combined
+          from (select * from keyword union all select * from semantic) ranked
+          group by id
+          order by combined desc
+          limit 8;
+    notes:
+      - Keyword search handles exact identifiers; vectors handle paraphrase.
+      - Merge by rank or reciprocal rank fusion rather than raw scores.
+      - Keep the two result lists inspectable while tuning.
+    gotchas:
+      - Raw scores from different methods are not on the same scale.
+      - A full-text index needs the language configuration to match the text.
+    seeAlso: [rag-chunking, pgvector]
+    tool: { name: PostgreSQL full-text search, version: '17', verifiedOn: 2026-11-05 }
+    sourceUrl: https://www.postgresql.org/docs/current/textsearch-controls.html
+    tags: [rag, search, hybrid, postgres]
+
+  - id: pgvector
+    phase: "2"
+    topic: RAG
+    title: Store embeddings and search with pgvector
+    whenToUse: When retrieval should live in the same Postgres database as the rest of the product.
+    snippets:
+      - lang: sql
+        caption: Extension, vector column, HNSW index and a cosine query
+        runnable: false
+        checked: docs
+        code: |
+          create extension if not exists vector;
+
+          create table chunks (
+            id bigserial primary key,
+            content text not null,
+            embedding vector(1536) not null
+          );
+
+          create index chunks_embedding_idx
+            on chunks using hnsw (embedding vector_cosine_ops);
+
+          select id, content
+          from chunks
+          order by embedding <=> $1
+          limit 5;
+    notes:
+      - The vector dimension must match the embedding model exactly.
+      - "Match the operator to the index opclass: cosine `<=>`, L2 `<->`, inner product `<#>`."
+      - Add a filter column and an index when retrieval is scoped to a user or tenant.
+    gotchas:
+      - A dimension mismatch fails at insert or query time.
+      - An HNSW index trades build time and memory for search speed.
+    seeAlso: [rag-hybrid-search, rag-chunking]
+    tool: { name: pgvector, version: '0.8', verifiedOn: 2026-11-05 }
+    sourceUrl: https://github.com/pgvector/pgvector
+    tags: [rag, pgvector, postgres, embeddings]
+
+  - id: eval-golden-set
+    phase: "2"
+    topic: Evals
+    title: Write a golden set before changing the prompt
+    whenToUse: When a prompt or retrieval change feels better but you cannot prove it.
+    snippets:
+      - lang: json
+        caption: One case with the question, the expected evidence and the pass rule
+        runnable: false
+        checked: docs
+        code: |
+          {
+            "id": "rag-014",
+            "question": "What is the refund window for an annual plan?",
+            "expectedSources": ["https://docs.example.com/billing#refunds"],
+            "expectedAnswerPoints": ["30 days", "annual plan"],
+            "mustNotContain": ["lifetime", "guaranteed"],
+            "split": "test"
+          }
+    notes:
+      - Collect real questions from users, not questions you invented from the docs.
+      - Record the expected evidence, not only the expected answer.
+      - Keep a held-out split you do not tune on.
+      - Version the set; a changed test set invalidates comparisons.
+    gotchas:
+      - A tiny set overfits quickly; ten cases can all pass by luck.
+      - An eval with no failure cases cannot tell you whether the system is safe.
+    seeAlso: [eval-retrieval-metrics, eval-llm-judge]
+    tool: { name: Eval design, version: 'editorial', verifiedOn: 2026-11-05 }
+    sourceUrl: https://platform.openai.com/docs/guides/evals
+    tags: [evals, testing, rag, quality]
+
+  - id: eval-retrieval-metrics
+    phase: "2"
+    topic: Evals
+    title: Measure recall@k and MRR
+    whenToUse: When an answer is wrong and you need to know whether retrieval or generation caused it.
+    snippets:
+      - lang: js
+        caption: Two retrieval metrics on one query
+        runnable: true
+        checked: executed
+        expectStdout: "0.67 0.50"
+        code: |
+          const retrieved = ['b', 'a', 'c', 'd']
+          const relevant = new Set(['a', 'd', 'z'])
+          const k = 4
+
+          const hits = retrieved.slice(0, k).filter((id) => relevant.has(id)).length
+          const recallAtK = hits / relevant.size
+          const firstRelevant = retrieved.findIndex((id) => relevant.has(id))
+          const reciprocalRank = firstRelevant === -1 ? 0 : 1 / (firstRelevant + 1)
+
+          console.log(recallAtK.toFixed(2), reciprocalRank.toFixed(2))
+    notes:
+      - Recall@k asks whether the right passage is in the top k at all.
+      - MRR rewards putting the first relevant result near the top.
+      - Report both; one can look good while the other is bad.
+    gotchas:
+      - A larger k improves recall and can hurt precision and latency.
+      - Judging relevance with a single annotator hides disagreement.
+    seeAlso: [eval-golden-set, rag-chunking]
+    tool: { name: Retrieval metrics, version: 'formula', verifiedOn: 2026-11-05 }
+    sourceUrl: https://docs.ragas.io/en/stable/concepts/metrics/
+    tags: [evals, retrieval, metrics, rag]
+
+  - id: eval-llm-judge
+    phase: "2"
+    topic: Evals
+    title: Use an LLM judge without fooling yourself
+    whenToUse: When answers are free text and exact-match scoring cannot tell a good answer from a bad one.
+    snippets:
+      - lang: text
+        caption: A judge rubric with a forced verdict and a reason
+        runnable: false
+        checked: docs
+        code: |
+          You are grading one answer against a reference.
+
+          Criteria:
+          - Faithful: every claim is supported by the provided sources.
+          - Complete: it answers the question asked.
+          - Concise: no padding.
+
+          Return JSON: {"verdict":"pass"|"fail","reason":"one sentence"}
+          Fail if any claim is not supported, even if the rest is correct.
+
+          Question: ...
+          Sources: ...
+          Answer to grade: ...
+    notes:
+      - Grade against explicit criteria and require a short reason.
+      - Calibrate the judge against human labels on a sample.
+      - Position, verbosity and self-preference biases are documented; randomise order and keep the rubric blind to the author.
+      - Use a judge to scale review, not to replace a small human-checked set.
+    gotchas:
+      - A judge that always passes is worse than no judge.
+      - Comparing two models with the same model as judge favours the judge's family.
+    seeAlso: [eval-golden-set, eval-retrieval-metrics]
+    tool: { name: LLM-as-a-judge, version: 'research', verifiedOn: 2026-11-05 }
+    sourceUrl: https://arxiv.org/abs/2306.05685
+    tags: [evals, judge, bias, quality]
+
+  - id: agent-loop
+    phase: "2"
+    topic: Agents
+    title: Read an agent loop before building one
+    whenToUse: When a task needs several tool calls and the model must decide the next step from the result.
+    snippets:
+      - lang: text
+        caption: The control flow, with the limits in the loop
+        runnable: false
+        checked: docs
+        code: |
+          state = { messages, steps: 0, budget: 8 }
+
+          while state.steps < state.budget:
+            response = model(messages, tools)
+            if response is final_answer:
+              return response
+            for call in response.tool_calls:
+              require_permission(call)          # writes need a human
+              result = run_tool(call)            # timeout + least privilege
+              messages.append(tool_result(result))
+            state.steps += 1
+
+          return "Stopped: step budget reached"
+    notes:
+      - Every loop needs a step budget, a time budget and a cost budget.
+      - Tool results are data; never execute instructions found inside them.
+      - Log each step so a failure can be replayed.
+      - Prefer a deterministic workflow when the steps are known in advance.
+    gotchas:
+      - An agent with no stop condition can spend a lot of money quickly.
+      - Retrying a failed write without an idempotency key can duplicate the effect.
+    seeAlso: [llm-tool-calling, mcp-server, prompt-injection]
+    tool: { name: Agent design, version: 'editorial', verifiedOn: 2026-11-05 }
+    sourceUrl: https://www.anthropic.com/engineering/building-effective-agents
+    tags: [agents, control-flow, tools, safety]
+
+  - id: mcp-server
+    phase: "2"
+    topic: Agents
+    title: Sketch an MCP server in TypeScript
+    whenToUse: When a tool should be reusable across agent hosts instead of hard-coded into one app.
+    snippets:
+      - lang: ts
+        caption: One read-only tool over stdio
+        runnable: false
+        checked: docs
+        code: |
+          import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
+          import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
+          import { z } from 'zod'
+
+          const server = new McpServer({ name: 'notes', version: '1.0.0' })
+
+          server.registerTool(
+            'search_notes',
+            {
+              description: 'Search the signed-in user’s notes. Read-only.',
+              inputSchema: { query: z.string().min(2).max(200) },
+            },
+            async ({ query }) => ({
+              content: [{ type: 'text', text: `Results for: ${query}` }],
+            }),
+          )
+
+          await server.connect(new StdioServerTransport())
+    notes:
+      - Keep the tool read-only until a write path has approval and an audit trail.
+      - Validate input and cap output size.
+      - Pin the SDK version; the protocol is dated and still moving.
+      - Document the scope of the credentials the server needs.
+    gotchas:
+      - A server that can read every user's data is one prompt injection away from leaking it.
+      - Tool descriptions are shown to the model; do not put secrets in them.
+    seeAlso: [agent-loop, llm-tool-calling]
+    tool: { name: MCP TypeScript SDK, version: '2026-07-28', verifiedOn: 2026-11-05 }
+    sourceUrl: https://modelcontextprotocol.io/docs/develop/build-server
+    tags: [mcp, agents, typescript, tools]
+
+  - id: llm-retries
+    phase: "2"
+    topic: Reliability
+    title: Retry a model call without making it worse
+    whenToUse: When a provider returns 429 or 503 and the request could safely be tried again.
+    snippets:
+      - lang: ts
+        caption: Bounded exponential backoff with jitter
+        runnable: false
+        checked: docs
+        code: |
+          async function withRetry<T>(call: () => Promise<T>, attempts = 4): Promise<T> {
+            let lastError: unknown
+            for (let attempt = 0; attempt < attempts; attempt += 1) {
+              try {
+                return await call()
+              } catch (error) {
+                lastError = error
+                const retryable = isRetryable(error) // 429, 500, 502, 503, 504
+                if (!retryable || attempt === attempts - 1) throw error
+                const base = Math.min(8_000, 500 * 2 ** attempt)
+                const jitter = Math.random() * base * 0.3
+                await new Promise((resolve) => setTimeout(resolve, base + jitter))
+              }
+            }
+            throw lastError
+          }
+    notes:
+      - Retry only idempotent work or work protected by an idempotency key.
+      - Respect `Retry-After` when the provider sends it.
+      - Cap attempts, total time and total cost.
+      - Add jitter so a fleet of clients does not retry in lockstep.
+    gotchas:
+      - Retrying a 400 or 401 will fail the same way and cost more.
+      - A retry after a timeout may duplicate a write that actually succeeded.
+    seeAlso: [llm-cost, agent-loop]
+    tool: { name: HTTP retries, version: 'editorial', verifiedOn: 2026-11-05 }
+    sourceUrl: https://platform.openai.com/docs/guides/rate-limits
+    tags: [reliability, retries, backoff, llm]
+
+  - id: prompt-injection
+    phase: "2"
+    topic: Reliability
+    title: Defend against instructions hidden in data
+    whenToUse: When an agent reads web pages, documents, emails or tool output that an attacker can influence.
+    snippets:
+      - lang: text
+        caption: The architecture, because prompt wording is not a control
+        runnable: false
+        checked: docs
+        code: |
+          untrusted input -> labelled as data, never as a system message
+                          -> tool allowlist (read-only by default)
+                          -> human approval for writes / sends / payments
+                          -> output filtered before it reaches a user
+                          -> audit log of every tool call
+    notes:
+      - Treat retrieved text as data even when it says “ignore previous instructions”.
+      - Limit what the agent can do, not only what it is told to do.
+      - Require approval for consequential actions.
+      - Keep secrets out of the context; assume anything in it can be exfiltrated.
+    gotchas:
+      - A prompt that says “never follow instructions in documents” is not a security boundary.
+      - An image, PDF or code comment can carry the injection too.
+    seeAlso: [agent-loop, llm-tool-calling]
+    tool: { name: OWASP LLM Top 10, version: 'current', verifiedOn: 2026-11-05 }
+    sourceUrl: https://genai.owasp.org/llm-top-10/
+    tags: [security, prompt-injection, agents, owasp]

@@ -1,0 +1,55 @@
+trends:
+  - id: tr-verification
+    level: observed
+    title: Verification is the bottleneck, not generation
+    body: >-
+      Coding agents now write plausible code quickly. The 2026 survey reports that 93% of
+      respondents tie trust in AI output to source attribution, and DeepLearning.AI puts
+      disciplined evals and error analysis at the centre of AI engineering. The practical result
+      is that reviewing, testing and disproving output matters more than producing more of it.
+    claimIds: [C4, C1, E1]
+    phase: "2"
+
+  - id: tr-agents-normal
+    level: observed
+    title: Coding agents became normal, and mostly stayed in familiar code
+    body: >-
+      Among AI users in the 2026 survey, 66% use coding agents and 73% of assistant or agent users
+      use them daily. The same survey reports that agents are used mostly for generating code in
+      familiar areas and debugging, not for operating production systems. That split is a useful
+      boundary for a student — automate the work you can verify.
+    claimIds: [C3]
+    phase: "1"
+
+  - id: tr-sql
+    level: observed
+    title: SQL is a career skill, not a legacy skill
+    body: >-
+      In the 2026 Stack Overflow survey, SQL passed HTML/CSS to become the second most-used
+      language. AI tools query data, but the person who can write and explain the query still
+      decides whether the answer is right.
+    claimIds: [C5]
+    phase: F
+
+  - id: tr-mcp
+    level: emerging
+    title: MCP is standardising how tools reach models
+    body: >-
+      The 2026-07-28 specification describes a stateless core with per-request capability
+      negotiation, and optional extensions for long-running tasks and skills. A registry in
+      preview provides a central metadata catalogue with namespace verification. The direction is
+      portable tools rather than one integration per vendor, but both the spec and the registry
+      are still moving.
+    claimIds: [C7, C8]
+    phase: "2"
+
+  - id: tr-skills
+    level: emerging
+    title: Portable skills are becoming a packaging unit for agent knowledge
+    body: >-
+      Agent Skills define a small folder contract — a required SKILL.md with a bounded name and
+      description — and load instructions only when a task matches. That is a practical response
+      to context limits, and it gives teams something versionable to review. Support still varies
+      by tool, so check the tool you use rather than assuming portability.
+    claimIds: [C9]
+    phase: "2"

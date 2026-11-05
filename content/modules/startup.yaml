@@ -1,0 +1,961 @@
+modules:
+  - id: s1-should-i-start
+    phase: S
+    order: 1
+    title: Should I start one?
+    summary: Starting a company is a decision about risk, runway and evidence. Make the constraints explicit before you make the commitment.
+    objectives:
+      - Write down your runway, obligations and weekly hours.
+      - Separate a testable idea from a fantasy with no first customer.
+      - Define a 90-day experiment with a stop rule.
+      - Decide what you will not sacrifice to keep the experiment going.
+    prerequisites: []
+    estHours: { min: 3, max: 5 }
+    claimIds: [S2]
+    resources:
+      - title: Y Combinator Startup School
+        publisher: Y Combinator
+        url: https://www.startupschool.org/
+        format: course
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: Free lectures and exercises on choosing an idea and finding users.
+      - title: How Not to Die
+        publisher: Paul Graham
+        url: https://paulgraham.com/die.html
+        format: article
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: A direct essay on the most common way startups fail and how to avoid it.
+    cheatsheetIds: [startup-funding-stages, customer-questions]
+    quiz:
+      - id: s1-q1
+        question: What does it mean for a startup to be “default alive”?
+        choices:
+          - It is profitable, or on track to be, before the money runs out
+          - It has raised a seed round
+          - It has a waitlist
+          - It has more users than last month
+        answerIndex: 0
+        explanation: Default alive means the current growth and spending reach profitability before the cash is gone.
+        sourceUrl: https://paulgraham.com/aord.html
+      - id: s1-q2
+        question: According to Paul Graham, what is the most common cause of startup death?
+        choices: [Running out of money, A bad logo, Too many users, A slow website]
+        answerIndex: 0
+        explanation: Startups are usually killed by running out of money, often after the founders stop working on the thing that mattered.
+        sourceUrl: https://paulgraham.com/die.html
+      - id: s1-q3
+        question: In YC's standard deal, what does the $125,000 convert into?
+        choices: [A fixed 7% of the company, A fixed 20%, An uncapped SAFE, A loan]
+        answerIndex: 0
+        explanation: The $125k is on a post-money SAFE for 7%; the $375k is on an uncapped MFN SAFE.
+        sourceUrl: https://ycombinator.com/deal
+      - id: s1-q4
+        question: What is the $375,000 portion of the YC deal?
+        choices:
+          - An uncapped SAFE with a most-favoured-nation provision
+          - A priced Series A round
+          - A grant that does not dilute
+          - A convertible note with a 9% interest rate
+        answerIndex: 0
+        explanation: YC invests $375,000 on an uncapped SAFE with MFN terms; it converts with the next round's terms.
+        sourceUrl: https://ycombinator.com/deal
+      - id: s1-q5
+        question: What does Paul Graham recommend for getting the first users?
+        choices:
+          - Recruit them manually, one at a time
+          - Run a broad ad campaign
+          - Buy a large email list
+          - Wait for the product to go viral
+        answerIndex: 0
+        explanation: Early on, unscalable manual recruitment is the fastest way to learn what users actually want.
+        sourceUrl: https://paulgraham.com/ds.html
+    proof:
+      title: A risk and runway worksheet
+      brief: Write a one-page worksheet with your cash, monthly burn, obligations, available hours and the evidence you already have. Define a 90-day experiment with one metric, one budget and one stop rule. Name what you will not sacrifice, such as your degree or sleep.
+      evidence: The worksheet, the experiment definition, and one paragraph on the worst realistic outcome.
+      rubric:
+        - criterion: Constraints
+          levels:
+            0: No numbers or dates.
+            1: A budget exists but no time constraint.
+            2: Cash, burn, hours and obligations are written down.
+            3: The runway is checked against the experiment length and a buffer.
+        - criterion: Test design
+          levels:
+            0: “Get traction” is the only goal.
+            1: A metric is named but not a threshold.
+            2: One metric, one budget and a stop rule are defined.
+            3: The result would change a decision, and the alternative is stated.
+        - criterion: Honesty
+          levels:
+            0: Every risk is dismissed.
+            1: Risks are listed without consequences.
+            2: The worst realistic outcome and its effect are written down.
+            3: A person you trust reviewed the worksheet and disagreed with something.
+    playbookIds: []
+    whyItMatters: The decision to start is reversible only up to a point. Writing down runway and stop rules is how you keep the choice yours.
+    riskNote: Do not borrow money you cannot repay or leave a degree on the strength of encouragement rather than evidence.
+
+  - id: s2-problem
+    phase: S
+    order: 2
+    title: Find a problem worth solving
+    summary: A problem worth solving is painful, frequent and reachable. Learn to hear it in someone's words instead of inventing it in a document.
+    objectives:
+      - Describe one narrow customer and the moment the problem occurs.
+      - Ask about past behaviour instead of hypothetical intent.
+      - Recognise a compliment as a non-signal.
+      - Turn recurring language into a problem statement.
+    prerequisites: [s1-should-i-start]
+    estHours: { min: 4, max: 6 }
+    claimIds: []
+    resources:
+      - title: The Mom Test
+        publisher: Rob Fitzpatrick
+        url: https://www.momtestbook.com/
+        format: book
+        price: paid
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: A short, practical book on questions that produce evidence instead of polite encouragement. Paid, and worth labelling as such.
+      - title: Y Combinator Startup Library
+        publisher: Y Combinator
+        url: https://www.ycombinator.com/library
+        format: video
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: Free talks on finding problems and talking to users.
+    cheatsheetIds: [customer-questions]
+    quiz:
+      - id: s2-q1
+        question: What is the core rule of customer conversations described by The Mom Test?
+        choices:
+          - Talk about their life, not your idea
+          - Pitch the idea as early as possible
+          - Ask whether they would buy it
+          - Collect compliments to build confidence
+        answerIndex: 0
+        explanation: The conversation is about their behaviour and constraints, not your solution.
+        sourceUrl: https://www.momtestbook.com/
+      - id: s2-q2
+        question: Which question is most likely to produce useful evidence?
+        choices:
+          - What did you do the last time this happened?
+          - Would you use an app that solved this?
+          - Do you think this is a good idea?
+          - Wouldn't it be great if this were easier?
+        answerIndex: 0
+        explanation: A specific past incident produces facts; a hypothetical produces politeness.
+        sourceUrl: https://www.momtestbook.com/
+      - id: s2-q3
+        question: How should you treat a compliment about your idea?
+        choices:
+          - As a non-signal that is not evidence of demand
+          - As proof of product-market fit
+          - As a reason to stop interviewing
+          - As a commitment to pay
+        answerIndex: 0
+        explanation: Compliments cost the speaker nothing and do not predict behaviour.
+        sourceUrl: https://www.momtestbook.com/
+      - id: s2-q4
+        question: What is a stronger signal than stated interest?
+        choices:
+          - A payment, a deposit or a costly commitment
+          - A waitlist signup
+          - A “this is cool” message
+          - A request for a demo
+        answerIndex: 0
+        explanation: Commitment of money, time or reputation is costly and therefore more predictive.
+        sourceUrl: https://www.momtestbook.com/
+      - id: s2-q5
+        question: Who is the best person to interview first?
+        choices:
+          - Someone who recently experienced the problem
+          - A friend who wants to support you
+          - An expert who has never had the problem
+          - A large anonymous survey panel
+        answerIndex: 0
+        explanation: Recent experience is concrete and easier to recall accurately.
+        sourceUrl: https://www.momtestbook.com/
+    proof:
+      title: A problem statement from real words
+      brief: Interview five people who have the problem. Record their exact words and the last time it happened. Write a one-paragraph problem statement using their language, and list the evidence that would make you abandon this problem.
+      evidence: Five interview notes with quotes, the problem statement, and the abandonment criteria.
+      rubric:
+        - criterion: Evidence
+          levels:
+            0: No interviews or invented quotes.
+            1: Interviews exist but are summarised into your words.
+            2: Five interviews include exact quotes and recent incidents.
+            3: At least one quote contradicts your original assumption.
+        - criterion: Specificity
+          levels:
+            0: “Everyone” has the problem.
+            1: A broad segment is named.
+            2: One narrow group and one triggering moment are named.
+            3: The statement excludes a group you deliberately will not serve.
+        - criterion: Falsifiability
+          levels:
+            0: Nothing could change your mind.
+            1: A vague “if people don't like it”.
+            2: Concrete evidence that would make you abandon the problem.
+            3: A cheap test of that evidence is defined.
+    playbookIds: []
+    whyItMatters: Most failed products are a solution in search of a problem. The words of five real people are worth more than a hundred imagined personas.
+    riskNote: A single enthusiastic conversation is not a market. Look for a pattern across people who do not know each other.
+
+  - id: s3-discovery
+    phase: S
+    order: 3
+    title: Customer discovery
+    summary: Run conversations that produce decisions. Avoid pitching, leading questions and the trap of collecting encouragement.
+    objectives:
+      - Plan a 15-minute conversation with a specific person and a clear purpose.
+      - Ask about a recent incident and the cost of the current workaround.
+      - Record quotes and insights in a log you can review.
+      - Stop interviewing when the pattern repeats, not when you feel ready.
+    prerequisites: [s2-problem]
+    estHours: { min: 5, max: 8 }
+    claimIds: []
+    resources:
+      - title: The Mom Test
+        publisher: Rob Fitzpatrick
+        url: https://www.momtestbook.com/
+        format: book
+        price: paid
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: The question patterns and the commitment framework used in this module.
+      - title: Y Combinator Startup Library
+        publisher: Y Combinator
+        url: https://www.ycombinator.com/library
+        format: video
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: Free talks on user interviews and finding the first customers.
+    cheatsheetIds: [customer-questions, startup-outreach]
+    quiz:
+      - id: s3-q1
+        question: What should you do before asking about the problem?
+        choices:
+          - Ask about the last time it happened and what they did
+          - Explain your solution
+          - Ask whether they would invest
+          - Show a pricing page
+        answerIndex: 0
+        explanation: A specific past event is concrete; a solution pitch contaminates the answer.
+        sourceUrl: https://www.momtestbook.com/
+      - id: s3-q2
+        question: Why is pitching during discovery a problem?
+        choices:
+          - It turns the conversation into a sales call and invites politeness
+          - It makes the interview too short
+          - It is illegal
+          - It prevents you from taking notes
+        answerIndex: 0
+        explanation: Once you pitch, people respond to you rather than to their own workflow.
+        sourceUrl: https://www.momtestbook.com/
+      - id: s3-q3
+        question: What should the insight log contain?
+        choices:
+          - Exact quotes and the context of the incident
+          - Only your conclusions
+          - A list of compliments
+          - The number of slides shown
+        answerIndex: 0
+        explanation: Raw words let a second person check your interpretation later.
+        sourceUrl: https://www.momtestbook.com/
+      - id: s3-q4
+        question: When should you stop running discovery interviews?
+        choices:
+          - When the same pattern repeats across independent people
+          - After exactly three interviews
+          - When someone says they love the idea
+          - When you run out of questions
+        answerIndex: 0
+        explanation: Saturation is a pattern across independent people, not a fixed count or a single enthusiastic response.
+        sourceUrl: https://www.momtestbook.com/
+      - id: s3-q5
+        question: What is a good follow-up after a useful conversation?
+        choices:
+          - Ask for an introduction to someone with the same problem
+          - Send a invoice
+          - Add them to a mass mailing list
+          - Ask them to sign a term sheet
+        answerIndex: 0
+        explanation: A warm introduction is a low-cost commitment and reaches people with the same context.
+        sourceUrl: https://www.momtestbook.com/
+    proof:
+      title: Twenty conversations, three insights
+      brief: Log at least 20 real conversations with people who have the problem. Each entry needs a date, a quote and the incident they described. Then write three insights that changed your understanding, and one that you are still unsure about.
+      evidence: The interview log, three insights tied to quotes, and the open question.
+      rubric:
+        - criterion: Customer contact
+          levels:
+            0: Fewer than five conversations.
+            1: Ten conversations, mostly friends.
+            2: Twenty conversations with people who have the problem.
+            3: At least five conversations came from a cold or referred source.
+        - criterion: Insight quality
+          levels:
+            0: Insights restate the idea.
+            1: Insights are opinions with no quote.
+            2: Three insights cite specific quotes and changed a decision.
+            3: One insight contradicts the original hypothesis and is documented.
+        - criterion: Honesty
+          levels:
+            0: Failures and boring conversations are omitted.
+            1: Only positive conversations are logged.
+            2: The log includes conversations that weakened the idea.
+            3: The open question and the next test are stated.
+    playbookIds: []
+    whyItMatters: Discovery is the cheapest place to be wrong. Every hour here saves a week of building the wrong thing.
+    riskNote: Do not record personal or sensitive information without consent. A quote can identify someone in a small community.
+
+  - id: s4-mvp
+    phase: S
+    order: 4
+    title: Build the smallest product
+    summary: Ship something five people can use, not a platform for a thousand. The first version exists to answer a question, not to impress.
+    objectives:
+      - State the riskiest assumption the first version must test.
+      - Choose a manual or concierge version when it is faster.
+      - Ship to five real users and watch one of them use it.
+      - Measure whether the core action is completed, not whether the page is visited.
+    prerequisites: [s3-discovery, p1-react]
+    estHours: { min: 8, max: 12 }
+    claimIds: [E1]
+    resources:
+      - title: Do Things That Don't Scale
+        publisher: Paul Graham
+        url: https://paulgraham.com/ds.html
+        format: article
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: The argument for manual recruiting and white-glove support in the first version.
+      - title: Y Combinator Startup Library
+        publisher: Y Combinator
+        url: https://www.ycombinator.com/library
+        format: video
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: Free talks on building an MVP and talking to early users.
+    cheatsheetIds: [startup-metrics]
+    quiz:
+      - id: s4-q1
+        question: What does Paul Graham recommend instead of early growth hacks?
+        choices:
+          - Recruit users manually, one at a time
+          - Buy ads at scale
+          - Hire a growth team
+          - Wait for word of mouth
+        answerIndex: 0
+        explanation: Early on, unscalable manual work teaches you what users need and creates the first real usage.
+        sourceUrl: https://paulgraham.com/ds.html
+      - id: s4-q2
+        question: Why is a concierge or manual version useful?
+        choices:
+          - It tests the value before you automate the workflow
+          - It is easier to patent
+          - It scales better
+          - It removes the need for users
+        answerIndex: 0
+        explanation: A founder can deliver the outcome by hand, learn the steps and only then automate them.
+        sourceUrl: https://paulgraham.com/ds.html
+      - id: s4-q3
+        question: What should the first version optimise for?
+        choices:
+          - Learning whether the core value is real
+          - Visual polish
+          - Supporting every edge case
+          - A large feature list
+        answerIndex: 0
+        explanation: The MVP exists to answer a question. Extra surface area slows the answer.
+        sourceUrl: https://paulgraham.com/ds.html
+      - id: s4-q4
+        question: What is a good first-user target for a student project?
+        choices:
+          - Five real people who use the core action
+          - A thousand signups
+          - A hundred followers
+          - Ten thousand page views
+        answerIndex: 0
+        explanation: Five people completing the core action is evidence you can observe and act on.
+        sourceUrl: https://paulgraham.com/ds.html
+      - id: s4-q5
+        question: Why should you watch someone use the product instead of only reading a survey?
+        choices:
+          - You see where they hesitate or work around the product
+          - It is easier to collect a testimonial
+          - It guarantees they will pay
+          - It replaces the need for a metric
+        answerIndex: 0
+        explanation: Observation exposes confusion that a survey may not capture.
+        sourceUrl: https://paulgraham.com/ds.html
+    proof:
+      title: An MVP used by five people
+      brief: State the riskiest assumption, build the smallest version that tests it, and get five real people to complete the core action. Record what you changed after watching two of them use it. Include one thing you deliberately did not build.
+      evidence: A link to the product, five usage records, and the list of changes made after observation.
+      rubric:
+        - criterion: Scope
+          levels:
+            0: The product is a platform with no users.
+            1: The scope is large but a demo exists.
+            2: The smallest version tests one assumption.
+            3: A larger feature was deliberately removed and the reason is documented.
+        - criterion: Real usage
+          levels:
+            0: No one outside the team used it.
+            1: Friends clicked once.
+            2: Five people completed the core action.
+            3: One person used it twice without being asked.
+        - criterion: Learning
+          levels:
+            0: No observation.
+            1: Feedback was collected but not acted on.
+            2: Two sessions were observed and changes were made.
+            3: The change is tied to a behaviour you can point to in the recording or notes.
+    playbookIds: [pb-plan-feature]
+    whyItMatters: A shipped small thing teaches more than a polished plan. The goal is contact with a user, not completeness.
+    riskNote: Do not expose real user data or run an MVP that can cause financial or medical harm without a review.
+
+  - id: s5-customers
+    phase: S
+    order: 5
+    title: Get the first customers
+    summary: A user is not a customer until they complete the value moment and come back. Learn activation, a first channel and an honest price.
+    objectives:
+      - Define the activation event for one product.
+      - Write a short outreach message and track follow-ups.
+      - Choose one channel where the first customers already spend time.
+      - Calculate a simple CAC and decide whether it is affordable.
+    prerequisites: [s4-mvp]
+    estHours: { min: 5, max: 8 }
+    claimIds: []
+    resources:
+      - title: Y Combinator Startup Library
+        publisher: Y Combinator
+        url: https://www.ycombinator.com/library
+        format: video
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: Free talks on first customers, pricing and early growth.
+      - title: Do Things That Don't Scale
+        publisher: Paul Graham
+        url: https://paulgraham.com/ds.html
+        format: article
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: Why manual outreach and founder-led support are appropriate at this stage.
+    cheatsheetIds: [startup-outreach, startup-metrics]
+    quiz:
+      - id: s5-q1
+        question: What is an activation event?
+        choices:
+          - The first moment a user gets the product's core value
+          - A page view
+          - An account creation
+          - An email open
+        answerIndex: 0
+        explanation: Activation is the behaviour that shows the user reached the value, not merely signed up.
+        sourceUrl: https://amplitude.com/blog/activation-metrics
+      - id: s5-q2
+        question: How is monthly churn computed?
+        choices:
+          - Customers lost ÷ customers at the start of the month
+          - New customers ÷ total customers
+          - Revenue lost ÷ revenue gained
+          - Customers lost ÷ page views
+        answerIndex: 0
+        explanation: Churn compares the customers who left with the base at the start of the period.
+        sourceUrl: https://en.wikipedia.org/wiki/Churn_rate
+      - id: s5-q3
+        question: How is customer acquisition cost calculated?
+        choices:
+          - Acquisition spend ÷ new customers won
+          - Revenue ÷ total customers
+          - Ad spend ÷ impressions
+          - Payroll ÷ months
+        answerIndex: 0
+        explanation: CAC divides the cost of acquisition by the customers it produced.
+        sourceUrl: https://en.wikipedia.org/wiki/Customer_acquisition_cost
+      - id: s5-q4
+        question: What does a waitlist measure?
+        choices:
+          - Interest, which is weaker than a payment or repeated use
+          - Revenue
+          - Retention
+          - Product-market fit
+        answerIndex: 0
+        explanation: A signup costs little; payment and repeat use are stronger signals.
+        sourceUrl: https://www.momtestbook.com/
+      - id: s5-q5
+        question: Which first channel is usually best?
+        choices:
+          - One where the target customers already spend attention
+          - Every channel at once
+          - The cheapest ad inventory
+          - A channel you have never used
+        answerIndex: 0
+        explanation: A narrow channel with the right people beats a broad channel with the wrong ones.
+        sourceUrl: https://www.ycombinator.com/library
+    proof:
+      title: First five customers
+      brief: Define activation in one sentence and instrument it. Contact 20 people through one channel, log the replies, and get five to complete the activation event. Calculate CAC from the actual spend, including your time at a stated rate, and write down one thing you would change.
+      evidence: The outreach log, five activation records, the CAC calculation and the change note.
+      rubric:
+        - criterion: Activation
+          levels:
+            0: Success is a page view.
+            1: A signup is counted as success.
+            2: Activation is a specific behaviour tied to value and measured.
+            3: A cohort returns and the activation rate is reported.
+        - criterion: Outreach
+          levels:
+            0: A mass message with no tracking.
+            1: Messages are sent but replies are not tracked.
+            2: Twenty targeted messages and replies are logged.
+            3: A follow-up and a referral path are included.
+        - criterion: Unit economics
+          levels:
+            0: No cost calculation.
+            1: Ad spend only, ignoring time.
+            2: CAC includes spend and a stated time cost.
+            3: CAC is compared with a price and a payback period.
+    playbookIds: []
+    whyItMatters: The first five customers teach you more than the first thousand visits. Activation and a real channel are the start of a business, not a marketing tactic.
+    riskNote: Do not buy an email list or send unsolicited bulk messages. It damages the domain and the relationship.
+
+  - id: s6-legal-money
+    phase: S
+    order: 6
+    title: Legal, money and company basics
+    summary: A company is a set of contracts and obligations. Learn the questions to ask a professional, the SAFE arithmetic, and what changes when you incorporate.
+    objectives:
+      - Distinguish a sole proprietor from a limited company in plain language.
+      - Explain what a SAFE is and what a post-money cap does.
+      - List the jurisdiction-specific questions you must confirm with an official source.
+      - Keep personal and company money separate from day one.
+    prerequisites: [s1-should-i-start]
+    estHours: { min: 4, max: 6 }
+    claimIds: [S1]
+    resources:
+      - title: Stripe Atlas guides
+        publisher: Stripe
+        url: https://stripe.com/atlas
+        format: docs
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: Plain-language guides on incorporation, equity and getting paid across borders.
+      - title: Y Combinator SAFE documents
+        publisher: Y Combinator
+        url: https://www.ycombinator.com/documents
+        format: docs
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: The standard SAFE documents and the deal page used for the arithmetic in this module.
+    cheatsheetIds: [safe-dilution, startup-funding-stages]
+    quiz:
+      - id: s6-q1
+        question: What does a SAFE defer?
+        choices:
+          - The valuation and the equity conversion until a later round
+          - The payment of salaries
+          - The registration of the company
+          - The tax return
+        answerIndex: 0
+        explanation: A SAFE converts later, usually at a cap or with the terms of the next priced round.
+        sourceUrl: https://ycombinator.com/deal
+      - id: s6-q2
+        question: With a post-money cap, how do you estimate the ownership from an investment?
+        choices:
+          - Investment ÷ post-money cap
+          - Investment × post-money cap
+          - Investment ÷ annual revenue
+          - Post-money cap ÷ investment
+        answerIndex: 0
+        explanation: YC's example converts $375,000 at a $15M post-money cap into 2.5%.
+        sourceUrl: https://ycombinator.com/deal
+      - id: s6-q3
+        question: Why incorporate instead of operating as a sole proprietor?
+        choices:
+          - The company is a separate legal entity, which can limit personal liability
+          - It guarantees investors
+          - It removes the need for taxes
+          - It makes the product faster
+        answerIndex: 0
+        explanation: A limited company is separate from its owners; the exact liability rules depend on the jurisdiction.
+        sourceUrl: https://stripe.com/atlas
+      - id: s6-q4
+        question: What is founder vesting for?
+        choices:
+          - Earning equity over time and handling an early departure
+          - Reducing taxes
+          - Increasing the valuation
+          - Paying suppliers
+        answerIndex: 0
+        explanation: Vesting ties ownership to continued work and gives the company a way to handle a founder leaving.
+        sourceUrl: https://stripe.com/atlas
+      - id: s6-q5
+        question: What should you do before relying on a legal or tax rule from a website?
+        choices:
+          - Check the official government page for your jurisdiction and date it
+          - Assume it applies everywhere
+          - Ask a friend who started a company
+          - Copy a template without reading it
+        answerIndex: 0
+        explanation: Registration, tax and payment rules are jurisdictional and change. The official page is the record.
+        sourceUrl: https://stripe.com/atlas
+    proof:
+      title: A jurisdiction checklist with dates
+      brief: Write a checklist of the legal, tax and payment questions for your country. For each item, either link the official page you checked and the date, or write “not verified” and the person you will ask. Include a separate list of questions for a lawyer or accountant. Do not give legal advice.
+      evidence: The checklist with official links and dates, and the question list.
+      rubric:
+        - criterion: Sourcing
+          levels:
+            0: Rules are copied from a blog with no link.
+            1: Links exist but no dates.
+            2: Every rule links an official page and a check date.
+            3: Unverified items are explicitly marked instead of guessed.
+        - criterion: Separation of money
+          levels:
+            0: Personal and company spending are mixed.
+            1: A separate account is planned but not opened.
+            2: A separate account and a simple bookkeeping method exist.
+            3: A monthly close and a receipt rule are written down.
+        - criterion: Professional boundary
+          levels:
+            0: The document presents itself as legal advice.
+            1: A disclaimer is present but vague.
+            2: The limits are stated and a professional is named.
+            3: The questions for the professional are specific enough to answer in one meeting.
+    playbookIds: []
+    whyItMatters: Legal mistakes are expensive to reverse. A checklist and a professional are cheaper than a cleanup.
+    riskNote: This module is general information, not legal, tax or financial advice. Rules differ by country and change.
+
+  - id: s7-funding
+    phase: S
+    order: 7
+    title: Funding paths, without the hype
+    summary: Bootstrapping, grants, accelerators, angels and venture capital are different tools. Learn what each costs before you apply.
+    objectives:
+      - Compare three funding paths on money, dilution, time and control.
+      - Explain the YC standard deal and a post-money SAFE.
+      - State what Startup Bangladesh is and what public evidence says about its activity.
+      - Decide which path fits your stage and constraints.
+    prerequisites: [s6-legal-money]
+    estHours: { min: 4, max: 6 }
+    claimIds: [S1, S2, S3, V1]
+    resources:
+      - title: The Y Combinator Deal
+        publisher: Y Combinator
+        url: https://ycombinator.com/deal
+        format: docs
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: The standard deal, the SAFE structure and the worked conversion example.
+      - title: Startup Bangladesh Limited
+        publisher: Startup Bangladesh Limited
+        url: https://www.startupbangladesh.vc
+        format: docs
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: The official site of the government-backed venture capital company.
+    cheatsheetIds: [startup-funding-stages, safe-dilution]
+    quiz:
+      - id: s7-q1
+        question: How is the $500,000 YC standard deal split?
+        choices:
+          - $125,000 for 7% plus $375,000 on an uncapped MFN SAFE
+          - $250,000 for 10% plus $250,000 as a loan
+          - $500,000 for 20%
+          - $125,000 as a grant and $375,000 as revenue
+        answerIndex: 0
+        explanation: The deal page states the two SAFEs and the 7% conversion.
+        sourceUrl: https://ycombinator.com/deal
+      - id: s7-q2
+        question: What does Startup Bangladesh Limited do?
+        choices:
+          - It invests equity or quasi-equity in Bangladeshi startups
+          - It gives direct loans to any business
+          - It runs a stock exchange
+          - It only provides office space
+        answerIndex: 0
+        explanation: It is a government-backed venture capital company making equity and quasi-equity investments.
+        sourceUrl: https://www.startupbangladesh.vc
+      - id: s7-q3
+        question: What did the ICT Minister tell Parliament in June 2026 about Startup Bangladesh?
+        choices:
+          - It had invested about Tk 109 crore in 36 approved startups
+          - It had invested Tk 5 crore in 500 startups
+          - It had stopped investing
+          - It had only given loans
+        answerIndex: 0
+        explanation: The figure was reported on 9 June 2026 by BSS and the Financial Express.
+        sourceUrl: https://www.bssnews.net/js-session/393938
+      - id: s7-q4
+        question: What is bootstrapping?
+        choices:
+          - Funding growth from revenue and savings rather than investors
+          - Raising a Series A before launch
+          - Borrowing from a bank at a fixed rate
+          - Selling equity to an accelerator
+        answerIndex: 0
+        explanation: Bootstrapping keeps ownership but limits the speed and scale the company can fund.
+        sourceUrl: https://en.wikipedia.org/wiki/Bootstrapping_(business)
+      - id: s7-q5
+        question: What is dilution?
+        choices:
+          - A reduction in existing owners' percentage when new shares are issued
+          - A fall in the product price
+          - A refund to customers
+          - A tax on revenue
+        answerIndex: 0
+        explanation: New shares increase the total, so earlier owners hold a smaller percentage unless they buy pro rata.
+        sourceUrl: https://ycombinator.com/deal
+    proof:
+      title: A funding comparison with sources
+      brief: Compare three paths (bootstrapping, accelerator, seed) for your stage. For each, list the money, dilution, time cost, control and eligibility, with a source link and the date checked. Add the one question you would ask a founder who chose each path.
+      evidence: The comparison table with sources and dates, and the three questions.
+      rubric:
+        - criterion: Accuracy
+          levels:
+            0: Numbers are quoted from memory.
+            1: Links exist but are not specific.
+            2: Every figure has a source and a date.
+            3: A number that could not be verified is marked as unverified.
+        - criterion: Comparison
+          levels:
+            0: Only one path is considered.
+            1: Paths are listed without costs.
+            2: Money, dilution, time and control are compared.
+            3: The comparison is tied to the company's stage and a specific decision.
+        - criterion: Judgment
+          levels:
+            0: The biggest number is assumed to be best.
+            1: A choice is made without criteria.
+            2: The choice states the trade-off and the alternative.
+            3: A stop rule and a next milestone are defined.
+    playbookIds: []
+    whyItMatters: Funding is a trade of ownership and time for money. The arithmetic is simple; the expectations are not.
+    riskNote: Never pay an upfront fee to an investor or an accelerator that promises funding. Verify the entity and the terms.
+
+  - id: s8-pitch-metrics
+    phase: S
+    order: 8
+    title: Pitch and early metrics
+    summary: A pitch is a short argument with evidence. A metric is only useful if its definition is written down and the period matches.
+    objectives:
+      - Write a one-page pitch with seven blocks.
+      - Calculate MRR, churn, CAC and a simple LTV from real numbers.
+      - State the period and definition beside every metric.
+      - Ask for one specific thing at the end.
+    prerequisites: [s5-customers]
+    estHours: { min: 4, max: 6 }
+    claimIds: []
+    resources:
+      - title: Writing a business plan
+        publisher: Sequoia Capital
+        url: https://www.sequoiacap.com/article/writing-a-business-plan/
+        format: article
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: A widely used outline for the problem, solution, market and team sections.
+      - title: Y Combinator Startup Library
+        publisher: Y Combinator
+        url: https://www.ycombinator.com/library
+        format: video
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: Free talks on pitching, metrics and early-stage fundraising.
+    cheatsheetIds: [startup-pitch, startup-metrics]
+    quiz:
+      - id: s8-q1
+        question: What is MRR?
+        choices:
+          - Monthly recurring revenue from active subscriptions
+          - Total revenue including one-off sales
+          - Annual revenue divided by twelve
+          - Cash in the bank
+        answerIndex: 0
+        explanation: MRR counts recurring subscription revenue for one month, excluding one-off charges.
+        sourceUrl: https://en.wikipedia.org/wiki/Monthly_recurring_revenue
+      - id: s8-q2
+        question: A company starts the month with 100 customers and loses 5. What is the monthly churn rate?
+        choices: ['5%', '0.5%', '50%', '95%']
+        answerIndex: 0
+        explanation: Churn = 5 ÷ 100 = 5%.
+        sourceUrl: https://en.wikipedia.org/wiki/Churn_rate
+      - id: s8-q3
+        question: A company spends $1,000 to acquire 20 customers. What is the CAC?
+        choices: ['$50', '$20', '$200', '$1,000']
+        answerIndex: 0
+        explanation: CAC = spend ÷ new customers = 1,000 ÷ 20 = 50.
+        sourceUrl: https://en.wikipedia.org/wiki/Customer_acquisition_cost
+      - id: s8-q4
+        question: What is a simple LTV formula when revenue and churn are monthly?
+        choices:
+          - Monthly revenue per customer ÷ monthly churn
+          - Monthly revenue × monthly churn
+          - Annual revenue ÷ customers
+          - CAC × churn
+        answerIndex: 0
+        explanation: The simple version divides monthly revenue by the fraction of customers lost each month.
+        sourceUrl: https://en.wikipedia.org/wiki/Customer_lifetime_value
+      - id: s8-q5
+        question: What should a one-page pitch end with?
+        choices:
+          - A specific ask the reader can answer
+          - A long market-size calculation
+          - A list of every feature
+          - A request to sign an NDA
+        answerIndex: 0
+        explanation: "The reader needs to know what you want: an intro, advice, a pilot or money."
+        sourceUrl: https://www.sequoiacap.com/article/writing-a-business-plan/
+    proof:
+      title: A one-page pitch and a metric sheet
+      brief: Write a one-page pitch with problem, customer, insight, solution, evidence, business and ask. Add a metric sheet with MRR, churn, CAC and LTV, each with its definition and period. If you have no data, write “no data yet” and state the smallest measurement you will run next.
+      evidence: The pitch, the metric sheet, and the one measurement that would change the pitch.
+      rubric:
+        - criterion: Argument
+          levels:
+            0: Features with no customer or problem.
+            1: A problem exists but the evidence is a compliment.
+            2: The seven blocks are present and the evidence is checkable.
+            3: A sceptical reader's main objection is addressed.
+        - criterion: Metrics
+          levels:
+            0: Numbers without definitions.
+            1: Definitions exist but periods do not match.
+            2: Each metric has a definition and a period.
+            3: The metrics reconcile with the underlying data or clearly say they cannot.
+        - criterion: The ask
+          levels:
+            0: No ask.
+            1: “Any help would be great.”
+            2: A specific ask is stated.
+            3: The ask is sized and tied to a milestone.
+    playbookIds: []
+    whyItMatters: A clear pitch is a test of whether you understand the business. The metrics keep the story honest.
+    riskNote: Do not invent traction, logos or market numbers. A fabricated metric is a permanent credibility risk.
+
+  - id: s9-failure
+    phase: S
+    order: 9
+    title: Why startups fail, and how to reduce the risk
+    summary: "Most failure is ordinary: no demand, no money, a team that cannot continue. Learn the leading indicators and write the pre-mortem before you need it."
+    objectives:
+      - List the failure modes that apply to your stage.
+      - Define a leading indicator for each of the top three.
+      - Run a pre-mortem and record the assumptions behind a decision.
+      - Recognise burnout and set a sustainable constraint.
+    prerequisites: [s3-discovery]
+    estHours: { min: 3, max: 5 }
+    claimIds: [E1]
+    resources:
+      - title: How Not to Die
+        publisher: Paul Graham
+        url: https://paulgraham.com/die.html
+        format: article
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: A direct account of the ordinary way startups fail and what founders can control.
+      - title: Burn-out — questions and answers
+        publisher: World Health Organization
+        url: https://www.who.int/news/item/28-05-2019-burn-out-an-occupational-phenomenon-international-classification-of-diseases
+        format: docs
+        price: free
+        lastVerifiedAt: 2026-11-05
+        officialVendor: true
+        why: The official definition of burnout as an occupational phenomenon, not a personal weakness.
+    cheatsheetIds: [startup-metrics]
+    quiz:
+      - id: s9-q1
+        question: According to Paul Graham, what is the most common way startups die?
+        choices: [Running out of money, A competitor copying them, A bad domain name, Hiring too slowly]
+        answerIndex: 0
+        explanation: The essay focuses on running out of money and the behaviours that cause it.
+        sourceUrl: https://paulgraham.com/die.html
+      - id: s9-q2
+        question: What is survivorship bias?
+        choices:
+          - Learning only from the visible survivors and ignoring the failures
+          - The tendency to survive a bad launch
+          - A bias in survey sampling only
+          - A tax rule for startups
+        answerIndex: 0
+        explanation: Successful companies are more visible, so their choices are over-represented as causes of success.
+        sourceUrl: https://en.wikipedia.org/wiki/Survivorship_bias
+      - id: s9-q3
+        question: What is a pre-mortem?
+        choices:
+          - Imagining the project has failed and listing the likely causes
+          - A meeting after a failure
+          - A financial forecast
+          - A legal review
+        answerIndex: 0
+        explanation: A pre-mortem makes failure modes discussable before the pressure of a real failure.
+        sourceUrl: https://en.wikipedia.org/wiki/Pre-mortem
+      - id: s9-q4
+        question: How does the WHO describe burnout?
+        choices:
+          - An occupational phenomenon resulting from chronic workplace stress that has not been managed
+          - A medical diagnosis caused by a virus
+          - A personality trait
+          - A lack of motivation
+        answerIndex: 0
+        explanation: The WHO definition is about chronic, unmanaged workplace stress, not individual weakness.
+        sourceUrl: https://www.who.int/news/item/28-05-2019-burn-out-an-occupational-phenomenon-international-classification-of-diseases
+      - id: s9-q5
+        question: Why keep a decision log?
+        choices:
+          - To record the assumption and review it when the result is known
+          - To prove you were right
+          - To satisfy investors
+          - To replace a strategy
+        answerIndex: 0
+        explanation: A decision log separates a bad outcome from a bad decision and makes learning possible.
+        sourceUrl: https://paulgraham.com/die.html
+    proof:
+      title: A pre-mortem and a decision log
+      brief: Write a pre-mortem with ten ways the project could fail in the next year. Pick the three most likely, define a leading indicator and a response for each, and add three decisions you have made with the assumption behind them and the date you will review them.
+      evidence: The ten failure modes, the three indicators, and the three decision records.
+      rubric:
+        - criterion: Failure modes
+          levels:
+            0: A generic list copied from the internet.
+            1: Ten modes, none specific to the stage.
+            2: Ten specific modes with the three most likely chosen.
+            3: At least one mode is uncomfortable and was challenged by another person.
+        - criterion: Indicators
+          levels:
+            0: No indicators.
+            1: Indicators are lagging, such as revenue after a year.
+            2: Three leading indicators have a threshold and a review date.
+            3: A response is defined for each indicator before it triggers.
+        - criterion: Sustainability
+          levels:
+            0: No limit on hours or stress.
+            1: A limit is stated but not tracked.
+            2: Working hours and a rest day are tracked.
+            3: A person outside the project knows the warning signs and the plan.
+    playbookIds: []
+    whyItMatters: Failure is not a moral verdict. Naming the ordinary ways it happens is how you notice one early enough to change course.
+    riskNote: This module is not a substitute for mental-health care. If stress is affecting your health, talk to a professional.

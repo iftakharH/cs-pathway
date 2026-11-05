@@ -1,0 +1,186 @@
+entries:
+  - id: safe-dilution
+    phase: S
+    topic: Startup finance
+    title: Convert a post-money SAFE at its cap
+    whenToUse: When a SAFE states a post-money valuation cap and you need the ownership it implies before later rounds.
+    snippets:
+      - lang: js
+        caption: The YC worked example, in code
+        runnable: true
+        checked: executed
+        expectStdout: "2.5"
+        code: |
+          const investment = 375_000
+          const postMoneyCap = 15_000_000
+
+          const ownership = investment / postMoneyCap
+          console.log((ownership * 100).toFixed(1))
+    notes:
+      - Ownership at the cap = investment ÷ post-money cap.
+      - This ignores the option pool, later rounds and any other SAFEs.
+      - Use the cap stated in the signed document, not a rumoured round size.
+    gotchas:
+      - A pre-money cap and a post-money cap produce different ownership.
+      - Converting at a cap is not the same as agreeing to a valuation.
+    seeAlso: [startup-funding-stages, startup-metrics]
+    tool: { name: Y Combinator SAFE, version: 'post-money', verifiedOn: 2026-11-05 }
+    sourceUrl: https://ycombinator.com/deal
+    tags: [startup, safe, dilution, finance]
+
+  - id: startup-funding-stages
+    phase: S
+    topic: Startup finance
+    title: Compare the common funding paths
+    whenToUse: When deciding whether to bootstrap, apply to a programme or raise from investors, and what each choice costs.
+    snippets:
+      - lang: text
+        caption: What each path usually gives and costs
+        runnable: false
+        checked: docs
+        code: |
+          Bootstrapping   revenue funds growth        slower, full ownership
+          Grants          non-dilutive money           reporting, eligibility
+          Accelerator     cash + programme + network  equity, time, demo pressure
+          Angel / seed    money + advice               equity, board expectations
+          Series A        growth capital               dilution, a growth plan
+    notes:
+      - The cheapest money is revenue; it is also the slowest to arrive.
+      - Grants and accelerators have eligibility and reporting costs, not only equity costs.
+      - A funding round is a tool for a plan, not a milestone in itself.
+    gotchas:
+      - Raising money you do not need adds expectations you cannot remove.
+      - A high valuation is not a win if it makes the next round impossible.
+    seeAlso: [safe-dilution, startup-metrics]
+    tool: { name: Funding paths, version: 'editorial', verifiedOn: 2026-11-05 }
+    sourceUrl: https://www.ycombinator.com/library
+    tags: [startup, funding, accelerator, bootstrapping]
+
+  - id: startup-metrics
+    phase: S
+    topic: Startup finance
+    title: Calculate MRR, churn, CAC and LTV
+    whenToUse: When a dashboard shows growth but you cannot tell whether the business is getting healthier.
+    snippets:
+      - lang: js
+        caption: Four standard formulas on one example
+        runnable: true
+        checked: executed
+        expectStdout: "2900 5 50 580"
+        code: |
+          const price = 29
+          const subscribers = 100
+          const churned = 5
+          const startingCustomers = 100
+          const acquisitionSpend = 1000
+          const newCustomers = 20
+
+          const mrr = price * subscribers
+          const churnRate = churned / startingCustomers
+          const cac = acquisitionSpend / newCustomers
+          const ltv = price / churnRate
+
+          console.log(mrr, churnRate * 100, cac, Math.round(ltv))
+    notes:
+      - MRR = monthly price × active subscribers.
+      - Churn = customers lost ÷ customers at the start of the period.
+      - CAC = acquisition spend ÷ new customers won.
+      - Simple LTV = monthly revenue per customer ÷ monthly churn.
+    gotchas:
+      - LTV ÷ CAC is meaningless if churn is measured over a different period.
+      - Including one-off fees in MRR overstates recurring revenue.
+    seeAlso: [safe-dilution, customer-questions]
+    tool: { name: Startup metrics, version: 'formula', verifiedOn: 2026-11-05 }
+    sourceUrl: https://en.wikipedia.org/wiki/Monthly_recurring_revenue
+    tags: [startup, metrics, mrr, churn, cac, ltv]
+
+  - id: customer-questions
+    phase: S
+    topic: Customer discovery
+    title: Ask about the past, not the future
+    whenToUse: When a conversation is producing compliments instead of evidence about a real problem.
+    snippets:
+      - lang: text
+        caption: Questions that produce evidence
+        runnable: false
+        checked: docs
+        code: |
+          What did you do the last time this happened?
+          What did that cost you in time or money?
+          What have you tried already?
+          Who else deals with this?
+          What would you do if this never got fixed?
+
+          Avoid:
+          Would you use this?
+          Wouldn't it be great if...?
+          Do you think this is a good idea?
+    notes:
+      - Ask about a specific recent incident, not a general opinion.
+      - Listen for the exact words; they are better copy than your own.
+      - Ask for a commitment only after the problem is clear.
+    gotchas:
+      - A hypothetical answer costs the person nothing and predicts little.
+      - Pitching during discovery turns the interview into a sales call.
+    seeAlso: [startup-pitch, startup-metrics]
+    tool: { name: The Mom Test, version: 'method', verifiedOn: 2026-11-05 }
+    sourceUrl: https://www.momtestbook.com/
+    tags: [startup, discovery, interviews, customers]
+
+  - id: startup-pitch
+    phase: S
+    topic: Customer discovery
+    title: Write the one-page pitch
+    whenToUse: When an investor, a mentor or a potential pilot asks what you are building and you have one page to answer.
+    snippets:
+      - lang: text
+        caption: Seven blocks, in the order a reader asks them
+        runnable: false
+        checked: docs
+        code: |
+          Problem      one sentence a customer would recognise
+          Customer     the narrow group that has it
+          Insight      what you learned that others miss
+          Solution     the smallest thing that changes the workflow
+          Evidence     usage, payment, a repeated behaviour
+          Business     who pays, how much, how often
+          Ask          intro, advice, pilot or money
+    notes:
+      - Lead with the problem, not the technology.
+      - Evidence should be something a sceptic can check.
+      - State the ask precisely enough that a reader can say yes or no.
+    gotchas:
+      - A market-size number without a bottom-up calculation is not evidence.
+      - A pitch that lists features instead of a change in behaviour is forgettable.
+    seeAlso: [customer-questions, startup-metrics]
+    tool: { name: Sequoia business plan template, version: 'template', verifiedOn: 2026-11-05 }
+    sourceUrl: https://www.sequoiacap.com/article/writing-a-business-plan/
+    tags: [startup, pitch, storytelling, fundraising]
+
+  - id: startup-outreach
+    phase: S
+    topic: Customer discovery
+    title: Write a short outreach message that gets a reply
+    whenToUse: When you need ten conversations and a generic “please try my product” message is being ignored.
+    snippets:
+      - lang: text
+        caption: The four-sentence structure
+        runnable: false
+        checked: docs
+        code: |
+          Hi <name> — I saw <specific work>.
+          I am researching <narrow problem> and not selling anything yet.
+          Would you be open to 15 minutes about how you handle it today?
+          If not, no problem — is there someone else you would point me to?
+    notes:
+      - Name the specific thing that made you write to this person.
+      - Ask for a conversation, not for a purchase, during discovery.
+      - Make it easy to decline and easy to forward.
+      - Follow up once, then stop.
+    gotchas:
+      - A mass template with a first-name field reads like a mass template.
+      - Asking for “feedback” attracts politeness; asking about a real task attracts evidence.
+    seeAlso: [customer-questions, startup-pitch]
+    tool: { name: Outreach, version: 'editorial', verifiedOn: 2026-11-05 }
+    sourceUrl: https://www.ycombinator.com/library
+    tags: [startup, outreach, customers, email]

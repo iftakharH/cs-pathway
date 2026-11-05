@@ -1,0 +1,45 @@
+phases:
+  - id: F
+    order: 1
+    name: Foundations
+    kicker: The tools you use every day
+    description: Git, the terminal, HTTP, SQL and the two languages this path uses. Not a computer-science degree. The working subset you need before an agent can help you build something real.
+    outcome: You can move a change from your machine to a repository, query a database, and explain what happens when a browser calls an API.
+    gate: Given a broken repository and an unclear error, you can find the cause and fix it without asking an agent to guess.
+    proofSummary: A public repository containing a small working tool, its tests, and a README that explains the trade-offs you chose.
+
+  - id: "1"
+    order: 2
+    name: AI-native full-stack
+    kicker: Ship a real product
+    description: Build the product layer — React, an API, Postgres, authentication, deployment — then learn to direct coding agents with a spec instead of hoping.
+    outcome: You have a deployed, authenticated app that stores real data and has tests.
+    gate: You can ship a feature end to end — schema, API, UI, test, deploy — and explain every layer.
+    proofSummary: A deployed app with sign-in, a database, tests and one real user.
+
+  - id: "2"
+    order: 3
+    name: AI engineer
+    kicker: Make models reliable
+    description: Prompting is the easy part. This phase is about retrieval, evals, tool design and cost control — the work that makes a model-driven feature dependable.
+    outcome: You can build a retrieval or agent feature, measure it, and explain why it fails when it fails.
+    gate: You can show an eval that fails, fix the system, and show the score improve.
+    proofSummary: A retrieval or agent feature with a golden-set eval and a before-and-after score.
+
+  - id: "3"
+    order: 4
+    name: ML engineer
+    kicker: Understand the model
+    description: The math, metrics and training loops behind the APIs. Enough theory to read a paper, debug a model and know when fine-tuning is the wrong answer.
+    outcome: You can train, evaluate and serve a model on your own data.
+    gate: You can explain a model's errors with metrics, not vibes.
+    proofSummary: A trained model with a clean evaluation, a baseline and a short model card.
+
+  - id: S
+    order: 5
+    name: Startup
+    kicker: From idea to customers
+    description: Starting a company is a learnable process, not a personality trait. Customer conversations, a small product, real pricing, honest numbers and the legal basics — with the risks stated.
+    outcome: You have talked to real customers and shipped something they can use.
+    gate: You can show evidence that someone wants what you built, and a plan for the next 90 days.
+    proofSummary: 20 customer conversations, 3 documented insights, an MVP used by 5 people, a one-page pitch and a 90-day plan.

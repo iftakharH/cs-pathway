@@ -1,0 +1,104 @@
+sources:
+  - id: src-dlai-skills-map
+    title: The AI Engineering Skills Map, Part 1
+    publisher: DeepLearning.AI — The Batch
+    url: https://www.deeplearning.ai/the-batch/the-ai-engineering-skills-map
+    tier: primary
+    publishedAt: 2026-08-14
+    retrievedAt: 2026-11-05
+    note: Read in full. The four-skill list and the research method are stated in the article.
+
+  - id: src-so-2026-survey
+    title: The results of the 2026 Developer Survey are here
+    publisher: Stack Overflow
+    url: https://stackoverflow.blog/2026/10/06/the-results-of-the-2026-developer-survey-are-here/
+    tier: primary
+    publishedAt: 2026-10-06
+    retrievedAt: 2026-11-05
+    note: Read in full. Figures used here appear in the blog post; the full dataset was still marked as forthcoming.
+
+  - id: src-mcp-spec
+    title: Model Context Protocol specification, 2026-07-28
+    publisher: Model Context Protocol
+    url: https://modelcontextprotocol.io/specification/2026-07-28
+    tier: primary
+    publishedAt: 2026-07-28
+    retrievedAt: 2026-11-05
+
+  - id: src-mcp-registry
+    title: The MCP Registry
+    publisher: Model Context Protocol
+    url: https://modelcontextprotocol.io/registry
+    tier: primary
+    retrievedAt: 2026-11-05
+    note: Page labels the registry as preview.
+
+  - id: src-agentskills
+    title: Agent Skills overview
+    publisher: Agent Skills
+    url: https://agentskills.io
+    tier: primary
+    retrievedAt: 2026-11-05
+
+  - id: src-agentskills-spec
+    title: Agent Skills specification
+    publisher: Agent Skills
+    url: https://agentskills.io/specification.md
+    tier: primary
+    retrievedAt: 2026-11-05
+    note: Field limits and progressive disclosure are stated on this page.
+
+  - id: src-yc-deal
+    title: The Y Combinator Deal
+    publisher: Y Combinator
+    url: https://ycombinator.com/deal
+    tier: primary
+    retrievedAt: 2026-11-05
+    note: Includes the $15M cap worked example that the dilution calculator is tested against.
+
+  - id: src-startupbd
+    title: Startup Bangladesh Limited
+    publisher: Startup Bangladesh Limited
+    url: https://www.startupbangladesh.vc
+    tier: primary
+    retrievedAt: 2026-11-05
+    note: Page is JavaScript-rendered; only the site identity and its venture-capital description could be read.
+
+  - id: src-bss-startupbd
+    title: Startup Bangladesh invests in 36 approved technology-driven startups
+    publisher: Bangladesh Sangbad Sangstha
+    url: https://www.bssnews.net/js-session/393938
+    tier: secondary
+    publishedAt: 2026-06-09
+    retrievedAt: 2026-11-05
+
+  - id: src-tfe-startupbd
+    title: Tk 1.09b invested in startups — ICT Minister
+    publisher: The Financial Express
+    url: https://thefinancialexpress.com.bd/home/tk-109b-invested-in-startups-ict-minister
+    tier: secondary
+    publishedAt: 2026-06-09
+    retrievedAt: 2026-11-05
+
+  - id: src-vercel-fair-use
+    title: Fair use guidelines
+    publisher: Vercel
+    url: https://vercel.com/docs/limits/fair-use-guidelines
+    tier: primary
+    retrievedAt: 2026-11-05
+    note: Page last updated 2026-09-14. States Hobby is non-commercial personal use only.
+
+  - id: src-neon-pricing
+    title: Neon pricing plans
+    publisher: Neon
+    url: https://neon.com/pricing
+    tier: primary
+    retrievedAt: 2026-11-05
+    note: Page says last updated 2026-10-31. Free storage is 1 GB per project, 20 GB per account.
+
+  - id: src-better-auth-security
+    title: Security
+    publisher: Better Auth
+    url: https://www.better-auth.com/docs/reference/security
+    tier: primary
+    retrievedAt: 2026-11-05
