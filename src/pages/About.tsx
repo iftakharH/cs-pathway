@@ -9,7 +9,6 @@ export default function About() {
   return (
     <div className="container-page">
       <PageHeader
-        kicker="About"
         title="A single-author project about checking the work"
         lede="cs-pathway is a source-verified roadmap, tracker and cheatsheet library for people heading into software and AI work in 2027. It is built and maintained by one person."
         breadcrumb={[{ label: 'Home', to: '/' }, { label: 'About' }]}

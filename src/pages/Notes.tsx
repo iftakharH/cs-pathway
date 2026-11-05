@@ -36,7 +36,6 @@ export default function Notes() {
   return (
     <div className="container-page">
       <PageHeader
-        kicker="Notes"
         title="What you wrote down"
         lede="Notes are attached to a module or a cheatsheet and stored in this browser. Export them before clearing site data."
         breadcrumb={[{ label: 'Home', to: '/' }, { label: 'Notes' }]}
@@ -80,7 +79,6 @@ export default function Notes() {
                   <article key={key} className="card p-5">
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div>
-                        <p className="eyebrow mb-1">Note</p>
                         <h2 className="text-lg">
                           {to ? (
                             <Link to={to} className="hover:text-accent">

@@ -24,7 +24,6 @@ export default function Tools() {
   return (
     <div className="container-page">
       <PageHeader
-        kicker="Startup tools"
         title="Numbers and conversations, in one place"
         lede="These tools work without an account and save in this browser. They are calculators and logs, not advice, and they do not promise an outcome."
         breadcrumb={[
@@ -41,8 +40,8 @@ export default function Tools() {
       />
 
       <div className="grid gap-8 py-8 lg:grid-cols-[14rem_1fr]">
-        <nav aria-label="Tools" className="no-print">
-          <ul className="flex gap-2 overflow-x-auto pb-2 lg:flex-col lg:overflow-visible lg:pb-0">
+        <nav aria-label="Tools" className="min-w-0 no-print">
+          <ul className="flex min-w-0 gap-2 overflow-x-auto pb-2 lg:flex-col lg:overflow-visible lg:pb-0">
             {tools.map((tool) => (
               <li key={tool.id} className="shrink-0">
                 <button
@@ -64,7 +63,7 @@ export default function Tools() {
           </ul>
         </nav>
 
-        <div>
+        <div className="min-w-0">
           {active === 'dilution' ? <DilutionTool /> : null}
           {active === 'runway' ? <RunwayTool /> : null}
           {active === 'pricing' ? <PricingTool /> : null}

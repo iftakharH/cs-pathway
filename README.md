@@ -27,10 +27,11 @@ function yet. Progress, notes, proofs and tools are stored in `localStorage`. Se
 | Phases | 5 (F, 1, 2, 3, S) |
 | Modules | 31 |
 | Quiz questions | 155, each with a source page |
-| Cheatsheets | 106 |
+| Cheatsheets | 108 |
 | Executable snippets | 23 |
 | Claims | 15 |
 | Sources | 13 (11 primary, 2 secondary) |
+| Harnesses verified | 6 |
 | Playbook entries | 4 |
 | Startup tools | 8 |
 
@@ -62,6 +63,7 @@ Open `http://localhost:5173`. No environment variables are needed for the public
 | `npm run e2e` | Playwright: guest journey, every phase, axe scans. |
 | `npm run check:links` | Fetch every source, resource and quiz URL. |
 | `npm run check:stale` | Fail when a claim is past `reviewAfter`. |
+| `npm run check:versions` | Compare stamped tool versions with npm, PyPI and endoflife.date. Add `--strict` to fail on drift. |
 | `npm run verify` | Lint, types, unit tests, snippets and build in one command. |
 
 ## Content: how to add a claim, module or cheatsheet
@@ -230,32 +232,57 @@ npx vercel --prod
 
 Re-check both pages before launch and record the new date.
 
-## Verification (5 Nov 2026)
+## Harness verification
+
+`/harnesses` compares six agent harnesses: Claude Code, OpenCode, Cursor, Codex CLI, Gemini CLI
+and GitHub Copilot. Each row was read from the vendor's own docs on 6 Nov 2026 and records:
+
+- native, partial or no support for Skills, MCP and `AGENTS.md`;
+- the exact file path or config location for each primitive;
+- the limitations that a green checkmark would hide;
+- links to the skills, MCP, instruction and pricing pages.
+
+Two findings matter more than the table:
+
+- **Claude Code** reads `AGENTS.md` only as a fallback when no `CLAUDE.md` exists, and direct
+  support requires v2.1.277+. The matrix marks it Partial, not Native.
+- **Gemini CLI** is marked Legacy. Google says it was replaced by Antigravity CLI for unpaid and
+  Google One users on 18 June 2026. The row stays visible for existing setups, with a warning.
+
+`npm run check:versions` compares every stamped tool with its registry. It flags Docker 28 and
+TypeScript 6.0.3 as behind the current releases; neither stamp was changed because the Dockerfile
+and the TypeScript snippets have not been re-verified against the newer versions. That is a review
+item, not an automatic upgrade.
+
+## Verification (6 Nov 2026)
 
 | Check | Result |
 | --- | --- |
-| `npm run validate` | 31 modules, 106 cheatsheets, 155 questions, 15 claims, 13 sources |
+| `npm run validate` | 31 modules, 108 cheatsheets, 155 questions, 15 claims, 13 sources, 6 harnesses |
 | `npm run lint` | Pass, 0 warnings |
 | `npm run typecheck` | Pass, strict |
-| `npm test` | 55 tests pass |
+| `npm test` | 57 tests pass |
 | `npm run test:snippets` | 23/23 executable snippets pass |
 | `npm run build` | Pass |
-| `npm run e2e` | 22/22 Playwright tests pass (4 journey + 18 axe: 9 routes × light/dark) |
-| axe-core | 0 serious/critical on 9 representative routes in both themes |
-| Lighthouse mobile | Home 100 performance / 100 accessibility; cheatsheets 100/100; module 99/100 |
-| `npm run check:links` | 187/188 reachable; 1 bot-blocked (OpenAI docs returns 403 to automated requests) |
+| `npm run e2e` | 25/25 Playwright tests pass (5 journey + 20 axe: 10 routes × light/dark) |
+| axe-core | 0 serious/critical on 10 representative routes in both themes |
+| Lighthouse mobile | Performance: home 99–100, harnesses 97, cheatsheets 100, module 98. One cold-cache home run scored 91 (LCP 3.3 s); accessibility 100 on all four. |
+| `npm run check:links` | 196/198 reachable; 2 bot-blocked (OpenAI docs and pricing return 403) |
 | `npm audit --omit=dev` | 0 vulnerabilities in production dependencies |
 
 Not run or not verified on that date: a signed-in flow, live OAuth, a live Neon database,
-GitHub Actions (no remote yet), and the full six-harness comparison.
+GitHub Actions (no remote yet), and Antigravity CLI coverage.
 
 ## Known gaps
 
 - Accounts, Neon, Better Auth and OAuth are deferred. The schema and env names are reserved, but
   no server code exists.
-- The harness comparison has two verified entries, not six. The page says so.
+- Gemini CLI is marked legacy and Antigravity CLI is not covered yet. It needs its own verified
+  entry before the matrix can recommend it.
+- `check:versions` flags Docker 28 and TypeScript 6.0.3 as behind current releases. They remain
+  at the versions the docs and snippets were actually verified against.
 - Email verification and password reset are out of scope until a free sender is confirmed.
-- One link is blocked to automated checkers; it is a valid page in a browser.
+- Two links are blocked to automated checkers; both are valid pages in a browser.
 - `npm audit` reports 10 moderate dev-only advisories in the `typescript-eslint` chain. Production
   dependencies are clean.
 - The GitHub Actions workflows exist but have not run in CI because the repository has no remote.

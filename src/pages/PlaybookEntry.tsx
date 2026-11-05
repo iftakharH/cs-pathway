@@ -33,7 +33,6 @@ export default function PlaybookEntry() {
   return (
     <div className="container-page">
       <PageHeader
-        kicker={`Playbook · ${entry.risk} risk`}
         title={entry.task}
         lede={entry.summary}
         breadcrumb={[

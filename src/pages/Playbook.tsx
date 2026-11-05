@@ -15,7 +15,6 @@ export default function Playbook() {
   return (
     <div className="container-page">
       <PageHeader
-        kicker="Agent playbook"
         title="Use agents like a senior engineer would delegate"
         lede="A task, the tools that fit it, a copy-ready prompt, a verification checklist and the pitfalls. Risk is stated before the install line."
         breadcrumb={[{ label: 'Home', to: '/' }, { label: 'Playbook' }]}
@@ -62,7 +61,6 @@ export default function Playbook() {
 
       <section className="pb-12">
         <SectionHeader
-          eyebrow="Verification status"
           title="An install line is not a fact"
           lede="Tools are marked as verified only when the vendor's current docs were checked and dated. Unverified install lines are hidden rather than guessed."
           action={<ButtonLink to="/methodology" variant="ghost" size="sm">Methodology</ButtonLink>}

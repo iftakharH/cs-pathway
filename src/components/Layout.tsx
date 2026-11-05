@@ -23,7 +23,15 @@ const primaryNav = [
   { to: '/playbook', label: 'Playbook' },
 ]
 
-const trustPrefixes = ['/methodology', '/sources', '/claims', '/trends', '/changelog', '/corrections']
+const trustPrefixes = [
+  '/methodology',
+  '/sources',
+  '/claims',
+  '/trends',
+  '/changelog',
+  '/corrections',
+  '/harnesses',
+]
 
 function isTrustRoute(pathname: string) {
   return trustPrefixes.some((prefix) => pathname.startsWith(prefix))
@@ -60,8 +68,10 @@ function Header({ onOpenSearch }: { onOpenSearch: () => void }) {
               to={item.to}
               className={({ isActive }) =>
                 cx(
-                  'rounded-md px-3 py-2 text-sm font-medium transition-colors',
-                  isActive ? 'bg-surface-2 text-ink' : 'text-muted hover:text-ink',
+                  'relative rounded-none px-3 py-2 text-sm font-medium transition-colors',
+                  isActive
+                    ? 'text-ink after:absolute after:inset-x-3 after:-bottom-[1px] after:h-px after:bg-accent'
+                    : 'text-muted hover:text-ink',
                 )
               }
             >
@@ -71,8 +81,10 @@ function Header({ onOpenSearch }: { onOpenSearch: () => void }) {
           <NavLink
             to="/methodology"
             className={cx(
-              'rounded-md px-3 py-2 text-sm font-medium transition-colors',
-              isTrustRoute(pathname) ? 'bg-surface-2 text-ink' : 'text-muted hover:text-ink',
+              'relative rounded-none px-3 py-2 text-sm font-medium transition-colors',
+              isTrustRoute(pathname)
+                ? 'text-ink after:absolute after:inset-x-3 after:-bottom-[1px] after:h-px after:bg-accent'
+                : 'text-muted hover:text-ink',
             )}
           >
             Trust
@@ -140,7 +152,7 @@ function MobileNav() {
 
 function Footer() {
   return (
-    <footer className="no-print mt-20 border-t border-line bg-surface/40 pb-24 pt-12 md:pb-12">
+    <footer className="no-print mt-20 border-t border-line pb-24 pt-12 md:pb-12">
       <div className="container-page">
         <div className="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
           <div>
@@ -231,7 +243,7 @@ function FooterColumn({
 }) {
   return (
     <div>
-      <h2 className="eyebrow mb-3">{title}</h2>
+      <h2 className="mb-3 text-xs font-semibold text-ink">{title}</h2>
       <ul className="space-y-2">
         {links.map((link) => (
           <li key={link.to}>

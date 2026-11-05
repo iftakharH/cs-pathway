@@ -12,9 +12,11 @@ A quarterly refresh, plus a weekly automated check once the repository has a rem
 
 ## Every week (automated once GitHub Actions is enabled)
 
-- `npm run check:links` — 187 of 188 URLs reachable on 5 Nov 2026; one OpenAI docs page
-  returns 403 to automated requests and is a documented exception.
+- `npm run check:links` — 196 of 198 URLs reachable on 6 Nov 2026; two OpenAI pages return 403
+  to automated requests and are documented exceptions.
 - `npm run check:stale` — fails when a claim passes its `reviewAfter` date.
+- `npm run check:versions -- --strict` — fails when a non-baseline tool stamp is behind its
+  registry. Docker 28 and TypeScript 6.0.3 were flagged on 6 Nov 2026.
 - The workflow opens an issue with the output. It does not edit content.
 
 ## Every quarter (manual)

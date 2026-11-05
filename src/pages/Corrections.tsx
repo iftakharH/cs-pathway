@@ -6,7 +6,6 @@ export default function Corrections() {
   return (
     <div className="container-page">
       <PageHeader
-        kicker="Corrections"
         title="A wrong claim is a bug, and it stays in the record"
         lede="Report a mistake with the claim id and a link to a better source. If it changes what the page says, the old statement moves to the changelog instead of disappearing."
         breadcrumb={[{ label: 'Home', to: '/' }, { label: 'Corrections' }]}

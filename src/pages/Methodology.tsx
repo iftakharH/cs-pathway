@@ -8,7 +8,6 @@ export default function Methodology() {
   return (
     <div className="container-page">
       <PageHeader
-        kicker="Methodology"
         title="How a fact gets onto this site"
         lede="A short, boring process: write the claim, find the source, record the date, and let the build fail if the evidence is thin. The goal is not to sound certain. It is to make uncertainty visible."
         breadcrumb={[{ label: 'Home', to: '/' }, { label: 'Methodology' }]}

@@ -57,7 +57,6 @@ export default function Claims() {
   return (
     <div className="container-page">
       <PageHeader
-        kicker="Claim explorer"
         title="Every factual statement, with its evidence"
         lede="Filter by kind, confidence or phase. “Needs re-check” means the review date has passed; the claim stays visible but is not presented as fresh."
         breadcrumb={[{ label: 'Home', to: '/' }, { label: 'Claims' }]}

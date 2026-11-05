@@ -314,8 +314,48 @@ export function OutreachTool() {
       </div>
 
       {data.entries.length > 0 ? (
-        <div className="mt-4 overflow-x-auto">
-          <table className="w-full min-w-[40rem] text-left text-sm">
+        <>
+          <ul className="mt-4 space-y-2 sm:hidden">
+            {data.entries.map((entry) => (
+              <li key={entry.id} className="border-t border-line pt-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-ink">{entry.name}</p>
+                    <p className="text-xs text-muted">{entry.channel || 'No channel'}</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setData({ entries: data.entries.filter((item) => item.id !== entry.id) })}
+                    className="shrink-0 rounded p-2 text-faint hover:text-danger"
+                    aria-label={`Delete ${entry.name}`}
+                  >
+                    <Trash2 size={14} aria-hidden="true" />
+                  </button>
+                </div>
+                <div className="mt-2 flex flex-wrap items-center gap-2">
+                  <select
+                    value={entry.status}
+                    onChange={(event) => update(entry.id, { status: event.target.value })}
+                    aria-label={`Status for ${entry.name}`}
+                    className="min-h-9 rounded border border-line bg-surface px-2 text-xs text-ink"
+                  >
+                    {statuses.map((status) => (
+                      <option key={status} value={status}>
+                        {status}
+                      </option>
+                    ))}
+                  </select>
+                  <span className="mono text-[10px] text-faint">
+                    {entry.nextDate ? `Next ${entry.nextDate}` : 'No follow-up date'}
+                  </span>
+                </div>
+                {entry.notes ? <p className="mt-1.5 text-xs text-muted">{entry.notes}</p> : null}
+              </li>
+            ))}
+          </ul>
+
+          <div className="mt-4 hidden overflow-x-auto sm:block">
+            <table className="w-full min-w-[40rem] text-left text-sm">
             <thead>
               <tr className="border-b border-line text-xs text-faint">
                 <th scope="col" className="py-2 pr-3 font-medium">Name</th>
@@ -359,7 +399,8 @@ export function OutreachTool() {
               ))}
             </tbody>
           </table>
-        </div>
+          </div>
+        </>
       ) : null}
     </ToolPanel>
   )

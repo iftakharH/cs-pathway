@@ -68,7 +68,6 @@ export function ProofWorkflow({ module }: { module: Module }) {
   return (
     <div>
       <div className="mb-4">
-        <p className="eyebrow mb-1">Proof</p>
         <h2 className="text-xl">{module.proof.title}</h2>
       </div>
 

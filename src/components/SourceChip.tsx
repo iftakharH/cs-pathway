@@ -78,7 +78,7 @@ export function ClaimDrawer({
         </dl>
 
         <div>
-          <h3 className="eyebrow mb-3">Sources ({sources.length})</h3>
+          <h3 className="mb-3 text-xs font-semibold text-ink">Sources ({sources.length})</h3>
           {sources.length === 0 ? (
             <p className="flex items-start gap-2 rounded-lg border border-line bg-surface-2 p-3 text-sm text-muted">
               <ShieldAlert size={16} className="mt-0.5 shrink-0" aria-hidden="true" />

@@ -44,7 +44,6 @@ export default function PlaybookSecurity() {
   return (
     <div className="container-page">
       <PageHeader
-        kicker="Playbook · security"
         title="The agent is a user with your credentials"
         lede="Every rule here exists because a plausible-looking tool can read, write or send something you did not intend. The checklist is short on purpose."
         breadcrumb={[

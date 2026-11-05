@@ -93,7 +93,6 @@ export default function Start() {
     return (
       <div className="container-page">
         <PageHeader
-          kicker="Placement result"
           title={`Start at phase ${startPhase} — ${phase?.name ?? ''}`}
           lede="Your starting point is based on five scenario answers and your own rating. Start one phase earlier if you are unsure; the first module is short enough to check."
           breadcrumb={[{ label: 'Home', to: '/' }, { label: 'Placement' }]}
@@ -209,7 +208,6 @@ export default function Start() {
   return (
     <div className="container-page">
       <PageHeader
-        kicker="Placement check"
         title="Find your first module in about three minutes"
         lede="Five scenario questions and a quick self-rating. There is no pass or fail, no account, and you can change the answer later."
         breadcrumb={[{ label: 'Home', to: '/' }, { label: 'Placement' }]}

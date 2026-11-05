@@ -20,11 +20,15 @@ import {
 import { formatDate, formatHours } from '@/lib/format'
 import { setModuleStatus, useGuestState } from '@/lib/store'
 import { InlineText } from '@/components/InlineText'
+import { useActiveSection } from '@/lib/useActiveSection'
+
+const SECTION_IDS = ['objectives', 'why', 'resources', 'sheets', 'quiz', 'proof', 'notes'] as const
 
 export default function ModulePage() {
   const { id } = useParams()
   const module = getModule(id)
   const state = useGuestState()
+  const activeSection = useActiveSection(SECTION_IDS)
 
   if (!module) {
     return (
@@ -53,7 +57,6 @@ export default function ModulePage() {
   return (
     <div className="container-page">
       <PageHeader
-        kicker={`Phase ${module.phase} · ${phase?.name ?? ''}`}
         title={module.title}
         lede={module.summary}
         breadcrumb={[
@@ -85,11 +88,11 @@ export default function ModulePage() {
         <div className="min-w-0 space-y-10">
           <section id="objectives" className="scroll-mt-24">
             <h2 className="mb-3 text-xl">What you will be able to do</h2>
-            <ul className="grid gap-2 sm:grid-cols-2">
+            <ul className="grid gap-0 sm:grid-cols-2 sm:gap-x-8">
               {module.objectives.map((objective) => (
                 <li
                   key={objective}
-                  className="flex items-start gap-2 rounded-lg border border-line bg-surface px-3 py-2.5 text-sm leading-relaxed text-muted"
+                  className="flex items-start gap-2 border-t border-line py-2.5 text-sm leading-relaxed text-muted"
                 >
                   <span className="mono mt-0.5 shrink-0 text-[10px] text-accent">→</span>
                   <span>
@@ -104,9 +107,9 @@ export default function ModulePage() {
             <h2 className="mb-3 text-xl">Why this matters</h2>
             <p className="max-w-2xl text-sm leading-relaxed text-muted">{module.whyItMatters}</p>
             {claims.length > 0 ? (
-              <div className="mt-4 space-y-3">
+              <div className="mt-4 border-t border-line">
                 {claims.map((claim) => (
-                  <div key={claim.id} className="rounded-lg border border-line bg-surface p-4">
+                  <div key={claim.id} className="border-b border-line py-4">
                     <div className="flex flex-wrap items-center gap-2">
                       <EvidenceBadge kind={claim.kind} />
                       {isStale(claim) ? <StaleBadge /> : null}
@@ -144,9 +147,9 @@ export default function ModulePage() {
               Two or more options, at least one free and one from the official vendor. Prices and
               availability were checked on the date shown.
             </p>
-            <ul className="space-y-2">
+            <ul className="border-t border-line">
               {module.resources.map((resource) => (
-                <li key={resource.url} className="card p-4">
+                <li key={resource.url} className="border-b border-line py-4">
                   <div className="flex flex-wrap items-start justify-between gap-2">
                     <div className="min-w-0">
                       <a
@@ -195,20 +198,19 @@ export default function ModulePage() {
               Short, copyable answers with a version stamp and an official source.
             </p>
             {sheets.length > 0 ? (
-              <ul className="grid gap-2 sm:grid-cols-2">
+              <ul className="grid gap-x-8 sm:grid-cols-2">
                 {sheets.map((entry) => (
                   <li key={entry.id}>
                     <Link
                       to={`/cheatsheet/${entry.id}`}
-                      className="card flex h-full flex-col p-4 hover:border-accent"
+                      className="flex h-full flex-col border-t border-line py-3 hover:text-accent"
                     >
-                      <span className="eyebrow mb-1.5">{entry.topic}</span>
                       <span className="text-sm font-medium text-ink">{entry.title}</span>
                       <span className="mt-1 line-clamp-2 text-xs leading-relaxed text-muted">
                         {entry.whenToUse}
                       </span>
                       <span className="mono mt-auto pt-3 text-[10px] text-faint">
-                        {entry.tool.name} {entry.tool.version}
+                        {entry.topic} · {entry.tool.name} {entry.tool.version}
                       </span>
                     </Link>
                   </li>
@@ -222,12 +224,12 @@ export default function ModulePage() {
           {playbookEntries.length > 0 ? (
             <section id="playbook" className="scroll-mt-24">
               <h2 className="mb-3 text-xl">Playbook</h2>
-              <ul className="space-y-2">
+              <ul className="border-t border-line">
                 {playbookEntries.map((entry) => (
                   <li key={entry.id}>
                     <Link
                       to={`/playbook/${entry.id}`}
-                      className="flex items-center gap-3 rounded-lg border border-line bg-surface p-4 hover:border-accent"
+                      className="flex items-center gap-3 border-b border-line py-3 hover:text-accent"
                     >
                       <FileText size={16} className="shrink-0 text-accent" aria-hidden="true" />
                       <span>
@@ -316,7 +318,7 @@ export default function ModulePage() {
           </div>
 
           <nav aria-label="On this page" className="card p-4">
-            <p className="eyebrow mb-2">On this page</p>
+            <p className="mb-2 text-xs font-semibold text-ink">On this page</p>
             <ul className="space-y-1.5 text-sm">
               {[
                 ['objectives', 'Objectives'],
@@ -326,13 +328,32 @@ export default function ModulePage() {
                 ['quiz', 'Quiz'],
                 ['proof', 'Proof'],
                 ['notes', 'Notes'],
-              ].map(([anchor, label]) => (
-                <li key={anchor}>
-                  <a href={`#${anchor}`} className="text-muted hover:text-accent">
-                    {label}
-                  </a>
-                </li>
-              ))}
+              ].map(([anchor, label]) => {
+                const isActive = activeSection === anchor
+                return (
+                  <li key={anchor}>
+                    <a
+                      href={`#${anchor}`}
+                      aria-current={isActive ? 'location' : undefined}
+                      className={
+                        isActive
+                          ? 'inline-flex items-center gap-2 font-medium text-accent'
+                          : 'inline-flex items-center gap-2 text-muted hover:text-accent'
+                      }
+                    >
+                      <span
+                        className={
+                          isActive
+                            ? 'h-1.5 w-1.5 rounded-full bg-accent'
+                            : 'h-1.5 w-1.5 rounded-full bg-line-strong'
+                        }
+                        aria-hidden="true"
+                      />
+                      {label}
+                    </a>
+                  </li>
+                )
+              })}
             </ul>
           </nav>
 

@@ -47,7 +47,6 @@ export default function Cheatsheet() {
   return (
     <div className="container-page">
       <PageHeader
-        kicker={`${entry.topic} · Phase ${entry.phase}`}
         title={entry.title}
         lede={entry.whenToUse}
         breadcrumb={[

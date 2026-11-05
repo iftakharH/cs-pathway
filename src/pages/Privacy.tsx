@@ -20,7 +20,6 @@ export default function Privacy() {
   return (
     <div className="container-page">
       <PageHeader
-        kicker="Privacy"
         title="No account. No server copy. No tracking."
         lede="This build has no authentication and no database. Everything you enter is stored in your browser's localStorage, on this device. It is not transmitted to cs-pathway."
         breadcrumb={[{ label: 'Home', to: '/' }, { label: 'Privacy' }]}

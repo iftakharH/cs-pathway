@@ -30,7 +30,6 @@ export default function Startup() {
   return (
     <div className="container-page">
       <PageHeader
-        kicker="Phase S · from idea to customers"
         title="Starting a company is a process, not a personality trait"
         lede={phase?.description}
         breadcrumb={[{ label: 'Home', to: '/' }, { label: 'Startup' }]}
@@ -61,7 +60,6 @@ export default function Startup() {
         <div className="rounded-xl border border-accent/30 bg-accent-soft p-5 sm:p-6">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <p className="eyebrow mb-1">Your next 7 days</p>
               <h2 className="text-2xl">Three actions, no fundraising required</h2>
             </div>
             <CalendarDays size={22} className="text-accent" aria-hidden="true" />
@@ -92,7 +90,6 @@ export default function Startup() {
 
       <section className="py-8">
         <SectionHeader
-          eyebrow="The honest version"
           title="What this phase can and cannot do"
           lede="A path can teach the process. It cannot make a market want the product."
         />
@@ -120,7 +117,6 @@ export default function Startup() {
 
       <section className="py-8">
         <SectionHeader
-          eyebrow="Modules"
           title="Nine steps from a problem to a plan"
           lede="Each module has resources, a sourced quiz, a proof and one risk note. Start at S1 if you have not shipped to a user yet."
         />
@@ -155,7 +151,6 @@ export default function Startup() {
       <section className="border-y border-line py-10">
         <div className="grid gap-8 lg:grid-cols-[1fr_1fr]">
           <div>
-            <p className="eyebrow mb-3">Funding, without the hype</p>
             <h2 className="text-2xl sm:text-3xl">Two verified examples, not a promise</h2>
             <p className="mt-3 text-sm leading-relaxed text-muted">
               Most companies do not raise venture capital. If you do, the terms matter more than the
@@ -219,7 +214,6 @@ export default function Startup() {
       <section className="py-10">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <p className="eyebrow mb-2">Before you start</p>
             <h2 className="text-2xl">Check that the problem is real, not that the idea is clever.</h2>
           </div>
           <ButtonLink to="/module/s1-should-i-start">Open S1</ButtonLink>

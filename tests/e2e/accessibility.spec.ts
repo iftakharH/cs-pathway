@@ -10,6 +10,7 @@ const routes = [
   ['/module/f-git', 'module'],
   ['/claims', 'claims'],
   ['/methodology', 'methodology'],
+  ['/harnesses', 'harnesses'],
   ['/tools', 'tools'],
 ] as const
 

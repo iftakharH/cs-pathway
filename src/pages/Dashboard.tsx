@@ -123,7 +123,6 @@ export default function Dashboard() {
     return (
       <div className="container-page">
         <PageHeader
-          kicker="Dashboard"
           title="Your plan starts with three minutes"
           lede="This page becomes your weekly view: what to do next, what you have proved, and what is blocked. It needs one input first — your starting point."
           breadcrumb={[{ label: 'Home', to: '/' }, { label: 'Dashboard' }]}
@@ -177,7 +176,6 @@ export default function Dashboard() {
   return (
     <div className="container-page">
       <PageHeader
-        kicker={state.profile ? `${state.profile.hoursPerWeek} h/week plan` : 'Dashboard'}
         title={next ? `Next: ${next.title}` : 'You have finished every module in range'}
         lede={
           next

@@ -47,7 +47,6 @@ export default function Plan() {
   return (
     <div className="container-page">
       <PageHeader
-        kicker="Fast-track planner"
         title="Turn weekly hours into a week-by-week plan"
         lede="The estimate uses the midpoint of each module's editorial hour range, skips what you have already proved, and recalculates when your pace changes."
         breadcrumb={[

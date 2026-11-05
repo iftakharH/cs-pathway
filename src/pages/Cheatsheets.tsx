@@ -86,7 +86,6 @@ export default function Cheatsheets() {
   return (
     <div className="container-page">
       <PageHeader
-        kicker="Cheatsheet library"
         title="One task. One answer. One source."
         lede={`${manifest.counts.cheatsheets} atomic entries, ${manifest.runnableSnippets} of them executed in CI. Copy a snippet, print a sheet, or pin the entries you use on the job.`}
         breadcrumb={[{ label: 'Home', to: '/' }, { label: 'Cheatsheets' }]}

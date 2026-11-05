@@ -14,6 +14,7 @@ const labels: Record<string, string> = {
   http: 'HTTP',
   dockerfile: 'Dockerfile',
   ini: 'Config',
+  toml: 'TOML',
   html: 'HTML',
   css: 'CSS',
   text: 'Text',

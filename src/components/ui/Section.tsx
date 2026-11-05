@@ -4,13 +4,11 @@ import { ChevronRight } from 'lucide-react'
 import { cx } from '@/lib/format'
 
 export function SectionHeader({
-  eyebrow,
   title,
   lede,
   action,
   className,
 }: {
-  eyebrow?: string
   title: string
   lede?: string
   action?: ReactNode
@@ -19,7 +17,6 @@ export function SectionHeader({
   return (
     <div className={cx('flex flex-wrap items-end justify-between gap-4', className)}>
       <div className="max-w-2xl">
-        {eyebrow ? <p className="eyebrow mb-2">{eyebrow}</p> : null}
         <h2 className="text-2xl sm:text-3xl">{title}</h2>
         {lede ? <p className="mt-2 text-[0.9375rem] leading-relaxed text-muted">{lede}</p> : null}
       </div>
@@ -29,13 +26,11 @@ export function SectionHeader({
 }
 
 export function PageHeader({
-  kicker,
   title,
   lede,
   breadcrumb,
   actions,
 }: {
-  kicker?: string
   title: string
   lede?: string
   breadcrumb?: Array<{ label: string; to?: string }>
@@ -61,7 +56,6 @@ export function PageHeader({
           </ol>
         </nav>
       ) : null}
-      {kicker ? <p className="eyebrow mb-3">{kicker}</p> : null}
       <div className="flex flex-wrap items-end justify-between gap-5">
         <h1 className="max-w-3xl text-3xl leading-[1.1] sm:text-4xl md:text-5xl">{title}</h1>
         {actions ? <div className="flex flex-wrap gap-2 no-print">{actions}</div> : null}

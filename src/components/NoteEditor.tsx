@@ -40,7 +40,6 @@ export function NoteEditor({
   return (
     <div>
       <div className="mb-3">
-        <p className="eyebrow mb-1">Notes</p>
         <h2 className="text-xl">{title}</h2>
         <p className="mt-1 text-sm text-muted">{description}</p>
       </div>

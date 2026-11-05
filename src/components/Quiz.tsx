@@ -40,7 +40,6 @@ export function Quiz({ module }: { module: Module }) {
     <div>
       <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="eyebrow mb-1">Quiz</p>
           <h2 className="text-xl">Check your understanding</h2>
         </div>
         <span className="mono text-[10px] uppercase tracking-wider text-faint">

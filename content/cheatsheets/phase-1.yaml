@@ -474,7 +474,7 @@ entries:
       - Editing a migration that already ran in production makes environments disagree.
       - A migration that locks a large table can take the app down.
     seeAlso: [pg-schema, pg-transactions, pg-pooling]
-    tool: { name: Drizzle Kit, version: '0.45.4', verifiedOn: 2026-11-05 }
+    tool: { name: Drizzle Kit, version: '0.31.11', verifiedOn: 2026-11-05 }
     sourceUrl: https://orm.drizzle.team/docs/migrations
     tags: [postgres, drizzle, migrations, deploy]
 
@@ -939,6 +939,105 @@ entries:
     tool: { name: AGENTS.md, version: 'convention', verifiedOn: 2026-11-05 }
     sourceUrl: https://agents.md/
     tags: [agents, instructions, workflow]
+
+  - id: skill-md
+    phase: "1"
+    topic: Coding agents
+    title: Write a portable SKILL.md
+    whenToUse: When a workflow should load only when a task matches, instead of being pasted into every session.
+    snippets:
+      - lang: text
+        caption: A skill is a folder with one required file
+        runnable: false
+        checked: docs
+        code: |
+          .agents/skills/release-notes/
+          ├── SKILL.md
+          ├── scripts/collect.ts
+          └── references/template.md
+      - lang: text
+        caption: The required frontmatter and a short procedure
+        runnable: false
+        checked: docs
+        code: |
+          ---
+          name: release-notes
+          description: Draft release notes from merged pull requests. Use when preparing a release or asking what changed.
+          license: MIT
+          ---
+
+          ## Steps
+          1. Read merged pull requests since the last tag.
+          2. Group by user-visible change, not commit type.
+          3. Return a draft with links. Do not publish.
+    notes:
+      - "`name` is required, at most 64 characters, lowercase letters, numbers and single hyphens."
+      - "`description` is required, at most 1,024 characters, and should say what it does and when to use it."
+      - Agents load only the name and description first, then the body when the task matches.
+      - Reference bundled scripts by a relative path from the skill root.
+      - The same folder can be loaded by Claude Code, Cursor, Codex, OpenCode, Copilot and Gemini CLI from their own skill directories.
+    gotchas:
+      - A vague description such as “helps with code” will not trigger reliably.
+      - Do not put always-on project rules in a skill; use AGENTS.md for those.
+      - A bundled script is executable code. Review it before installing a third-party skill.
+    seeAlso: [agents-md, mcp-connect]
+    tool: { name: Agent Skills, version: 'open standard', verifiedOn: 2026-11-06 }
+    sourceUrl: https://agentskills.io/specification
+    tags: [agents, skills, workflow, portability]
+
+  - id: mcp-connect
+    phase: "1"
+    topic: Coding agents
+    title: Connect one read-only MCP server
+    whenToUse: When the same external tool should be available to an agent, and you want the config shape for the harness you use.
+    snippets:
+      - lang: json
+        caption: OpenCode, in opencode.json
+        runnable: false
+        checked: docs
+        code: |
+          {
+            "$schema": "https://opencode.ai/config.json",
+            "mcp": {
+              "context7": {
+                "type": "remote",
+                "url": "https://mcp.context7.com/mcp",
+                "enabled": true
+              }
+            }
+          }
+      - lang: json
+        caption: Cursor, in .cursor/mcp.json
+        runnable: false
+        checked: docs
+        code: |
+          {
+            "mcpServers": {
+              "context7": {
+                "url": "https://mcp.context7.com/mcp"
+              }
+            }
+          }
+      - lang: toml
+        caption: Codex CLI, in ~/.codex/config.toml
+        runnable: false
+        checked: docs
+        code: |
+          [mcp_servers.context7]
+          url = "https://mcp.context7.com/mcp"
+    notes:
+      - Claude Code uses `.mcp.json` or `claude mcp add`; OpenCode uses `opencode.json` under `mcp`.
+      - Cursor uses `.cursor/mcp.json`; Codex uses `~/.codex/config.toml`; Gemini CLI uses `settings.json`; Copilot uses `mcp.json` or repository MCP settings.
+      - Prefer a read-only server and least-privilege credentials. Review the server source before connecting it.
+      - OAuth is preferred over a static token when the server supports it.
+    gotchas:
+      - MCP tools consume context. Enable only the server you need.
+      - A server that can read every repository is one prompt injection away from leaking them.
+      - Config formats differ; do not copy a Claude config into Codex and expect it to load.
+    seeAlso: [skill-md, agents-md, mcp-server]
+    tool: { name: Model Context Protocol, version: '2026-07-28', verifiedOn: 2026-11-06 }
+    sourceUrl: https://modelcontextprotocol.io/docs/getting-started/intro
+    tags: [agents, mcp, config, harnesses]
 
   - id: agent-spec-prompt
     phase: "1"

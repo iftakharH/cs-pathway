@@ -72,12 +72,28 @@ test('every phase has modules and every module has a proof', async ({ page }) =>
 
 test('cheatsheet search narrows the library and opens an entry', async ({ page }) => {
   await page.goto('/cheatsheets')
-  await expect(page.getByText('106 entries')).toBeVisible()
+  await expect(page.getByText(/\d+ entries/).first()).toBeVisible()
   await page.locator('#cheat-search').fill('rebase')
   await expect(page.getByText('Choose rebase or merge').first()).toBeVisible()
   await page.getByRole('link', { name: 'Choose rebase or merge' }).first().click()
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Choose rebase or merge')
   await expect(page.getByText('Executed by the snippet test suite on every push.').or(page.getByText('Checked against the official docs, not executed.'))).toBeVisible()
+})
+
+test('harness matrix filters and exposes file paths', async ({ page }) => {
+  await page.goto('/harnesses')
+  const table = page.locator('table')
+  await expect(table.getByText('Claude Code')).toBeVisible()
+  await expect(table.getByText('Gemini CLI')).toBeVisible()
+
+  await page.getByRole('button', { name: 'Hide legacy' }).click()
+  await expect(table.getByText('Gemini CLI')).toHaveCount(0)
+  await expect(table.getByText('Codex CLI')).toBeVisible()
+
+  await page.getByRole('button', { name: 'Reset' }).click()
+  await table.getByRole('button', { name: /Codex CLI/ }).click()
+  await expect(page.getByRole('heading', { name: 'Codex CLI' })).toBeVisible()
+  await expect(page.getByText('.agents/skills or $HOME/.agents/skills')).toBeVisible()
 })
 
 test('startup tools calculate and persist', async ({ page }) => {

@@ -38,7 +38,6 @@ export default function Phase() {
   return (
     <div className="container-page">
       <PageHeader
-        kicker={`Phase ${phase.id} · ${phase.kicker}`}
         title={phase.name}
         lede={phase.description}
         breadcrumb={[

@@ -40,7 +40,6 @@ export default function Pins() {
   return (
     <div className="container-page">
       <PageHeader
-        kicker="Your sheet"
         title="Pinned cheatsheets"
         lede="The entries you marked for the job. Export them as Markdown, or print a two-column A4 sheet and keep it next to the keyboard."
         breadcrumb={[
@@ -91,12 +90,12 @@ export default function Pins() {
                 <article key={entry.id} className="cheat-entry card p-5">
                   <div className="mb-2 flex flex-wrap items-start justify-between gap-2">
                     <div>
-                      <p className="eyebrow mb-1">{entry.topic}</p>
                       <h2 className="text-lg leading-snug">
                         <Link to={`/cheatsheet/${entry.id}`} className="hover:text-accent">
                           {entry.title}
                         </Link>
                       </h2>
+                      <p className="text-xs text-faint">{entry.topic}</p>
                     </div>
                     <div className="no-print">
                       <PinButton cheatId={entry.id} />

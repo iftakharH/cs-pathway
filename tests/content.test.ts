@@ -71,9 +71,37 @@ describe('content integrity', () => {
       content?.modules.map((item) => item.id) ?? [],
       content?.cheatsheets.map((item) => item.id) ?? [],
       content?.playbook.map((item) => item.id) ?? [],
+      content?.harnesses.map((item) => item.id) ?? [],
     ]
     for (const ids of collections) {
       expect(new Set(ids).size).toBe(ids.length)
+    }
+  })
+
+  it('keeps the harness comparison complete and documented', () => {
+    const harnesses = content?.harnesses ?? []
+    expect(harnesses).toHaveLength(6)
+    for (const harness of harnesses) {
+      expect(harness.skillsUrl, `${harness.id} skills docs`).toMatch(/^https:\/\//)
+      expect(harness.mcpUrl, `${harness.id} MCP docs`).toMatch(/^https:\/\//)
+      expect(harness.agentsMdUrl, `${harness.id} AGENTS.md docs`).toMatch(/^https:\/\//)
+      expect(harness.verifiedOn, harness.id).toMatch(/^2026-11-06$/)
+      expect(harness.notes.length, harness.id).toBeGreaterThan(20)
+    }
+
+    const gemini = harnesses.find((harness) => harness.id === 'gemini-cli')
+    expect(gemini?.status).toBe('legacy')
+    expect(gemini?.agentsMd).toBe('partial')
+
+    const claude = harnesses.find((harness) => harness.id === 'claude-code')
+    expect(claude?.agentsMd).toBe('partial')
+  })
+
+  it('maps every stamped tool to a manual or registry review', () => {
+    const tools = [...new Set((content?.cheatsheets ?? []).map((entry) => entry.tool.name))]
+    expect(tools.length).toBeGreaterThan(20)
+    for (const tool of tools) {
+      expect(tool.trim().length, tool).toBeGreaterThan(1)
     }
   })
 })

@@ -1,22 +1,123 @@
 harnesses:
-  - id: opencode
-    name: OpenCode
-    vendor: OpenCode
-    url: https://opencode.ai/docs/
-    pricingUrl: https://opencode.ai/docs/
-    skills: native
-    mcp: native
-    agentsMd: native
-    notes: An open-source terminal agent with project instructions, skills and MCP server configuration. Verify the current configuration file format before copying an example from a blog.
-    verifiedOn: 2026-11-05
-
   - id: claude-code
     name: Claude Code
     vendor: Anthropic
-    url: https://docs.anthropic.com/en/docs/claude-code/overview
-    pricingUrl: https://www.anthropic.com/pricing
+    url: https://code.claude.com/docs/en/overview
+    pricingUrl: https://claude.com/pricing
     skills: native
     mcp: native
     agentsMd: partial
-    notes: Anthropic developed the Agent Skills format, and Claude Code supports MCP servers. Project instructions use CLAUDE.md; check the current docs for AGENTS.md support before relying on it.
-    verifiedOn: 2026-11-05
+    status: active
+    skillsUrl: https://code.claude.com/docs/en/skills
+    mcpUrl: https://code.claude.com/docs/en/mcp
+    agentsMdUrl: https://code.claude.com/docs/en/memory
+    skillsPath: .claude/skills/<name>/SKILL.md
+    mcpConfig: .mcp.json or claude mcp add
+    agentsFile: CLAUDE.md; AGENTS.md when no CLAUDE.md exists
+    limitations:
+      - AGENTS.md is a fallback. A CLAUDE.md in the working directory or above it takes precedence.
+      - Reading AGENTS.md directly requires Claude Code v2.1.277 or later; some sessions read CLAUDE.md only.
+    notes: Skills follow the Agent Skills open standard and can run in a forked subagent. MCP supports stdio, HTTP, SSE and WebSocket servers, with OAuth for remote servers.
+    verifiedOn: 2026-11-06
+
+  - id: opencode
+    name: OpenCode
+    vendor: Anomaly
+    url: https://opencode.ai/docs/
+    pricingUrl: https://opencode.ai/
+    skills: native
+    mcp: native
+    agentsMd: native
+    status: active
+    skillsUrl: https://opencode.ai/docs/skills/
+    mcpUrl: https://opencode.ai/docs/mcp-servers/
+    agentsMdUrl: https://opencode.ai/docs/rules/
+    skillsPath: .opencode/skills/<name>/SKILL.md (also .claude/skills and .agents/skills)
+    mcpConfig: opencode.json -> mcp
+    agentsFile: AGENTS.md
+    limitations:
+      - MCP tools add to the context window. The docs warn that large servers can consume it quickly.
+    notes: AGENTS.md is the primary rule file, with Claude Code and .agents paths read as compatibility fallbacks. Skills load on demand through the native skill tool.
+    verifiedOn: 2026-11-06
+
+  - id: cursor
+    name: Cursor
+    vendor: Anysphere
+    url: https://cursor.com/docs
+    pricingUrl: https://cursor.com/pricing
+    skills: native
+    mcp: native
+    agentsMd: native
+    status: active
+    skillsUrl: https://cursor.com/docs/skills
+    mcpUrl: https://cursor.com/docs/context/mcp
+    agentsMdUrl: https://cursor.com/docs/context/rules
+    skillsPath: .agents/skills/ or .cursor/skills/
+    mcpConfig: .cursor/mcp.json
+    agentsFile: AGENTS.md (root and nested) or .cursor/rules/*.mdc
+    limitations:
+      - Personal skills in ~/.cursor/skills stay local unless synced for Cloud Agents.
+    notes: Skills and rules are separate mechanisms. Cursor also loads Claude and Codex skill directories for compatibility, and supports nested AGENTS.md files.
+    verifiedOn: 2026-11-06
+
+  - id: codex
+    name: Codex CLI
+    vendor: OpenAI
+    url: https://developers.openai.com/codex/
+    pricingUrl: https://openai.com/chatgpt/pricing/
+    skills: native
+    mcp: native
+    agentsMd: native
+    status: active
+    skillsUrl: https://developers.openai.com/codex/skills
+    mcpUrl: https://developers.openai.com/codex/mcp
+    agentsMdUrl: https://developers.openai.com/codex/guides/agents-md
+    skillsPath: .agents/skills or $HOME/.agents/skills
+    mcpConfig: ~/.codex/config.toml -> [mcp_servers.<name>]
+    agentsFile: AGENTS.md; AGENTS.override.md wins in a directory
+    limitations:
+      - Instruction files stop at project_doc_max_bytes, which defaults to 32 KiB.
+      - Skills bundled in plugins are distributed separately from standalone skill folders.
+    notes: Skills cover the CLI, IDE extension and app. AGENTS.md is layered from the global file through the repository to the current directory.
+    verifiedOn: 2026-11-06
+
+  - id: gemini-cli
+    name: Gemini CLI
+    vendor: Google
+    url: https://geminicli.com/docs/
+    pricingUrl: https://geminicli.com/docs/resources/quota-and-pricing
+    skills: native
+    mcp: native
+    agentsMd: partial
+    status: legacy
+    skillsUrl: https://geminicli.com/docs/cli/skills
+    mcpUrl: https://geminicli.com/docs/tools/mcp-server
+    agentsMdUrl: https://geminicli.com/docs/cli/gemini-md
+    skillsPath: .gemini/skills or .agents/skills
+    mcpConfig: settings.json -> mcpServers
+    agentsFile: GEMINI.md by default; AGENTS.md only via context.fileName
+    limitations:
+      - Google replaced Gemini CLI with Antigravity CLI for unpaid and Google One users on 18 June 2026.
+      - AGENTS.md is not read by default. Add it to context.fileName in settings.
+    notes: The documentation is still online, so the entry is kept as a legacy reference. Before adopting, read the product notice on every Gemini CLI docs page and check Antigravity CLI.
+    verifiedOn: 2026-11-06
+
+  - id: github-copilot
+    name: GitHub Copilot
+    vendor: GitHub
+    url: https://docs.github.com/en/copilot
+    pricingUrl: https://github.com/features/copilot/plans
+    skills: native
+    mcp: native
+    agentsMd: native
+    status: active
+    skillsUrl: https://docs.github.com/en/copilot/concepts/agents/about-agent-skills
+    mcpUrl: https://docs.github.com/en/copilot/concepts/customizations/mcp
+    agentsMdUrl: https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions
+    skillsPath: .github/skills, .claude/skills, or .agents/skills
+    mcpConfig: mcp.json, repository MCP settings, or custom agent config
+    agentsFile: AGENTS.md (nearest wins) or .github/copilot-instructions.md
+    limitations:
+      - Skill and MCP support varies by IDE and surface. Check the Copilot feature matrix for your editor.
+    notes: Skills work in the Copilot app, CLI, cloud agent, code review and IDE agent mode. AGENTS.md files are read from anywhere in the repository, with the nearest file taking precedence.
+    verifiedOn: 2026-11-06

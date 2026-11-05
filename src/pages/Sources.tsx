@@ -27,7 +27,6 @@ export default function Sources() {
   return (
     <div className="container-page">
       <PageHeader
-        kicker="Sources"
         title="The bibliography behind the claims"
         lede="Each record shows the publisher, tier, retrieval date and the URL. Source records are public even when the claim they support is not on the current page."
         breadcrumb={[{ label: 'Home', to: '/' }, { label: 'Sources' }]}

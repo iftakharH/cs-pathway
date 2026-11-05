@@ -34,6 +34,11 @@ Rules enforced by `npm run validate` (the build fails when broken):
   retrieval date, link.
 - Evidence labels are text + icon, never colour alone: Observed data, Official docs,
   Editorial opinion, Forecast.
+- Harness records live in `content/harnesses.yaml`. Each must link the vendor's Skills, MCP and
+  instruction docs, record the exact config path, and state its limitations. Mark a harness
+  `legacy` when the vendor has replaced it rather than silently deleting the row.
+- Run `npm run check:versions` before changing a tool stamp. A version stamp may move only after
+  the entry has been re-read against the new docs and, where applicable, its snippets re-run.
 
 ## 3. Stack and architecture (spec §7)
 

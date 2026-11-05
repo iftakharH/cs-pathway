@@ -18,7 +18,6 @@ export default function Glossary() {
   return (
     <div className="container-page">
       <PageHeader
-        kicker="Glossary"
         title="The words, defined once"
         lede="Each definition links to a primary explanation from the body that maintains the idea — not to another glossary."
         breadcrumb={[{ label: 'Home', to: '/' }, { label: 'Glossary' }]}

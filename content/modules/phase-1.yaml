@@ -546,7 +546,7 @@ modules:
         lastVerifiedAt: 2026-11-05
         officialVendor: true
         why: The current protocol for exposing tools and context to an agent.
-    cheatsheetIds: [agents-md, agent-spec-prompt]
+    cheatsheetIds: [agents-md, agent-spec-prompt, skill-md, mcp-connect]
     quiz:
       - id: p1-agent-q1
         question: What belongs first in an AGENTS.md file?

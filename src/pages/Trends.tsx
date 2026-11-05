@@ -13,7 +13,6 @@ export default function Trends() {
   return (
     <div className="container-page">
       <PageHeader
-        kicker="2027 trends"
         title="What changed, what is emerging, and what is only a guess"
         lede="Three labels, used strictly. Observed means a survey or dataset. Emerging means a specification or behaviour with early evidence. Forecast means a named institution made a prediction that could be proven wrong."
         breadcrumb={[{ label: 'Home', to: '/' }, { label: 'Trends' }]}
