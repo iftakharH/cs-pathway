@@ -118,6 +118,7 @@ function main() {
     '/claims',
     '/sources',
     '/methodology',
+    '/verification',
     '/changelog',
     '/corrections',
     '/about',

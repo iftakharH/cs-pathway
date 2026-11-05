@@ -12,21 +12,21 @@ import {
 } from '@/lib/calculators'
 
 describe('safe ownership', () => {
-  it('matches the worked example on the YC deal page', () => {
-    expect(safeOwnership(375_000, 15_000_000)).toBeCloseTo(0.025, 6)
+  it('converts an investment at a post-money cap', () => {
+    expect(safeOwnership(500_000, 10_000_000)).toBeCloseTo(0.05, 6)
   })
 
   it('returns null for a zero or negative cap', () => {
-    expect(safeOwnership(375_000, 0)).toBeNull()
-    expect(safeOwnership(375_000, -1)).toBeNull()
+    expect(safeOwnership(500_000, 0)).toBeNull()
+    expect(safeOwnership(500_000, -1)).toBeNull()
   })
 
   it('returns null for negative investment', () => {
-    expect(safeOwnership(-1, 15_000_000)).toBeNull()
+    expect(safeOwnership(-1, 10_000_000)).toBeNull()
   })
 
   it('handles zero investment as zero ownership', () => {
-    expect(safeOwnership(0, 15_000_000)).toBe(0)
+    expect(safeOwnership(0, 10_000_000)).toBe(0)
   })
 })
 

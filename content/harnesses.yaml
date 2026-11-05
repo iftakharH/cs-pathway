@@ -14,6 +14,11 @@ harnesses:
     skillsPath: .claude/skills/<name>/SKILL.md
     mcpConfig: .mcp.json or claude mcp add
     agentsFile: CLAUDE.md; AGENTS.md when no CLAUDE.md exists
+    quickstart:
+      - Install Claude Code and run `claude` inside the repository.
+      - Create `.claude/skills/release-notes/SKILL.md` with `name` and `description` frontmatter.
+      - Run `claude mcp add --transport http context7 https://mcp.context7.com/mcp`.
+      - Put always-on project rules in `CLAUDE.md`; add `AGENTS.md` only as a fallback.
     limitations:
       - AGENTS.md is a fallback. A CLAUDE.md in the working directory or above it takes precedence.
       - Reading AGENTS.md directly requires Claude Code v2.1.277 or later; some sessions read CLAUDE.md only.
@@ -35,6 +40,11 @@ harnesses:
     skillsPath: .opencode/skills/<name>/SKILL.md (also .claude/skills and .agents/skills)
     mcpConfig: opencode.json -> mcp
     agentsFile: AGENTS.md
+    quickstart:
+      - Run `opencode` in the repository and open a session.
+      - Create `.opencode/skills/release-notes/SKILL.md` with a specific `description`.
+      - Add the server under `mcp` in `opencode.json`, then restart the session.
+      - Put always-on rules in `AGENTS.md` at the repository root.
     limitations:
       - MCP tools add to the context window. The docs warn that large servers can consume it quickly.
     notes: AGENTS.md is the primary rule file, with Claude Code and .agents paths read as compatibility fallbacks. Skills load on demand through the native skill tool.
@@ -55,6 +65,11 @@ harnesses:
     skillsPath: .agents/skills/ or .cursor/skills/
     mcpConfig: .cursor/mcp.json
     agentsFile: AGENTS.md (root and nested) or .cursor/rules/*.mdc
+    quickstart:
+      - Open the repository in Cursor and switch the chat to Agent.
+      - Create `.cursor/skills/release-notes/SKILL.md`, or use `.agents/skills/`.
+      - Add the server to `.cursor/mcp.json` under `mcpServers`.
+      - Add `AGENTS.md` at the root; nested files apply to their own folders.
     limitations:
       - Personal skills in ~/.cursor/skills stay local unless synced for Cloud Agents.
     notes: Skills and rules are separate mechanisms. Cursor also loads Claude and Codex skill directories for compatibility, and supports nested AGENTS.md files.
@@ -75,6 +90,11 @@ harnesses:
     skillsPath: .agents/skills or $HOME/.agents/skills
     mcpConfig: ~/.codex/config.toml -> [mcp_servers.<name>]
     agentsFile: AGENTS.md; AGENTS.override.md wins in a directory
+    quickstart:
+      - Install Codex CLI and run `codex` inside the repository.
+      - Create `.agents/skills/release-notes/SKILL.md`, or use `~/.agents/skills/`.
+      - Add `[mcp_servers.context7]` with `url = "https://mcp.context7.com/mcp"` to `~/.codex/config.toml`.
+      - Add `AGENTS.md`; `AGENTS.override.md` wins in the directory where it sits.
     limitations:
       - Instruction files stop at project_doc_max_bytes, which defaults to 32 KiB.
       - Skills bundled in plugins are distributed separately from standalone skill folders.
@@ -96,6 +116,11 @@ harnesses:
     skillsPath: .gemini/skills or .agents/skills
     mcpConfig: settings.json -> mcpServers
     agentsFile: GEMINI.md by default; AGENTS.md only via context.fileName
+    quickstart:
+      - 'Read the replacement notice before installing: unpaid and Google One users should use Antigravity CLI.'
+      - Create `.gemini/skills/release-notes/SKILL.md`, or use `.agents/skills/`.
+      - Add the server under `mcpServers` in `settings.json`.
+      - GEMINI.md is read by default; add `AGENTS.md` to `context.fileName` to load it.
     limitations:
       - Google replaced Gemini CLI with Antigravity CLI for unpaid and Google One users on 18 June 2026.
       - AGENTS.md is not read by default. Add it to context.fileName in settings.
@@ -117,7 +142,39 @@ harnesses:
     skillsPath: .github/skills, .claude/skills, or .agents/skills
     mcpConfig: mcp.json, repository MCP settings, or custom agent config
     agentsFile: AGENTS.md (nearest wins) or .github/copilot-instructions.md
+    quickstart:
+      - Open the repository in a Copilot surface that supports agent skills.
+      - Create `.github/skills/release-notes/SKILL.md`; `.claude/skills` and `.agents/skills` also work.
+      - Add the server through `mcp.json` or repository MCP settings.
+      - Add `AGENTS.md`; the nearest file wins, or use `.github/copilot-instructions.md`.
     limitations:
       - Skill and MCP support varies by IDE and surface. Check the Copilot feature matrix for your editor.
     notes: Skills work in the Copilot app, CLI, cloud agent, code review and IDE agent mode. AGENTS.md files are read from anywhere in the repository, with the nearest file taking precedence.
+    verifiedOn: 2026-11-06
+
+  - id: antigravity
+    name: Antigravity CLI
+    vendor: Google
+    url: https://antigravity.google/docs/
+    pricingUrl: https://antigravity.google/pricing
+    skills: native
+    mcp: native
+    agentsMd: native
+    status: active
+    skillsUrl: https://antigravity.google/docs/skills
+    mcpUrl: https://antigravity.google/docs/mcp
+    agentsMdUrl: https://antigravity.google/docs/rules
+    skillsPath: .agents/skills/ (also ~/.gemini/config/skills/)
+    mcpConfig: .agents/mcp_config.json or ~/.gemini/config/mcp_config.json
+    agentsFile: AGENTS.md, GEMINI.md, or .agents/rules/*.md
+    quickstart:
+      - Install Antigravity CLI and run `agy` inside the repository.
+      - Create `.agents/skills/release-notes/SKILL.md`; the CLI also loads `~/.gemini/config/skills`.
+      - Add the server under `mcpServers` in `.agents/mcp_config.json` or the global `mcp_config.json`.
+      - Add `AGENTS.md`; `.agents/rules/*.md` adds scoped rules with frontmatter.
+    limitations:
+      - Rules are not loaded from subfolders below the workspace folder.
+      - A single rule file is truncated at 24 KB, and always-on rules share a 20,000-token budget.
+      - The CLI does not support rule mentions.
+    notes: Skills, MCP and rules are first-class across the app, CLI and IDE. The CLI uses `agy` and shares global skills with the app under `~/.gemini/config`.
     verifiedOn: 2026-11-06

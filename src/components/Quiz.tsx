@@ -28,6 +28,7 @@ export function Quiz({ module }: { module: Module }) {
       score,
       module.quiz.length,
       module.quiz.map((question) => answers[question.id] ?? -1),
+      module.quiz.map((question) => ({ id: question.id, answerIndex: question.answerIndex })),
     )
   }, [answers, complete, module, score])
 

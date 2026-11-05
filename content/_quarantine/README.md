@@ -13,15 +13,15 @@ confirmed against a primary or two independent secondary sources. It is not publ
 To restore it: read the linked post in full, record the exact wording and method, add a
 source record with a retrieval date, and add the claim with the right kind and confidence.
 
-## 2026-11-05 — Bangladesh startup grant announcement
+## 2026-11-05 — Country-specific grant announcement
 
-The brief supplied a claim that on 14 July 2026 the government announced grants from Tk 5 lakh
-to Tk 5 crore with about Tk 500 crore allocated, and launched a National Startup and
-Entrepreneur Platform. No official programme page was found and verified. It is not published.
+The brief supplied a national grant announcement with local-currency amounts and a ministry
+programme. No official programme page was found and verified. It is not published, and the
+product now uses worldwide funding sources instead of single-country programmes.
 
-To restore it: find the official ICT Division or programme page, confirm the amounts,
-eligibility and date, record the page with a retrieval date, and add the claim as an
-announcement rather than an entitlement.
+To restore it: find the official programme page, confirm the amounts, eligibility and date,
+record the page with a retrieval date, and add the claim as an announcement rather than an
+entitlement. A single-country claim also needs a review date tied to the policy cycle.
 
 ## 2026-11-05 — MCP Registry launch date
 

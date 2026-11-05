@@ -13,14 +13,14 @@ modules:
     estHours: { min: 3, max: 5 }
     claimIds: [S2]
     resources:
-      - title: Y Combinator Startup School
-        publisher: Y Combinator
-        url: https://www.startupschool.org/
-        format: course
+      - title: GEM 2025/2026 Global Report
+        publisher: Global Entrepreneurship Monitor
+        url: https://www.gemconsortium.org/reports/latest-global-report
+        format: docs
         price: free
-        lastVerifiedAt: 2026-11-05
+        lastVerifiedAt: 2026-11-06
         officialVendor: true
-        why: Free lectures and exercises on choosing an idea and finding users.
+        why: Worldwide survey evidence on startup activity, survival and access to finance.
       - title: How Not to Die
         publisher: Paul Graham
         url: https://paulgraham.com/die.html
@@ -48,21 +48,25 @@ modules:
         explanation: Startups are usually killed by running out of money, often after the founders stop working on the thing that mattered.
         sourceUrl: https://paulgraham.com/die.html
       - id: s1-q3
-        question: In YC's standard deal, what does the $125,000 convert into?
-        choices: [A fixed 7% of the company, A fixed 20%, An uncapped SAFE, A loan]
-        answerIndex: 0
-        explanation: The $125k is on a post-money SAFE for 7%; the $375k is on an uncapped MFN SAFE.
-        sourceUrl: https://ycombinator.com/deal
-      - id: s1-q4
-        question: What is the $375,000 portion of the YC deal?
+        question: What is bootstrapping?
         choices:
-          - An uncapped SAFE with a most-favoured-nation provision
-          - A priced Series A round
-          - A grant that does not dilute
-          - A convertible note with a 9% interest rate
+          - Funding growth from revenue and savings rather than outside investors
+          - Raising a seed round before launch
+          - Borrowing from a bank at a fixed rate
+          - Selling equity to an accelerator
         answerIndex: 0
-        explanation: YC invests $375,000 on an uncapped SAFE with MFN terms; it converts with the next round's terms.
-        sourceUrl: https://ycombinator.com/deal
+        explanation: Bootstrapping keeps ownership but limits the speed and scale the company can fund.
+        sourceUrl: https://en.wikipedia.org/wiki/Bootstrapping_(business)
+      - id: s1-q4
+        question: What does a post-money valuation cap fix?
+        choices:
+          - The maximum valuation at which a convertible instrument converts
+          - The share price for every future round
+          - The number of board seats the investor receives
+          - The interest rate on a convertible note
+        answerIndex: 0
+        explanation: The cap sets the highest valuation used to calculate conversion, so later rounds still change the ownership.
+        sourceUrl: https://en.wikipedia.org/wiki/Simple_agreement_for_future_equity
       - id: s1-q5
         question: What does Paul Graham recommend for getting the first users?
         choices:
@@ -122,14 +126,14 @@ modules:
         lastVerifiedAt: 2026-11-05
         officialVendor: true
         why: A short, practical book on questions that produce evidence instead of polite encouragement. Paid, and worth labelling as such.
-      - title: Y Combinator Startup Library
-        publisher: Y Combinator
-        url: https://www.ycombinator.com/library
-        format: video
+      - title: GEM 2025/2026 Global Report
+        publisher: Global Entrepreneurship Monitor
+        url: https://www.gemconsortium.org/reports/latest-global-report
+        format: docs
         price: free
-        lastVerifiedAt: 2026-11-05
+        lastVerifiedAt: 2026-11-06
         officialVendor: true
-        why: Free talks on finding problems and talking to users.
+        why: Worldwide survey evidence on startup activity, survival and access to finance.
     cheatsheetIds: [customer-questions]
     quiz:
       - id: s2-q1
@@ -231,14 +235,14 @@ modules:
         lastVerifiedAt: 2026-11-05
         officialVendor: true
         why: The question patterns and the commitment framework used in this module.
-      - title: Y Combinator Startup Library
-        publisher: Y Combinator
-        url: https://www.ycombinator.com/library
-        format: video
+      - title: GEM 2025/2026 Global Report
+        publisher: Global Entrepreneurship Monitor
+        url: https://www.gemconsortium.org/reports/latest-global-report
+        format: docs
         price: free
-        lastVerifiedAt: 2026-11-05
+        lastVerifiedAt: 2026-11-06
         officialVendor: true
-        why: Free talks on user interviews and finding the first customers.
+        why: Worldwide survey evidence on startup activity, survival and access to finance.
     cheatsheetIds: [customer-questions, startup-outreach]
     quiz:
       - id: s3-q1
@@ -340,14 +344,14 @@ modules:
         lastVerifiedAt: 2026-11-05
         officialVendor: true
         why: The argument for manual recruiting and white-glove support in the first version.
-      - title: Y Combinator Startup Library
-        publisher: Y Combinator
-        url: https://www.ycombinator.com/library
-        format: video
+      - title: GEM 2025/2026 Global Report
+        publisher: Global Entrepreneurship Monitor
+        url: https://www.gemconsortium.org/reports/latest-global-report
+        format: docs
         price: free
-        lastVerifiedAt: 2026-11-05
+        lastVerifiedAt: 2026-11-06
         officialVendor: true
-        why: Free talks on building an MVP and talking to early users.
+        why: Worldwide survey evidence on startup activity, survival and access to finance.
     cheatsheetIds: [startup-metrics]
     quiz:
       - id: s4-q1
@@ -441,14 +445,14 @@ modules:
     estHours: { min: 5, max: 8 }
     claimIds: []
     resources:
-      - title: Y Combinator Startup Library
-        publisher: Y Combinator
-        url: https://www.ycombinator.com/library
-        format: video
+      - title: GEM 2025/2026 Global Report
+        publisher: Global Entrepreneurship Monitor
+        url: https://www.gemconsortium.org/reports/latest-global-report
+        format: docs
         price: free
-        lastVerifiedAt: 2026-11-05
+        lastVerifiedAt: 2026-11-06
         officialVendor: true
-        why: Free talks on first customers, pricing and early growth.
+        why: Worldwide survey evidence on startup activity, survival and access to finance.
       - title: Do Things That Don't Scale
         publisher: Paul Graham
         url: https://paulgraham.com/ds.html
@@ -508,7 +512,7 @@ modules:
           - A channel you have never used
         answerIndex: 0
         explanation: A narrow channel with the right people beats a broad channel with the wrong ones.
-        sourceUrl: https://www.ycombinator.com/library
+        sourceUrl: https://www.gemconsortium.org/reports/latest-global-report
     proof:
       title: First five customers
       brief: Define activation in one sentence and instrument it. Contact 20 people through one channel, log the replies, and get five to complete the activation event. Calculate CAC from the actual spend, including your time at a stated rate, and write down one thing you would change.
@@ -543,29 +547,29 @@ modules:
     summary: A company is a set of contracts and obligations. Learn the questions to ask a professional, the SAFE arithmetic, and what changes when you incorporate.
     objectives:
       - Distinguish a sole proprietor from a limited company in plain language.
-      - Explain what a SAFE is and what a post-money cap does.
-      - List the jurisdiction-specific questions you must confirm with an official source.
+      - Explain what a convertible instrument is and what a post-money cap does.
+      - List the questions you must confirm with an official source for your jurisdiction.
       - Keep personal and company money separate from day one.
     prerequisites: [s1-should-i-start]
     estHours: { min: 4, max: 6 }
-    claimIds: [S1]
+    claimIds: [S2]
     resources:
-      - title: Stripe Atlas guides
-        publisher: Stripe
-        url: https://stripe.com/atlas
+      - title: Business Ready (B-READY)
+        publisher: World Bank
+        url: https://www.worldbank.org/en/businessready
         format: docs
         price: free
-        lastVerifiedAt: 2026-11-05
+        lastVerifiedAt: 2026-11-06
         officialVendor: true
-        why: Plain-language guides on incorporation, equity and getting paid across borders.
-      - title: Y Combinator SAFE documents
-        publisher: Y Combinator
-        url: https://www.ycombinator.com/documents
+        why: A cross-economy framework for business regulation and public services, used as a pointer to official rules.
+      - title: Simple agreement for future equity
+        publisher: Wikipedia
+        url: https://en.wikipedia.org/wiki/Simple_agreement_for_future_equity
         format: docs
         price: free
-        lastVerifiedAt: 2026-11-05
-        officialVendor: true
-        why: The standard SAFE documents and the deal page used for the arithmetic in this module.
+        lastVerifiedAt: 2026-11-06
+        officialVendor: false
+        why: A plain-language definition of the instrument and the valuation cap it can carry.
     cheatsheetIds: [safe-dilution, startup-funding-stages]
     quiz:
       - id: s6-q1
@@ -576,8 +580,8 @@ modules:
           - The registration of the company
           - The tax return
         answerIndex: 0
-        explanation: A SAFE converts later, usually at a cap or with the terms of the next priced round.
-        sourceUrl: https://ycombinator.com/deal
+        explanation: A convertible instrument converts later, usually at a cap or with the terms of the next priced round.
+        sourceUrl: https://en.wikipedia.org/wiki/Simple_agreement_for_future_equity
       - id: s6-q2
         question: With a post-money cap, how do you estimate the ownership from an investment?
         choices:
@@ -586,8 +590,8 @@ modules:
           - Investment ÷ annual revenue
           - Post-money cap ÷ investment
         answerIndex: 0
-        explanation: YC's example converts $375,000 at a $15M post-money cap into 2.5%.
-        sourceUrl: https://ycombinator.com/deal
+        explanation: With a post-money cap, ownership at conversion is the investment divided by the cap, before later dilution.
+        sourceUrl: https://en.wikipedia.org/wiki/Simple_agreement_for_future_equity
       - id: s6-q3
         question: Why incorporate instead of operating as a sole proprietor?
         choices:
@@ -597,7 +601,7 @@ modules:
           - It makes the product faster
         answerIndex: 0
         explanation: A limited company is separate from its owners; the exact liability rules depend on the jurisdiction.
-        sourceUrl: https://stripe.com/atlas
+        sourceUrl: https://en.wikipedia.org/wiki/Limited_liability_company
       - id: s6-q4
         question: What is founder vesting for?
         choices:
@@ -607,7 +611,7 @@ modules:
           - Paying suppliers
         answerIndex: 0
         explanation: Vesting ties ownership to continued work and gives the company a way to handle a founder leaving.
-        sourceUrl: https://stripe.com/atlas
+        sourceUrl: https://en.wikipedia.org/wiki/Vesting
       - id: s6-q5
         question: What should you do before relying on a legal or tax rule from a website?
         choices:
@@ -617,7 +621,7 @@ modules:
           - Copy a template without reading it
         answerIndex: 0
         explanation: Registration, tax and payment rules are jurisdictional and change. The official page is the record.
-        sourceUrl: https://stripe.com/atlas
+        sourceUrl: https://www.worldbank.org/en/businessready
     proof:
       title: A jurisdiction checklist with dates
       brief: Write a checklist of the legal, tax and payment questions for your country. For each item, either link the official page you checked and the date, or write “not verified” and the person you will ask. Include a separate list of questions for a lawyer or accountant. Do not give legal advice.
@@ -652,61 +656,61 @@ modules:
     summary: Bootstrapping, grants, accelerators, angels and venture capital are different tools. Learn what each costs before you apply.
     objectives:
       - Compare three funding paths on money, dilution, time and control.
-      - Explain the YC standard deal and a post-money SAFE.
-      - State what Startup Bangladesh is and what public evidence says about its activity.
+      - Explain the difference between a priced round and a convertible instrument.
+      - Name the worldwide sources you would check before applying for a programme or grant.
       - Decide which path fits your stage and constraints.
     prerequisites: [s6-legal-money]
     estHours: { min: 4, max: 6 }
-    claimIds: [S1, S2, S3, V1]
+    claimIds: [S1, S2]
     resources:
-      - title: The Y Combinator Deal
-        publisher: Y Combinator
-        url: https://ycombinator.com/deal
+      - title: Q3'26 Venture Pulse Report — Global trends
+        publisher: KPMG Private Enterprise
+        url: https://kpmg.com/xx/en/what-we-do/industries/private-enterprise/venture-pulse.html
         format: docs
         price: free
-        lastVerifiedAt: 2026-11-05
+        lastVerifiedAt: 2026-11-06
         officialVendor: true
-        why: The standard deal, the SAFE structure and the worked conversion example.
-      - title: Startup Bangladesh Limited
-        publisher: Startup Bangladesh Limited
-        url: https://www.startupbangladesh.vc
+        why: Worldwide venture capital investment and deal activity for the latest completed quarter.
+      - title: GEM 2025/2026 Global Report
+        publisher: Global Entrepreneurship Monitor
+        url: https://www.gemconsortium.org/reports/latest-global-report
         format: docs
         price: free
-        lastVerifiedAt: 2026-11-05
+        lastVerifiedAt: 2026-11-06
         officialVendor: true
-        why: The official site of the government-backed venture capital company.
+        why: Worldwide survey evidence on startup activity, survival and access to finance.
     cheatsheetIds: [startup-funding-stages, safe-dilution]
     quiz:
       - id: s7-q1
-        question: How is the $500,000 YC standard deal split?
+        question: What does KPMG's Venture Pulse track?
         choices:
-          - $125,000 for 7% plus $375,000 on an uncapped MFN SAFE
-          - $250,000 for 10% plus $250,000 as a loan
-          - $500,000 for 20%
-          - $125,000 as a grant and $375,000 as revenue
+          - Worldwide venture capital investment and deal activity
+          - Government grant approvals by country
+          - Public stock prices
+          - Bank interest rates
         answerIndex: 0
-        explanation: The deal page states the two SAFEs and the 7% conversion.
-        sourceUrl: https://ycombinator.com/deal
+        explanation: Venture Pulse reports global and regional venture capital investment, deal counts and sector trends.
+        sourceUrl: https://kpmg.com/xx/en/what-we-do/industries/private-enterprise/venture-pulse.html
       - id: s7-q2
-        question: What does Startup Bangladesh Limited do?
+        question: What does GEM identify as a structural constraint on startups becoming established firms?
         choices:
-          - It invests equity or quasi-equity in Bangladeshi startups
-          - It gives direct loans to any business
-          - It runs a stock exchange
-          - It only provides office space
+          - Access to finance and entrepreneurial education
+          - Too many investors
+          - Low interest rates
+          - A shortage of office space
         answerIndex: 0
-        explanation: It is a government-backed venture capital company making equity and quasi-equity investments.
-        sourceUrl: https://www.startupbangladesh.vc
+        explanation: GEM's 2025/2026 report names entrepreneurial education and access to finance as structural constraints on the transition.
+        sourceUrl: https://www.gemconsortium.org/reports/latest-global-report
       - id: s7-q3
-        question: What did the ICT Minister tell Parliament in June 2026 about Startup Bangladesh?
+        question: Which funding source is non-dilutive?
         choices:
-          - It had invested about Tk 109 crore in 36 approved startups
-          - It had invested Tk 5 crore in 500 startups
-          - It had stopped investing
-          - It had only given loans
+          - A grant
+          - A seed round
+          - A convertible note
+          - A priced round
         answerIndex: 0
-        explanation: The figure was reported on 9 June 2026 by BSS and the Financial Express.
-        sourceUrl: https://www.bssnews.net/js-session/393938
+        explanation: A grant does not exchange money for shares, so it does not dilute existing owners; eligibility and reporting still apply.
+        sourceUrl: https://en.wikipedia.org/wiki/Grant_(money)
       - id: s7-q4
         question: What is bootstrapping?
         choices:
@@ -726,7 +730,7 @@ modules:
           - A tax on revenue
         answerIndex: 0
         explanation: New shares increase the total, so earlier owners hold a smaller percentage unless they buy pro rata.
-        sourceUrl: https://ycombinator.com/deal
+        sourceUrl: https://en.wikipedia.org/wiki/Dilution_(finance)
     proof:
       title: A funding comparison with sources
       brief: Compare three paths (bootstrapping, accelerator, seed) for your stage. For each, list the money, dilution, time cost, control and eligibility, with a source link and the date checked. Add the one question you would ask a founder who chose each path.
@@ -776,14 +780,14 @@ modules:
         lastVerifiedAt: 2026-11-05
         officialVendor: true
         why: A widely used outline for the problem, solution, market and team sections.
-      - title: Y Combinator Startup Library
-        publisher: Y Combinator
-        url: https://www.ycombinator.com/library
-        format: video
+      - title: GEM 2025/2026 Global Report
+        publisher: Global Entrepreneurship Monitor
+        url: https://www.gemconsortium.org/reports/latest-global-report
+        format: docs
         price: free
-        lastVerifiedAt: 2026-11-05
+        lastVerifiedAt: 2026-11-06
         officialVendor: true
-        why: Free talks on pitching, metrics and early-stage fundraising.
+        why: Worldwide survey evidence on startup activity, survival and access to finance.
     cheatsheetIds: [startup-pitch, startup-metrics]
     quiz:
       - id: s8-q1

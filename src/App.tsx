@@ -50,6 +50,7 @@ const router = createBrowserRouter([
       },
       { path: 'pins', lazy: async () => ({ Component: (await import('@/pages/Pins')).default }) },
       { path: 'notes', lazy: async () => ({ Component: (await import('@/pages/Notes')).default }) },
+      { path: 'review', lazy: async () => ({ Component: (await import('@/pages/Review')).default }) },
       {
         path: 'glossary',
         lazy: async () => ({ Component: (await import('@/pages/Glossary')).default }),
@@ -87,6 +88,10 @@ const router = createBrowserRouter([
       {
         path: 'corrections',
         lazy: async () => ({ Component: (await import('@/pages/Corrections')).default }),
+      },
+      {
+        path: 'verification',
+        lazy: async () => ({ Component: (await import('@/pages/Verification')).default }),
       },
       { path: 'about', lazy: async () => ({ Component: (await import('@/pages/About')).default }) },
       {

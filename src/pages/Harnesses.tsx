@@ -9,6 +9,7 @@ import {
   TriangleAlert,
 } from 'lucide-react'
 import { PageHeader, Callout } from '@/components/ui/Section'
+import { InlineText } from '@/components/InlineText'
 import { HARNESSES } from '@/content/generated/harnesses'
 import type { Harness } from '@/content/schema'
 import { formatDate } from '@/lib/format'
@@ -78,7 +79,7 @@ export default function Harnesses() {
     <div className="container-page">
       <PageHeader
         title="The harness is not the model."
-        lede="Six agent harnesses, checked against their own documentation. The table shows which primitives are first-class, where the files live, and what each vendor does not support."
+        lede="Seven agent harnesses, checked against their own documentation. The table shows which primitives are first-class, where the files live, and what each vendor does not support."
         breadcrumb={[{ label: 'Home', to: '/' }, { label: 'Harnesses' }]}
       />
 
@@ -267,6 +268,25 @@ export default function Harnesses() {
               </div>
 
               <div>
+                {selected.quickstart && selected.quickstart.length > 0 ? (
+                  <div className="mb-5">
+                    <p className="text-xs font-semibold text-ink">Set it up in five minutes</p>
+                    <ol className="mt-2 space-y-1.5">
+                      {selected.quickstart.map((step, index) => (
+                        <li
+                          key={step}
+                          className="flex gap-2 text-xs leading-relaxed text-muted"
+                        >
+                          <span className="mono w-4 shrink-0 text-accent">{index + 1}</span>
+                          <span>
+                            <InlineText text={step} />
+                          </span>
+                        </li>
+                      ))}
+                    </ol>
+                  </div>
+                ) : null}
+
                 {selected.limitations && selected.limitations.length > 0 ? (
                   <div>
                     <p className="text-xs font-semibold text-ink">Limitations</p>

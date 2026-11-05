@@ -1,4 +1,3 @@
-import { SourceChip } from '@/components/SourceChip'
 import { Button } from '@/components/ui/Button'
 import {
   cac,
@@ -15,14 +14,14 @@ import {
 import { Formula, NumberField, Result, ToolPanel, useToolState } from './shared'
 
 export function DilutionTool() {
-  const [data, setData] = useToolState('dilution', { investment: 375000, cap: 15000000 })
+  const [data, setData] = useToolState('dilution', { investment: 500000, cap: 10000000 })
   const ownership = safeOwnership(data.investment, data.cap)
 
   return (
     <ToolPanel
-      title="SAFE dilution calculator"
-      description="Estimate the ownership a post-money SAFE converts to at its valuation cap. This is the arithmetic, not a negotiation."
-      note="This ignores later dilution from a priced round, option-pool increases and multiple SAFEs. It is a sanity check, not legal or financial advice."
+      title="Post-money dilution calculator"
+      description="Estimate the ownership a post-money convertible converts to at its valuation cap. This is the arithmetic, not a negotiation."
+      note="This ignores later dilution from a priced round, option-pool increases and other convertibles. The signed contract controls. It is a sanity check, not legal or financial advice."
     >
       <div className="grid gap-4 sm:grid-cols-2">
         <NumberField
@@ -39,7 +38,7 @@ export function DilutionTool() {
           prefix="$"
           value={data.cap}
           onChange={(cap) => setData({ ...data, cap })}
-          hint="The cap stated in the SAFE."
+          hint="The cap stated in the convertible."
         />
       </div>
 
@@ -54,15 +53,15 @@ export function DilutionTool() {
           note={ownership === null ? 'Enter a cap above zero.' : 'Before later rounds and option-pool dilution.'}
         />
         <div className="rounded-lg border border-line bg-surface p-4">
-          <p className="eyebrow mb-2">YC's own worked example</p>
+          <p className="mb-2 text-xs font-semibold text-ink">An illustrative conversion</p>
           <p className="text-sm leading-relaxed text-muted">
-            $375,000 at a $15M post-money cap converts to 2.5%. <SourceChip claimId="S1" />
+            $500,000 at a $10M post-money cap implies 5% ownership before later rounds.
           </p>
           <Button
             variant="secondary"
             size="sm"
             className="mt-3"
-            onClick={() => setData({ investment: 375000, cap: 15000000 })}
+            onClick={() => setData({ investment: 500000, cap: 10000000 })}
           >
             Use the example values
           </Button>

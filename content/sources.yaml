@@ -48,37 +48,30 @@ sources:
     retrievedAt: 2026-11-05
     note: Field limits and progressive disclosure are stated on this page.
 
-  - id: src-yc-deal
-    title: The Y Combinator Deal
-    publisher: Y Combinator
-    url: https://ycombinator.com/deal
+  - id: src-kpmg-venture-pulse
+    title: Q3'26 Venture Pulse Report — Global trends
+    publisher: KPMG Private Enterprise
+    url: https://kpmg.com/xx/en/what-we-do/industries/private-enterprise/venture-pulse.html
     tier: primary
-    retrievedAt: 2026-11-05
-    note: Includes the $15M cap worked example that the dilution calculator is tested against.
+    retrievedAt: 2026-11-06
+    note: States global VC investment of $170.9 billion across 8,341 deals in Q3 2026. Only the worldwide figure is used here.
 
-  - id: src-startupbd
-    title: Startup Bangladesh Limited
-    publisher: Startup Bangladesh Limited
-    url: https://www.startupbangladesh.vc
+  - id: src-gem-2026
+    title: GEM 2025/2026 Global Report — From Uncertainty to Opportunity
+    publisher: Global Entrepreneurship Monitor
+    url: https://www.gemconsortium.org/reports/latest-global-report
     tier: primary
-    retrievedAt: 2026-11-05
-    note: Page is JavaScript-rendered; only the site identity and its venture-capital description could be read.
+    publishedAt: 2026-02-26
+    retrievedAt: 2026-11-06
+    note: Based on more than 160,000 responses across 53 economies. The report cites access to finance and entrepreneurial education as constraints on the transition to established firms.
 
-  - id: src-bss-startupbd
-    title: Startup Bangladesh invests in 36 approved technology-driven startups
-    publisher: Bangladesh Sangbad Sangstha
-    url: https://www.bssnews.net/js-session/393938
-    tier: secondary
-    publishedAt: 2026-06-09
-    retrievedAt: 2026-11-05
-
-  - id: src-tfe-startupbd
-    title: Tk 1.09b invested in startups — ICT Minister
-    publisher: The Financial Express
-    url: https://thefinancialexpress.com.bd/home/tk-109b-invested-in-startups-ict-minister
-    tier: secondary
-    publishedAt: 2026-06-09
-    retrievedAt: 2026-11-05
+  - id: src-worldbank-business-ready
+    title: Business Ready (B-READY)
+    publisher: World Bank
+    url: https://www.worldbank.org/en/businessready
+    tier: primary
+    retrievedAt: 2026-11-06
+    note: Cross-economy methodology and data on business regulation and public services. Used as a pointer to official rules, not for country rankings.
 
   - id: src-vercel-fair-use
     title: Fair use guidelines

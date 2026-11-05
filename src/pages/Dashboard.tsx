@@ -23,6 +23,7 @@ import { phases } from '@/lib/phases'
 import { todayIso } from '@/lib/dates'
 import { buildPlan, nextUnfinishedModule, phaseCompletion } from '@/lib/planner'
 import {
+  dueReviewItems,
   exportGuestJson,
   importGuestJson,
   resetGuestData,
@@ -60,6 +61,7 @@ export default function Dashboard() {
   ).length
   const quizCount = Object.keys(state.quizzes).length
   const proofCount = Object.keys(state.proofs).length
+  const dueReviews = dueReviewItems(state).length
   const startPhase = state.placement?.recommendedPhase ?? 'F'
   const next = nextUnfinishedModule(moduleSummaries, state.progress, startPhase)
   const streak = currentStreak(state.activity)
@@ -205,9 +207,21 @@ export default function Dashboard() {
       <div className="grid gap-3 py-6 sm:grid-cols-2 lg:grid-cols-4">
         <Metric label="Modules with evidence" value={`${evidenceCount}/${moduleSummaries.length}`} />
         <Metric label="Quizzes taken" value={String(quizCount)} />
+        <Metric label="Due reviews" value={String(dueReviews)} />
         <Metric label="Proofs submitted" value={String(proofCount)} />
-        <Metric label="Notes and pins" value={String(Object.keys(state.notes).length + Object.keys(state.pins).length)} />
       </div>
+
+      {dueReviews > 0 ? (
+        <div className="flex flex-wrap items-center justify-between gap-3 border-y border-line py-3">
+          <p className="text-sm text-muted">
+            {plural(dueReviews, 'question')} from missed quiz answers are due today.
+          </p>
+          <Link to="/review" className="inline-flex items-center gap-1 text-sm font-medium text-accent">
+            Start review
+            <ArrowRight size={14} aria-hidden="true" />
+          </Link>
+        </div>
+      ) : null}
 
       <div className="grid gap-6 pb-10 lg:grid-cols-[1.1fr_0.9fr]">
         <div className="space-y-6">

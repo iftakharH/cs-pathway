@@ -259,6 +259,7 @@ export const HarnessSchema = z.strictObject({
   skillsPath: z.string().min(2).max(200).optional(),
   mcpConfig: z.string().min(2).max(200).optional(),
   agentsFile: z.string().min(2).max(200).optional(),
+  quickstart: z.array(z.string().min(5).max(180)).min(3).max(5).optional(),
   limitations: z.array(z.string().min(5).max(240)).max(4).optional(),
   notes: z.string().min(20).max(400),
   verifiedOn: dateString,

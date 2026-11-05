@@ -36,40 +36,40 @@ export default function Startup() {
         actions={<ButtonLink to="/tools">Open the tools</ButtonLink>}
       />
 
-      <div className="grid gap-4 py-6 sm:grid-cols-3">
-        <div className="card p-4">
-          <p className="eyebrow mb-1">Time</p>
-          <p className="mono text-lg text-ink">
+      <div className="grid gap-6 border-b border-line py-5 sm:grid-cols-3">
+        <div>
+          <p className="text-xs text-faint">Time</p>
+          <p className="mono mt-1 text-lg text-ink">
             {phase ? formatHours(
               modules.reduce((total, module) => total + module.estHours.min, 0),
               modules.reduce((total, module) => total + module.estHours.max, 0),
             ) : '—'}
           </p>
         </div>
-        <div className="card p-4">
-          <p className="eyebrow mb-1">Modules</p>
-          <p className="mono text-lg text-ink">{modules.length}</p>
+        <div>
+          <p className="text-xs text-faint">Modules</p>
+          <p className="mono mt-1 text-lg text-ink">{modules.length}</p>
         </div>
-        <div className="card p-4">
-          <p className="eyebrow mb-1">The proof</p>
-          <p className="text-xs leading-relaxed text-muted">20 conversations · 3 insights · 5 users</p>
+        <div>
+          <p className="text-xs text-faint">The proof</p>
+          <p className="mt-1 text-xs leading-relaxed text-muted">
+            20 conversations · 3 insights · 5 users
+          </p>
         </div>
       </div>
 
-      <section className="py-6">
-        <div className="rounded-xl border border-accent/30 bg-accent-soft p-5 sm:p-6">
+      <section className="py-8">
+        <div className="border-l-2 border-accent bg-accent-soft/60 p-5 sm:p-6">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
               <h2 className="text-2xl">Three actions, no fundraising required</h2>
             </div>
             <CalendarDays size={22} className="text-accent" aria-hidden="true" />
           </div>
-          <ol className="mt-5 grid gap-4 md:grid-cols-3">
+          <ol className="mt-5 grid gap-5 md:grid-cols-3">
             {nextSevenDays.map((action, index) => (
               <li key={action.title}>
-                <p className="mono mb-1 text-[10px] uppercase tracking-wider text-accent">
-                  Action {index + 1}
-                </p>
+                <p className="mono mb-1 text-[10px] text-accent">Action {index + 1}</p>
                 <p className="text-sm font-medium text-ink">{action.title}</p>
                 <p className="mt-1 text-xs leading-relaxed text-muted">{action.body}</p>
               </li>
@@ -93,19 +93,23 @@ export default function Startup() {
           title="What this phase can and cannot do"
           lede="A path can teach the process. It cannot make a market want the product."
         />
-        <div className="mt-6 grid gap-4 md:grid-cols-2">
-          <div className="card p-5">
-            <p className="eyebrow mb-2 text-accent">What it can do</p>
-            <ul className="space-y-2 text-sm leading-relaxed text-muted">
+        <div className="mt-6 grid gap-x-10 gap-y-6 md:grid-cols-2">
+          <div>
+            <p className="border-t border-ink pt-2 text-xs font-semibold text-accent">
+              What it can do
+            </p>
+            <ul className="mt-3 space-y-2 text-sm leading-relaxed text-muted">
               <li>— Show the steps: customers, a small product, pricing, a 90-day plan.</li>
               <li>— Give you a place to record evidence instead of opinions.</li>
               <li>— Explain the arithmetic behind dilution, runway and unit economics.</li>
               <li>— State one honest risk per module.</li>
             </ul>
           </div>
-          <div className="card p-5">
-            <p className="eyebrow mb-2 text-warn">What it cannot do</p>
-            <ul className="space-y-2 text-sm leading-relaxed text-muted">
+          <div>
+            <p className="border-t border-ink pt-2 text-xs font-semibold text-warn">
+              What it cannot do
+            </p>
+            <ul className="mt-3 space-y-2 text-sm leading-relaxed text-muted">
               <li>— Promise that a company will succeed or raise money.</li>
               <li>— Replace a lawyer, accountant or tax authority.</li>
               <li>— Validate an idea for you. Only real customers can do that.</li>
@@ -121,26 +125,22 @@ export default function Startup() {
           lede="Each module has resources, a sourced quiz, a proof and one risk note. Start at S1 if you have not shipped to a user yet."
         />
         {modules.length > 0 ? (
-          <div className="mt-6 grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-6 border-t border-line">
             {modules.map((module) => (
               <Link
                 key={module.id}
                 to={`/module/${module.id}`}
-                className="card flex h-full flex-col p-4 hover:border-accent"
+                className="group grid gap-2 border-b border-line py-4 hover:text-accent md:grid-cols-[1fr_2fr_auto] md:items-baseline md:gap-6"
               >
-                <div className="mb-2 flex items-center justify-between gap-2">
+                <div className="flex items-baseline gap-3">
                   <PhaseBadge phase="S" />
-                  <span className="mono text-[10px] text-faint">
-                    {module.estHours.min}–{module.estHours.max} h
-                  </span>
+                  <h3 className="text-base leading-snug">{module.title}</h3>
                 </div>
-                <h3 className="text-base leading-snug">{module.title}</h3>
-                <p className="mt-1.5 line-clamp-3 flex-1 text-xs leading-relaxed text-muted">
+                <p className="text-sm leading-relaxed text-muted">
                   {module.summary}
                 </p>
-                <span className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-accent">
-                  Open
-                  <ArrowRight size={12} aria-hidden="true" />
+                <span className="mono text-[10px] text-faint">
+                  {module.estHours.min}–{module.estHours.max} h
                 </span>
               </Link>
             ))}
@@ -149,46 +149,57 @@ export default function Startup() {
       </section>
 
       <section className="border-y border-line py-10">
-        <div className="grid gap-8 lg:grid-cols-[1fr_1fr]">
+        <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
           <div>
-            <h2 className="text-2xl sm:text-3xl">Two verified examples, not a promise</h2>
-            <p className="mt-3 text-sm leading-relaxed text-muted">
-              Most companies do not raise venture capital. If you do, the terms matter more than the
-              headline amount. These records are dated and linked; check the official page before
-              relying on a number.
+            <h2 className="text-2xl sm:text-3xl">Worldwide numbers, dated and linked</h2>
+            <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted">
+              Venture capital is one path, not the default. These figures describe the global
+              market and the conditions around it. They are not a target, and they do not predict
+              what will happen to one company.
             </p>
-            <div className="mt-5 space-y-3">
-              <div className="card p-4">
-                <p className="text-sm font-medium text-ink">Y Combinator standard deal</p>
-                <p className="mt-1 text-sm text-muted">
-                  $500,000: $125,000 on a post-money SAFE for 7%, plus $375,000 on an uncapped MFN
-                  SAFE. YC's example converts the $375,000 at a $15M cap to 2.5%.{' '}
-                  <SourceChip claimId="S1" />
+            <div className="mt-5 border-t border-ink">
+              <div className="border-b border-line py-4">
+                <p className="text-sm font-medium text-ink">Global venture capital, Q3 2026</p>
+                <p className="mt-1 text-sm leading-relaxed text-muted">
+                  KPMG’s Venture Pulse reports $170.9 billion invested worldwide across 8,341 deals.
+                  Investment cooled from an exceptional first half but stayed well above historical
+                  norms. <SourceChip claimId="S1" />
                 </p>
               </div>
-              <div className="card p-4">
-                <p className="text-sm font-medium text-ink">Startup Bangladesh Limited</p>
-                <p className="mt-1 text-sm text-muted">
-                  A government-backed venture capital company. On 9 June 2026 the ICT Minister told
-                  Parliament it had invested about Tk 109 crore in 36 approved startups.
-                  <span className="ml-1 inline-flex gap-1">
-                    <SourceChip claimId="S2" />
-                    <SourceChip claimId="S3" />
-                  </span>
+              <div className="border-b border-line py-4">
+                <p className="text-sm font-medium text-ink">What constrains the transition to a firm</p>
+                <p className="mt-1 text-sm leading-relaxed text-muted">
+                  GEM’s 2025/2026 Global Report draws on more than 160,000 responses across 53
+                  economies. It names access to finance and entrepreneurial education as structural
+                  constraints on startups becoming established businesses. <SourceChip claimId="S2" />
                 </p>
               </div>
             </div>
+            <div className="mt-4 flex flex-wrap gap-4 text-xs">
+              <Link
+                to="/sources"
+                className="font-medium text-accent underline decoration-line underline-offset-4"
+              >
+                Every source and retrieval date
+              </Link>
+              <Link
+                to="/claims"
+                className="font-medium text-accent underline decoration-line underline-offset-4"
+              >
+                Claim explorer
+              </Link>
+            </div>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-5">
             <Callout tone="warn" title="One honest risk for the whole phase">
               Most startups fail. Talking to customers reduces the chance of building something
               nobody wants; it does not remove the risk. Do not borrow money you cannot repay, and
               do not drop out of a degree on the strength of a single good conversation.
             </Callout>
-            <div className="card p-5">
-              <p className="eyebrow mb-2">The phase proof</p>
-              <p className="text-sm leading-relaxed text-ink">{phase?.proofSummary}</p>
+            <div className="border-t border-line pt-4">
+              <p className="text-xs font-semibold text-ink">The phase proof</p>
+              <p className="mt-2 text-sm leading-relaxed text-muted">{phase?.proofSummary}</p>
               <div className="mt-4 flex flex-wrap gap-2">
                 <ButtonLink to="/tools?tool=interviews" size="sm" variant="secondary">
                   Interview log
@@ -204,8 +215,8 @@ export default function Startup() {
             <p className="flex items-start gap-2 text-xs leading-relaxed text-faint">
               <ShieldAlert size={14} className="mt-0.5 shrink-0" aria-hidden="true" />
               General information, not legal or financial advice. Company registration, tax and
-              payment rules are jurisdiction-specific and are not listed here until each official
-              page has been checked and dated.
+              payment rules vary by jurisdiction and are not listed here. Check the official page
+              for your jurisdiction and record the date.
             </p>
           </div>
         </div>
@@ -216,7 +227,10 @@ export default function Startup() {
           <div>
             <h2 className="text-2xl">Check that the problem is real, not that the idea is clever.</h2>
           </div>
-          <ButtonLink to="/module/s1-should-i-start">Open S1</ButtonLink>
+          <ButtonLink to="/module/s1-should-i-start">
+            Open S1
+            <ArrowRight size={15} aria-hidden="true" />
+          </ButtonLink>
         </div>
       </section>
     </div>

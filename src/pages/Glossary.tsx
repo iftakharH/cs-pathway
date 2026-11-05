@@ -58,16 +58,18 @@ export default function Glossary() {
           {filtered.map((item) => (
             <div key={item.term} id={anchor(item.term)} className="card scroll-mt-24 p-4">
               <dt className="text-lg">{item.term}</dt>
-              <dd className="mt-1.5 text-sm leading-relaxed text-muted">{item.definition}</dd>
-              <a
-                href={item.sourceUrl}
-                target="_blank"
-                rel="noreferrer noopener"
-                className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-accent link-underline"
-              >
-                {item.sourceTitle}
-                <ExternalLink size={11} aria-hidden="true" />
-              </a>
+              <dd className="mt-1.5 text-sm leading-relaxed text-muted">
+                {item.definition}
+                <a
+                  href={item.sourceUrl}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-accent link-underline"
+                >
+                  {item.sourceTitle}
+                  <ExternalLink size={11} aria-hidden="true" />
+                </a>
+              </dd>
             </div>
           ))}
         </dl>

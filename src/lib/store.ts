@@ -22,6 +22,18 @@ export type ProofRecord = {
 
 export type ActivityRecord = { at: string; kind: string; refId: string }
 
+export type ReviewItem = {
+  questionId: string
+  moduleId: string
+  /** Leitner box, 0 to 5. A miss resets to 0. */
+  box: number
+  dueAt: string
+  lastReviewedAt: string | null
+  misses: number
+}
+
+export const REVIEW_INTERVALS = [1, 3, 7, 14, 30, 60] as const
+
 export type GuestState = {
   version: 1
   profile: { hoursPerWeek: number; targetPhase: PhaseId; startedAt: string } | null
@@ -40,6 +52,7 @@ export type GuestState = {
   review: { shipped: string; blocked: string; next: string; updatedAt: string } | null
   streakEnabled: boolean
   activity: ActivityRecord[]
+  reviews: Record<string, ReviewItem>
 }
 
 const STORAGE_KEY = 'cs-pathway:v1'
@@ -59,6 +72,7 @@ export const EMPTY_STATE: GuestState = {
   review: null,
   streakEnabled: false,
   activity: [],
+  reviews: {},
 }
 
 const phaseIdValues = ['F', '1', '2', '3', 'S'] as const
@@ -209,6 +223,36 @@ function normaliseImport(raw: unknown): GuestState | null {
     }
   }
 
+  const reviews: GuestState['reviews'] = {}
+  if (isRecord(raw.reviews)) {
+    for (const [key, value] of Object.entries(raw.reviews)) {
+      if (!isRecord(value)) return null
+      if (
+        typeof value.questionId !== 'string' ||
+        value.questionId !== key ||
+        typeof value.moduleId !== 'string' ||
+        typeof value.box !== 'number' ||
+        value.box < 0 ||
+        value.box >= REVIEW_INTERVALS.length ||
+        typeof value.dueAt !== 'string' ||
+        !/^\d{4}-\d{2}-\d{2}$/.test(value.dueAt) ||
+        (value.lastReviewedAt !== null && typeof value.lastReviewedAt !== 'string') ||
+        typeof value.misses !== 'number' ||
+        value.misses < 0
+      ) {
+        return null
+      }
+      reviews[key] = {
+        questionId: value.questionId,
+        moduleId: value.moduleId,
+        box: Math.floor(value.box),
+        dueAt: value.dueAt,
+        lastReviewedAt: value.lastReviewedAt,
+        misses: Math.floor(value.misses),
+      }
+    }
+  }
+
   return {
     version: 1,
     profile: isProfile(raw.profile) ? raw.profile : null,
@@ -222,6 +266,7 @@ function normaliseImport(raw: unknown): GuestState | null {
     review,
     streakEnabled: raw.streakEnabled === true,
     activity: activity.slice(0, MAX_ACTIVITY),
+    reviews,
   }
 }
 
@@ -322,9 +367,51 @@ export function setModuleStatus(moduleId: string, status: ModuleStatus) {
   )
 }
 
-export function recordQuiz(moduleId: string, score: number, total: number, answers: number[]) {
-  update((current) =>
-    record('quiz:completed', moduleId, {
+function localIsoDate(date: Date): string {
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${date.getFullYear()}-${month}-${day}`
+}
+
+function reviewDueDate(days: number): string {
+  const date = new Date()
+  date.setDate(date.getDate() + days)
+  return localIsoDate(date)
+}
+
+function nextReviewItem(
+  existing: ReviewItem | undefined,
+  moduleId: string,
+  questionId: string,
+  correct: boolean,
+): ReviewItem {
+  const box = correct ? Math.min((existing?.box ?? 0) + 1, REVIEW_INTERVALS.length - 1) : 0
+  return {
+    questionId,
+    moduleId,
+    box,
+    dueAt: reviewDueDate(REVIEW_INTERVALS[box] ?? REVIEW_INTERVALS[0]),
+    lastReviewedAt: existing?.lastReviewedAt ?? null,
+    misses: (existing?.misses ?? 0) + (correct ? 0 : 1),
+  }
+}
+
+export function recordQuiz(
+  moduleId: string,
+  score: number,
+  total: number,
+  answers: number[],
+  questions: Array<{ id: string; answerIndex: number }> = [],
+) {
+  update((current) => {
+    const reviews = { ...current.reviews }
+    questions.forEach((question, index) => {
+      const correct = answers[index] === question.answerIndex
+      const existing = reviews[question.id]
+      if (!existing && correct) return
+      reviews[question.id] = nextReviewItem(existing, moduleId, question.id, correct)
+    })
+    return record('quiz:completed', moduleId, {
       ...current,
       quizzes: {
         ...current.quizzes,
@@ -337,8 +424,39 @@ export function recordQuiz(moduleId: string, score: number, total: number, answe
           updatedAt: new Date().toISOString(),
         },
       },
-    }),
-  )
+      reviews,
+    })
+  })
+}
+
+export function recordReviewAnswer(questionId: string, correct: boolean) {
+  update((current) => {
+    const existing = current.reviews[questionId]
+    if (!existing) return current
+    return record(correct ? 'review:correct' : 'review:missed', completeQuestionRef(existing), {
+      ...current,
+      reviews: {
+        ...current.reviews,
+        [questionId]: {
+          ...nextReviewItem(existing, existing.moduleId, questionId, correct),
+          lastReviewedAt: localIsoDate(new Date()),
+        },
+      },
+    })
+  })
+}
+
+function completeQuestionRef(item: ReviewItem): string {
+  return `${item.moduleId}:${item.questionId}`
+}
+
+export function dueReviewItems(
+  current: GuestState,
+  today = localIsoDate(new Date()),
+): ReviewItem[] {
+  return Object.values(current.reviews)
+    .filter((item) => item.dueAt <= today)
+    .sort((a, b) => a.dueAt.localeCompare(b.dueAt))
 }
 
 export function saveNote(key: string, body: string): { ok: boolean; error?: string } {  const trimmed = body.trim()

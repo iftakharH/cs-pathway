@@ -25,6 +25,7 @@ const primaryNav = [
 
 const trustPrefixes = [
   '/methodology',
+  '/verification',
   '/sources',
   '/claims',
   '/trends',
@@ -176,6 +177,7 @@ function Footer() {
               { label: 'Cheatsheets', to: '/cheatsheets' },
               { label: 'Startup phase', to: '/startup' },
               { label: 'Startup tools', to: '/tools' },
+              { label: 'Review due', to: '/review' },
               { label: 'Playbook', to: '/playbook' },
               { label: 'Glossary', to: '/glossary' },
             ]}
@@ -184,6 +186,7 @@ function Footer() {
             title="Trust"
             links={[
               { label: 'Methodology', to: '/methodology' },
+              { label: 'Verification', to: '/verification' },
               { label: 'Sources', to: '/sources' },
               { label: 'Claim explorer', to: '/claims' },
               { label: '2027 trends', to: '/trends' },

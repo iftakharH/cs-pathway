@@ -39,6 +39,9 @@ Rules enforced by `npm run validate` (the build fails when broken):
   `legacy` when the vendor has replaced it rather than silently deleting the row.
 - Run `npm run check:versions` before changing a tool stamp. A version stamp may move only after
   the entry has been re-read against the new docs and, where applicable, its snippets re-run.
+- Startup funding content uses worldwide sources and worldwide figures. Do not publish a
+  single-country programme amount, a named accelerator's deal terms, or a local-currency figure
+  without its own official page and a review date tied to the policy cycle.
 
 ## 3. Stack and architecture (spec §7)
 

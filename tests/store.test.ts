@@ -2,10 +2,12 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import {
   EMPTY_STATE,
+  dueReviewItems,
   exportGuestJson,
   getSnapshot,
   importGuestJson,
   recordQuiz,
+  recordReviewAnswer,
   resetGuestData,
   saveNote,
   setPlacement,
@@ -112,5 +114,35 @@ describe('guest store', () => {
     const store = getSnapshot()
     expect(store.progress['f-git']?.status).toBe('in_progress')
     expect(EMPTY_STATE.profile).toBeNull()
+  })
+
+  it('schedules only the missed quiz questions for review', () => {
+    recordQuiz(
+      'f-git',
+      1,
+      2,
+      [0, 1],
+      [
+        { id: 'f-git-q1', answerIndex: 0 },
+        { id: 'f-git-q2', answerIndex: 0 },
+      ],
+    )
+    const reviews = getSnapshot().reviews
+    expect(reviews['f-git-q1']).toBeUndefined()
+    expect(reviews['f-git-q2']?.box).toBe(0)
+    expect(reviews['f-git-q2']?.misses).toBe(1)
+    expect(dueReviewItems(getSnapshot(), '2099-01-01')).toHaveLength(1)
+  })
+
+  it('moves a correct review further out and resets a miss', () => {
+    recordQuiz('f-git', 0, 1, [1], [{ id: 'f-git-q1', answerIndex: 0 }])
+    recordReviewAnswer('f-git-q1', true)
+    expect(getSnapshot().reviews['f-git-q1']?.box).toBe(1)
+
+    recordReviewAnswer('f-git-q1', false)
+    const reset = getSnapshot().reviews['f-git-q1']
+    expect(reset?.box).toBe(0)
+    expect(reset?.misses).toBe(2)
+    expect(reset?.lastReviewedAt).toMatch(/^\d{4}-\d{2}-\d{2}$/)
   })
 })

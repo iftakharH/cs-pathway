@@ -91,16 +91,58 @@ test('harness matrix filters and exposes file paths', async ({ page }) => {
   await expect(table.getByText('Codex CLI')).toBeVisible()
 
   await page.getByRole('button', { name: 'Reset' }).click()
-  await table.getByRole('button', { name: /Codex CLI/ }).click()
-  await expect(page.getByRole('heading', { name: 'Codex CLI' })).toBeVisible()
-  await expect(page.getByText('.agents/skills or $HOME/.agents/skills')).toBeVisible()
+  await table.getByRole('button', { name: /Antigravity CLI/ }).click()
+  await expect(page.getByRole('heading', { name: 'Antigravity CLI' })).toBeVisible()
+  await expect(page.getByText('Set it up in five minutes')).toBeVisible()
+  await expect(page.getByText('.agents/skills/ (also ~/.gemini/config/skills/)')).toBeVisible()
+})
+
+test('review queue reschedules a missed question', async ({ page }) => {
+  await page.addInitScript(() => {
+    const state = {
+      version: 1,
+      profile: null,
+      placement: null,
+      progress: {},
+      quizzes: {},
+      notes: {},
+      proofs: {},
+      pins: {},
+      tools: {},
+      review: null,
+      streakEnabled: false,
+      activity: [],
+      reviews: {
+        'f-git-q1': {
+          questionId: 'f-git-q1',
+          moduleId: 'f-git',
+          box: 0,
+          dueAt: '2026-01-01',
+          lastReviewedAt: null,
+          misses: 1,
+        },
+      },
+    }
+    window.localStorage.setItem('cs-pathway:v1', JSON.stringify(state))
+  })
+
+  await page.goto('/review')
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('Review what you missed')
+  await page.getByRole('radio', { name: /^git init$/ }).check()
+  await expect(page.getByText('This answer is scheduled from today.')).toBeVisible()
+
+  const stored = await page.evaluate(() =>
+    JSON.parse(window.localStorage.getItem('cs-pathway:v1') ?? '{}'),
+  )
+  expect(stored.reviews['f-git-q1'].box).toBe(1)
+  expect(stored.reviews['f-git-q1'].lastReviewedAt).toMatch(/^\d{4}-\d{2}-\d{2}$/)
 })
 
 test('startup tools calculate and persist', async ({ page }) => {
   await page.goto('/tools?tool=dilution')
-  await expect(page.getByText('2.5%', { exact: true })).toBeVisible()
+  await expect(page.getByText('5%', { exact: true })).toBeVisible()
   await page.locator('#dilution-investment').fill('100000')
-  await expect(page.getByText('0.67%', { exact: true })).toBeVisible()
+  await expect(page.getByText('1%', { exact: true })).toBeVisible()
 
   await page.getByRole('button', { name: 'Pricing' }).click()
   await expect(page.getByText('$40')).toBeVisible()

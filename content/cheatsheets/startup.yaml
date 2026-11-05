@@ -2,31 +2,32 @@ entries:
   - id: safe-dilution
     phase: S
     topic: Startup finance
-    title: Convert a post-money SAFE at its cap
-    whenToUse: When a SAFE states a post-money valuation cap and you need the ownership it implies before later rounds.
+    title: Estimate ownership from a post-money convertible
+    whenToUse: When a convertible instrument states a post-money valuation cap and you need the ownership it implies before later rounds.
     snippets:
       - lang: js
-        caption: The YC worked example, in code
+        caption: An illustrative conversion at the cap
         runnable: true
         checked: executed
-        expectStdout: "2.5"
+        expectStdout: "5.0"
         code: |
-          const investment = 375_000
-          const postMoneyCap = 15_000_000
+          const investment = 500_000
+          const postMoneyCap = 10_000_000
 
           const ownership = investment / postMoneyCap
           console.log((ownership * 100).toFixed(1))
     notes:
-      - Ownership at the cap = investment ÷ post-money cap.
-      - This ignores the option pool, later rounds and any other SAFEs.
+      - Ownership at the cap = investment / post-money cap.
+      - This ignores the option pool, later rounds and any other convertibles.
       - Use the cap stated in the signed document, not a rumoured round size.
     gotchas:
       - A pre-money cap and a post-money cap produce different ownership.
       - Converting at a cap is not the same as agreeing to a valuation.
+      - The contract controls. Different instruments define the cap differently.
     seeAlso: [startup-funding-stages, startup-metrics]
-    tool: { name: Y Combinator SAFE, version: 'post-money', verifiedOn: 2026-11-05 }
-    sourceUrl: https://ycombinator.com/deal
-    tags: [startup, safe, dilution, finance]
+    tool: { name: Post-money convertible, version: 'formula', verifiedOn: 2026-11-06 }
+    sourceUrl: https://en.wikipedia.org/wiki/Simple_agreement_for_future_equity
+    tags: [startup, convertible, dilution, finance]
 
   - id: startup-funding-stages
     phase: S
@@ -53,7 +54,7 @@ entries:
       - A high valuation is not a win if it makes the next round impossible.
     seeAlso: [safe-dilution, startup-metrics]
     tool: { name: Funding paths, version: 'editorial', verifiedOn: 2026-11-05 }
-    sourceUrl: https://www.ycombinator.com/library
+    sourceUrl: https://kpmg.com/xx/en/what-we-do/industries/private-enterprise/venture-pulse.html
     tags: [startup, funding, accelerator, bootstrapping]
 
   - id: startup-metrics
@@ -182,5 +183,5 @@ entries:
       - Asking for “feedback” attracts politeness; asking about a real task attracts evidence.
     seeAlso: [customer-questions, startup-pitch]
     tool: { name: Outreach, version: 'editorial', verifiedOn: 2026-11-05 }
-    sourceUrl: https://www.ycombinator.com/library
+    sourceUrl: https://www.momtestbook.com/
     tags: [startup, outreach, customers, email]

@@ -29,13 +29,18 @@ function yet. Progress, notes, proofs and tools are stored in `localStorage`. Se
 | Quiz questions | 155, each with a source page |
 | Cheatsheets | 108 |
 | Executable snippets | 23 |
-| Claims | 15 |
-| Sources | 13 (11 primary, 2 secondary) |
-| Harnesses verified | 6 |
+| Claims | 14 |
+| Sources | 12 (all primary) |
+| Harnesses verified | 7 |
 | Playbook entries | 4 |
 | Startup tools | 8 |
 
 The counts come from `src/content/generated/manifest.ts`, produced by the content build.
+
+`/verification` is the public audit trail: every claim and review date, every source and retrieval
+date, the seven harness checks, the tool stamps, and the commands that reproduce them. `/review`
+turns missed quiz answers into a spaced queue: a miss returns tomorrow, and each correct answer
+moves the question further out.
 
 ## Quick start
 
@@ -63,7 +68,7 @@ Open `http://localhost:5173`. No environment variables are needed for the public
 | `npm run e2e` | Playwright: guest journey, every phase, axe scans. |
 | `npm run check:links` | Fetch every source, resource and quiz URL. |
 | `npm run check:stale` | Fail when a claim is past `reviewAfter`. |
-| `npm run check:versions` | Compare stamped tool versions with npm, PyPI and endoflife.date. Add `--strict` to fail on drift. |
+| `npm run check:versions` | Compare tool stamps with npm, PyPI, endoflife.date and GitHub. `--strict` fails on drift. |
 | `npm run verify` | Lint, types, unit tests, snippets and build in one command. |
 
 ## Content: how to add a claim, module or cheatsheet
@@ -225,60 +230,90 @@ npx vercel --prod
 
 ### Free-tier limits (checked 5 Nov 2026)
 
-| Service | Limit | Source |
-| --- | --- | --- |
-| Vercel Hobby | Non-commercial personal use only; 100 GB fast data transfer and 1,000,000 function invocations per month | <https://vercel.com/docs/limits/fair-use-guidelines> (updated 2026-09-14) |
-| Neon Free | 100 projects; 1 GB storage per project / 20 GB per account; 100 CU-hours per project; 10 branches; scale-to-zero after 5 min; 6-hour restore; 5 GB egress per project; no card | <https://neon.com/pricing> (updated 2026-10-31) |
+- **Vercel Hobby** — non-commercial personal use only. 100 GB fast data transfer and
+  1,000,000 function invocations per month.
+  Source: <https://vercel.com/docs/limits/fair-use-guidelines> (updated 2026-09-14).
+- **Neon Free** — 100 projects; 1 GB storage per project and 20 GB per account; 100 CU-hours per
+  project; 10 branches; scale-to-zero after 5 minutes; 6-hour restore; 5 GB egress per project;
+  no card.
+  Source: <https://neon.com/pricing> (updated 2026-10-31).
 
 Re-check both pages before launch and record the new date.
 
 ## Harness verification
 
-`/harnesses` compares six agent harnesses: Claude Code, OpenCode, Cursor, Codex CLI, Gemini CLI
-and GitHub Copilot. Each row was read from the vendor's own docs on 6 Nov 2026 and records:
+`/harnesses` compares seven agent harnesses: Claude Code, OpenCode, Cursor, Codex CLI, Gemini CLI,
+GitHub Copilot and Antigravity CLI. Each row was read from the vendor's own docs on 6 Nov 2026 and
+records:
 
 - native, partial or no support for Skills, MCP and `AGENTS.md`;
 - the exact file path or config location for each primitive;
+- a five-minute setup path with the real commands and file names;
 - the limitations that a green checkmark would hide;
 - links to the skills, MCP, instruction and pricing pages.
 
-Two findings matter more than the table:
+Three findings matter more than the table:
 
 - **Claude Code** reads `AGENTS.md` only as a fallback when no `CLAUDE.md` exists, and direct
   support requires v2.1.277+. The matrix marks it Partial, not Native.
 - **Gemini CLI** is marked Legacy. Google says it was replaced by Antigravity CLI for unpaid and
   Google One users on 18 June 2026. The row stays visible for existing setups, with a warning.
+- **Antigravity CLI** is now covered as the supported replacement: `.agents/skills/`,
+  `.agents/mcp_config.json` and `AGENTS.md`, with the 24 KB per-rule limit and the 20,000-token
+  aggregate rule budget named as limitations.
 
 `npm run check:versions` compares every stamped tool with its registry. It flags Docker 28 and
 TypeScript 6.0.3 as behind the current releases; neither stamp was changed because the Dockerfile
 and the TypeScript snippets have not been re-verified against the newer versions. That is a review
 item, not an automatic upgrade.
 
+## Worldwide startup sources
+
+The startup phase uses worldwide data, not a single national programme or accelerator:
+
+- **KPMG Venture Pulse Q3 2026** reports $170.9 billion of global venture capital investment across
+  8,341 deals.
+- **GEM 2025/2026** draws on more than 160,000 responses across 53 economies and names access to
+  finance and entrepreneurial education as constraints on startups becoming established firms.
+
+Both are linked from `/startup` with a source chip and a retrieval date. The dilution calculator
+uses an illustrative post-money conversion, not a named accelerator's terms. Company registration,
+tax and payment rules are explicitly left to the official page for the reader's jurisdiction,
+because those rules cannot be stated accurately worldwide.
+
 ## Verification (6 Nov 2026)
 
 | Check | Result |
 | --- | --- |
-| `npm run validate` | 31 modules, 108 cheatsheets, 155 questions, 15 claims, 13 sources, 6 harnesses |
+| `npm run validate` | 31 modules, 108 cheatsheets, 155 questions, 14 claims, 12 sources, 7 harnesses |
 | `npm run lint` | Pass, 0 warnings |
 | `npm run typecheck` | Pass, strict |
-| `npm test` | 57 tests pass |
+| `npm test` | 60 tests pass |
 | `npm run test:snippets` | 23/23 executable snippets pass |
 | `npm run build` | Pass |
-| `npm run e2e` | 25/25 Playwright tests pass (5 journey + 20 axe: 10 routes × light/dark) |
-| axe-core | 0 serious/critical on 10 representative routes in both themes |
-| Lighthouse mobile | Performance: home 99–100, harnesses 97, cheatsheets 100, module 98. One cold-cache home run scored 91 (LCP 3.3 s); accessibility 100 on all four. |
-| `npm run check:links` | 196/198 reachable; 2 bot-blocked (OpenAI docs and pricing return 403) |
+| `npm run e2e` | 44/44 Playwright tests pass (6 journey + 38 axe: 19 routes × light/dark) |
+| axe-core | 0 serious/critical on 19 representative routes in both themes |
+| Lighthouse mobile | Performance: home 92–100, other four 99–100; accessibility 100 on all five |
+| `npm run check:links` | 198/200 reachable; 2 bot-blocked (OpenAI docs and pricing return 403) |
+| `npm run check:stale` | No claims past review on 6 Nov 2026 |
+| `npm run check:versions` | 13 current, 2 behind, 3 intentional baselines, 40 manual review |
 | `npm audit --omit=dev` | 0 vulnerabilities in production dependencies |
 
+Home's score varies with cold-run main-thread time. The slower runs show a 3.3 s LCP while both
+font files arrive in under 40 ms, so the delay is JavaScript execution on a throttled mobile CPU,
+not a late font swap.
+
 Not run or not verified on that date: a signed-in flow, live OAuth, a live Neon database,
-GitHub Actions (no remote yet), and Antigravity CLI coverage.
+GitHub Actions (no remote yet), and Antigravity CLI behaviour on a real machine. Its documentation
+was read; the entry is a docs claim, not an executed test.
 
 ## Known gaps
 
 - Accounts, Neon, Better Auth and OAuth are deferred. The schema and env names are reserved, but
   no server code exists.
-- Gemini CLI is marked legacy and Antigravity CLI is not covered yet. It needs its own verified
-  entry before the matrix can recommend it.
+- Gemini CLI is marked legacy and Antigravity CLI is covered for skills, MCP and rules. Feature
+  parity across the Antigravity app, CLI and IDE can change; the row records what the docs said on
+  6 Nov 2026.
 - `check:versions` flags Docker 28 and TypeScript 6.0.3 as behind current releases. They remain
   at the versions the docs and snippets were actually verified against.
 - Email verification and password reset are out of scope until a free sender is confirmed.

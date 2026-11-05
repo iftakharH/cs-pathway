@@ -86,37 +86,26 @@ claims:
     topics: [skills, agents]
 
   - id: S1
-    statement: Y Combinator's standard deal invests $500,000 — $125,000 on a post-money SAFE for 7%, plus $375,000 on an uncapped MFN SAFE. YC's own example converts the $375,000 at a $15M post-money cap into 2.5% of the company.
-    kind: spec-fact
-    confidence: high
-    sourceIds: [src-yc-deal]
-    scope: Y Combinator standard deal, 2026
-    verifiedAt: 2026-11-05
-    reviewAfter: 2027-02-05
-    phase: S
-    topics: [funding, safe]
-
-  - id: S2
-    statement: Startup Bangladesh Limited is a government-backed venture capital company that invests in Bangladeshi startups.
-    kind: spec-fact
-    confidence: high
-    sourceIds: [src-startupbd, src-tfe-startupbd]
-    scope: Startup Bangladesh Limited
-    verifiedAt: 2026-11-05
-    reviewAfter: 2027-02-05
-    phase: S
-    topics: [funding, bangladesh]
-
-  - id: S3
-    statement: On 9 June 2026, Bangladesh's ICT Minister told Parliament that Startup Bangladesh had invested about Tk 109 crore in 36 approved startups.
+    statement: KPMG's Venture Pulse Q3 2026 reports global venture capital investment of $170.9 billion across 8,341 deals. Investment was down from an exceptional first half of 2026 but stayed well above historical norms.
     kind: observed-data
     confidence: high
-    sourceIds: [src-bss-startupbd, src-tfe-startupbd]
-    scope: Startup Bangladesh investment total, reported June 2026
-    verifiedAt: 2026-11-05
-    reviewAfter: 2027-02-05
+    sourceIds: [src-kpmg-venture-pulse]
+    scope: Global venture capital investment, Q3 2026
+    verifiedAt: 2026-11-06
+    reviewAfter: 2027-02-06
     phase: S
-    topics: [funding, bangladesh]
+    topics: [funding, venture-capital]
+
+  - id: S2
+    statement: GEM's 2025/2026 Global Report, based on more than 160,000 responses across 53 economies, finds that the transition from startup to established business is constrained by structural conditions, particularly entrepreneurial education and access to finance.
+    kind: observed-data
+    confidence: high
+    sourceIds: [src-gem-2026]
+    scope: Global entrepreneurship survey, 2025/2026
+    verifiedAt: 2026-11-06
+    reviewAfter: 2027-02-06
+    phase: S
+    topics: [funding, entrepreneurship]
 
   - id: V1
     statement: Vercel restricts Hobby teams to non-commercial personal use; all commercial usage requires a Pro or Enterprise plan.

@@ -80,13 +80,14 @@ describe('content integrity', () => {
 
   it('keeps the harness comparison complete and documented', () => {
     const harnesses = content?.harnesses ?? []
-    expect(harnesses).toHaveLength(6)
+    expect(harnesses).toHaveLength(7)
     for (const harness of harnesses) {
       expect(harness.skillsUrl, `${harness.id} skills docs`).toMatch(/^https:\/\//)
       expect(harness.mcpUrl, `${harness.id} MCP docs`).toMatch(/^https:\/\//)
       expect(harness.agentsMdUrl, `${harness.id} AGENTS.md docs`).toMatch(/^https:\/\//)
       expect(harness.verifiedOn, harness.id).toMatch(/^2026-11-06$/)
       expect(harness.notes.length, harness.id).toBeGreaterThan(20)
+      expect(harness.quickstart?.length ?? 0, harness.id).toBeGreaterThanOrEqual(3)
     }
 
     const gemini = harnesses.find((harness) => harness.id === 'gemini-cli')
@@ -95,6 +96,19 @@ describe('content integrity', () => {
 
     const claude = harnesses.find((harness) => harness.id === 'claude-code')
     expect(claude?.agentsMd).toBe('partial')
+
+    const antigravity = harnesses.find((harness) => harness.id === 'antigravity')
+    expect(antigravity?.skills).toBe('native')
+    expect(antigravity?.mcp).toBe('native')
+    expect(antigravity?.agentsMd).toBe('native')
+  })
+
+  it('keeps startup funding worldwide, not tied to one country', () => {
+    const startup = (content?.modules ?? []).filter((module) => module.phase === 'S')
+    const text = JSON.stringify(startup)
+    expect(text).not.toMatch(/Bangladesh|Taka|Tk \d|Y Combinator|ycombinator/i)
+    expect(text).toMatch(/KPMG|Venture Pulse/)
+    expect(text).toMatch(/GEM|Global Entrepreneurship Monitor/)
   })
 
   it('maps every stamped tool to a manual or registry review', () => {

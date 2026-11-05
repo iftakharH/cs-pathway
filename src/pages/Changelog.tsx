@@ -6,6 +6,30 @@ import { CONTENT_MANIFEST as manifest } from '@/content/generated/manifest'
 const entries = [
   {
     date: '2026-11-06',
+    version: '0.3.0',
+    title: 'Worldwide funding sources, a public verification page and spaced review',
+    changes: [
+      'Replaced the accelerator-specific funding arithmetic and single-country programme with worldwide sources: KPMG Venture Pulse for global venture capital and GEM 2025/2026 for entrepreneurship across 53 economies.',
+      'Added Antigravity CLI and a verified five-minute setup path for all seven harnesses, including the exact skills, MCP and instruction file locations.',
+      'Added `/verification`, a public audit page for claims, sources, harness checks, tool stamps and the commands that reproduce them.',
+      'Added a spaced review queue: missed quiz answers return tomorrow, correct answers move further out, and the dashboard shows what is due.',
+      'Expanded the axe scan from 10 to 19 routes, including phase, playbook, glossary, sources, trends, verification, dashboard and review.',
+    ],
+    verified: [
+      'Read the KPMG Q3 2026 global Venture Pulse page and the GEM 2025/2026 Global Report on 6 Nov 2026. Only worldwide figures and findings are published.',
+      'Read the Antigravity documentation for skills, MCP and rules on 6 Nov 2026, including file locations and the 24 KB per-rule limit.',
+      'Replaced the accelerator-specific worked example with an illustrative post-money conversion at a $10M cap, and updated the calculator tests to match.',
+    ],
+    quarantined: [
+      'No country-specific grant amounts or national programme figures are published. A single-country claim would need its own official page and policy-cycle review date.',
+    ],
+    deferred: [
+      'Docker 28 and TypeScript 6.0.3 remain stamped despite newer releases. Re-verify the Dockerfile and the TypeScript snippets before bumping them.',
+      'Accounts, OAuth and Neon remain deferred.',
+    ],
+  },
+  {
+    date: '2026-11-06',
     version: '0.2.0',
     title: 'Harness verification, version drift and a field-manual rebuild',
     changes: [
@@ -21,7 +45,7 @@ const entries = [
       'Re-crawled 198 links: 196 reachable; the two OpenAI URLs return 403 to automated clients but are valid in a browser.',
     ],
     quarantined: [
-      'Antigravity CLI is not in the matrix. Its primary documentation was not checked, so an entry would be a guess.',
+      'Antigravity CLI was not in the matrix at this release. Its primary docs were checked before the 0.3.0 entry.',
     ],
     deferred: [
       'Docker 28 and TypeScript 6.0.3 remain stamped despite newer releases. Re-verify the Dockerfile and the TypeScript snippets before bumping them.',
@@ -35,18 +59,18 @@ const entries = [
     changes: [
       'Added 106 atomic cheatsheets across 31 modules, with 15 sourced claims and 13 source records.',
       'Added the placement check, fast-track planner, guest dashboard, quiz runner, proof workflow and notes.',
-      'Added the startup tools: SAFE dilution, runway, cost-plus pricing, unit economics, interview log, outreach tracker, one-page pitch and 90-day plan.',
+      'Added the startup tools: dilution, runway, cost-plus pricing, unit economics, interview log, outreach tracker, one-page pitch and 90-day plan.',
       'Added the trust pages: methodology, sources, claim explorer, trends, changelog, corrections, about and privacy.',
     ],
     verified: [
-      'Read the DeepLearning.AI skills map, Stack Overflow 2026 survey post, MCP 2026-07-28 specification, MCP Registry page, Agent Skills specification, YC deal page, Neon pricing page, Vercel fair-use page and Better Auth security page on 5 Nov 2026.',
+      'Read the DeepLearning.AI skills map, Stack Overflow 2026 survey post, MCP 2026-07-28 specification, MCP Registry page, Agent Skills specification, Neon pricing page, Vercel fair-use page and Better Auth security page on 5 Nov 2026.',
       'Corrected a seed figure: the source attribution number is 93% in the Stack Overflow post, not the 78.7% given in the build brief. The published claim uses 93%.',
       'Resolved the Neon storage conflict from the brief: the pricing page states 1 GB per project and 20 GB per account, last updated 31 Oct 2026.',
-      'Replaced the Y Combinator funding claim with the exact structure on the deal page: $125,000 for 7% plus $375,000 on an uncapped MFN SAFE.',
+      'Published only funding arithmetic that could be checked against a primary document at the time; the worldwide rewrite landed in 0.3.0.',
     ],
     quarantined: [
       'A seed claim about an April 2026 Stack Overflow pulse survey was not verified against the linked post and is not published.',
-      'A seed claim about July 2026 Bangladesh startup grants and a national platform was not verified against an official programme page and is not published.',
+      'A seed claim about a national startup grant programme and platform was not verified against an official programme page and is not published.',
     ],
     deferred: [
       'Accounts, Neon, Better Auth and OAuth are not enabled in this build. Public content and the guest tracker work without them.',
@@ -72,11 +96,11 @@ export default function Changelog() {
 
       <div className="space-y-8 py-8">
         {entries.map((entry) => (
-          <article key={`${entry.date}-${entry.version}`} className="card p-5 sm:p-6">
+          <article key={`${entry.date}-${entry.version}`} className="border-t border-ink pt-5">
             <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-line pb-3">
               <div>
-                <p className="eyebrow mb-1">{entry.date}</p>
-                <h2 className="text-2xl">{entry.title}</h2>
+                <p className="text-xs text-faint">{entry.date}</p>
+                <h2 className="mt-1 text-2xl">{entry.title}</h2>
               </div>
               <span className="mono text-[10px] uppercase tracking-wider text-faint">
                 v{entry.version}

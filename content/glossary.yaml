@@ -55,14 +55,14 @@ terms:
     sourceUrl: https://platform.openai.com/docs/guides/evals
 
   - term: SAFE
-    definition: A contract for converting an investment into equity later, often at a valuation cap, without pricing the round now.
-    sourceTitle: Y Combinator — SAFE documents
-    sourceUrl: https://www.ycombinator.com/documents
+    definition: A contract that converts an investment into equity later, often at a valuation cap, without pricing the round now. The name is an acronym for Simple Agreement for Future Equity.
+    sourceTitle: Wikipedia — Simple agreement for future equity
+    sourceUrl: https://en.wikipedia.org/wiki/Simple_agreement_for_future_equity
 
   - term: MRR
     definition: Monthly recurring revenue — the normalised monthly value of active subscriptions, excluding one-off charges.
-    sourceTitle: Y Combinator Startup Library
-    sourceUrl: https://www.ycombinator.com/library
+    sourceTitle: Wikipedia — Monthly recurring revenue
+    sourceUrl: https://en.wikipedia.org/wiki/Monthly_recurring_revenue
 
   - term: Idempotency
     definition: The property that repeating the same request has the same effect as sending it once, which makes retries safe.
