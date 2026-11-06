@@ -334,7 +334,7 @@ because those rules cannot be stated accurately worldwide.
 | `npm run check:links` | 198/200 reachable; 2 bot-blocked (OpenAI docs and pricing return 403) |
 | `npm run check:stale` | No claims past review on 6 Nov 2026 |
 | `npm run check:versions` | 15 current, 1 behind, 2 intentional baselines, 40 manual review |
-| `npm audit --omit=dev` | 0 vulnerabilities in production dependencies |
+| `npm audit` | 4 moderate dev-only advisories in drizzle-kit's esbuild chain; no runtime dependency reported |
 
 Not run or not verified on that date: Google/GitHub OAuth with real provider credentials and a
 Vercel production deployment. Antigravity CLI was executed; its workspace skill and `AGENTS.md`
@@ -359,8 +359,9 @@ chunks; the global session check is a small fetch-backed hook.
   unavailable so no image build was executed. Keep the pin until the Dockerfile runs on 29.
 - Email verification and password reset are out of scope until a free sender is confirmed.
 - Two links are blocked to automated checkers; both are valid pages in a browser.
-- `npm audit` reports 10 moderate dev-only advisories in the `typescript-eslint` chain. Production
-  dependencies are clean.
+- `npm audit` reports 4 moderate dev-only advisories in drizzle-kit's esbuild chain. Dependabot's
+  minimatch/esbuild update path is blocked by an eslint peer resolution; no production dependency
+  is reported.
 - CI and the weekly workflow have run on GitHub. The weekly run opened issue #1 because Docker 28
   is behind; that is a real drift, not a workflow bug. Dependabot is enabled by GitHub.
 
