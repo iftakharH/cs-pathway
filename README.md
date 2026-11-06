@@ -28,7 +28,7 @@ function yet. Progress, notes, proofs and tools are stored in `localStorage`. Se
 | Modules | 31 |
 | Quiz questions | 155, each with a source page |
 | Cheatsheets | 108 |
-| Executable snippets | 23 |
+| Executable snippets | 27 |
 | Claims | 14 |
 | Sources | 12 (all primary) |
 | Harnesses verified | 7 |
@@ -198,6 +198,11 @@ The database has 14 tables: Better Auth's `user`, `session`, `account` and `veri
 `flashcard_state`, `tool_state`, `activity` and `weekly_review`. Every app table cascades from
 `user.id`; notes are capped at 200 KB per account and each tool state at 100 KB.
 
+Vercel Hobby allows 12 Serverless Functions and its file-based `[...path]` matcher only covers one
+segment. The whole API is therefore one function at `api/index.ts`, and
+`vercel.json` rewrites `/api/(.*)` to `/api?__path=$1`. `server/app.ts` restores the path before
+Express or Better Auth sees it. Do not split this into a function per route on the free plan.
+
 Environment variables (names only; never commit values):
 
 ```
@@ -287,12 +292,15 @@ Three findings matter more than the table:
   Google One users on 18 June 2026. The row stays visible for existing setups, with a warning.
 - **Antigravity CLI** is now covered as the supported replacement: `.agents/skills/`,
   `.agents/mcp_config.json` and `AGENTS.md`, with the 24 KB per-rule limit and the 20,000-token
-  aggregate rule budget named as limitations.
+  aggregate rule budget named as limitations. Executed on 6 Nov 2026 with `agy` 1.5.2: a workspace
+  skill and `AGENTS.md` were discovered in print mode.
 
-`npm run check:versions` compares every stamped tool with its registry. It flags Docker 28 and
-TypeScript 6.0.3 as behind the current releases; neither stamp was changed because the Dockerfile
-and the TypeScript snippets have not been re-verified against the newer versions. That is a review
-item, not an automatic upgrade.
+`npm run check:versions` compares every stamped tool with its registry. The current result is
+15 current, 1 behind and 2 intentional baselines. Docker 28 remains pinned: Docker 29.7.2 is
+installed, but the daemon was unavailable, so the Dockerfile was not executed. TypeScript snippets
+are stamped 7.0.2 after the whole repository and every snippet typechecked with it; the dev
+toolchain stays at 6.0.3 because `typescript-eslint` requires `<6.1`. PostgreSQL is stamped 18.6
+after all seven SQL snippets matched on the live Neon database.
 
 ## Worldwide startup sources
 
@@ -316,24 +324,24 @@ because those rules cannot be stated accurately worldwide.
 | `npm run lint` | Pass, 0 warnings |
 | `npm run typecheck` | Pass, strict |
 | `npm test` | 60 tests pass |
-| `npm run test:snippets` | 23/23 executable snippets pass |
+| `npm run test:snippets` | 27/27 executable snippets pass |
 | `npm run build` | Pass |
 | `npm run e2e` | 49/49 Playwright tests pass (1 account journey + 6 guest journeys + 42 axe: 21 routes × light/dark) |
 | axe-core | 0 serious/critical on 21 representative routes in both themes |
 | `npm run test:auth` | Pass: sign-up, state write, export, cross-user isolation and delete against Neon |
-| Lighthouse mobile | Performance: home 92–100, other four 99–100; accessibility 100 on all five |
+| Vercel preview | Pass: `/api/auth/ok`, sign-up, sign-in, session, state PUT/GET and account deletion |
+| Lighthouse mobile | Performance: home 100, module 99, harnesses 100, sign-in 100, verification 100; accessibility 100 on all five |
 | `npm run check:links` | 198/200 reachable; 2 bot-blocked (OpenAI docs and pricing return 403) |
 | `npm run check:stale` | No claims past review on 6 Nov 2026 |
-| `npm run check:versions` | 13 current, 2 behind, 3 intentional baselines, 40 manual review |
+| `npm run check:versions` | 15 current, 1 behind, 2 intentional baselines, 40 manual review |
 | `npm audit --omit=dev` | 0 vulnerabilities in production dependencies |
 
-Home's score varies with cold-run main-thread time. The slower runs show a 3.3 s LCP while both
-font files arrive in under 40 ms, so the delay is JavaScript execution on a throttled mobile CPU,
-not a late font swap.
+Not run or not verified on that date: Google/GitHub OAuth with real provider credentials and a
+Vercel production deployment. Antigravity CLI was executed; its workspace skill and `AGENTS.md`
+were discovered in print mode.
 
-Not run or not verified on that date: Google/GitHub OAuth with real provider credentials, a Vercel
-production deployment, GitHub Actions (no remote yet), and Antigravity CLI behaviour on a real
-machine. Its documentation was read; the entry is a docs claim, not an executed test.
+Initial JavaScript is 112 KB gzip. Better Auth loads only on the sign-in, sign-up and account
+chunks; the global session check is a small fetch-backed hook.
 
 ## Known gaps
 
@@ -344,8 +352,8 @@ machine. Its documentation was read; the entry is a docs claim, not an executed 
 - Gemini CLI is marked legacy and Antigravity CLI is covered for skills, MCP and rules. Feature
   parity across the Antigravity app, CLI and IDE can change; the row records what the docs said on
   6 Nov 2026.
-- `check:versions` flags Docker 28 and TypeScript 6.0.3 as behind current releases. They remain
-  at the versions the docs and snippets were actually verified against.
+- `check:versions` still flags Docker 28. Docker 29.7.2 is installed, but the daemon was
+  unavailable so no image build was executed. Keep the pin until the Dockerfile runs on 29.
 - Email verification and password reset are out of scope until a free sender is confirmed.
 - Two links are blocked to automated checkers; both are valid pages in a browser.
 - `npm audit` reports 10 moderate dev-only advisories in the `typescript-eslint` chain. Production

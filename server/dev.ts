@@ -1,5 +1,5 @@
-import './env'
-import { createApp } from './app'
+import './env.js'
+import { createApp } from './app.js'
 
 const port = Number(process.env.API_PORT ?? 3101)
 const app = createApp()

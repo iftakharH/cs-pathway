@@ -176,5 +176,5 @@ harnesses:
       - Rules are not loaded from subfolders below the workspace folder.
       - A single rule file is truncated at 24 KB, and always-on rules share a 20,000-token budget.
       - The CLI does not support rule mentions.
-    notes: Skills, MCP and rules are first-class across the app, CLI and IDE. The CLI uses `agy` and shares global skills with the app under `~/.gemini/config`.
+    notes: Executed on 6 Nov 2026 with agy 1.5.2. A workspace skill and AGENTS.md were discovered in print mode. Skills, MCP and rules are first-class across the app, CLI and IDE.
     verifiedOn: 2026-11-06

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { CloudDownload, CloudUpload, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
-import { useSession } from '@/lib/auth-client'
+import { useSession } from '@/lib/session'
 import { fetchServerState, pushServerState } from '@/lib/api'
 import {
   getSnapshot,

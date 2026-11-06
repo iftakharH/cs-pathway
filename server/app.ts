@@ -1,13 +1,13 @@
 import express, { type NextFunction, type Request, type Response } from 'express'
 import { eq } from 'drizzle-orm'
 import { fromNodeHeaders, toNodeHandler } from 'better-auth/node'
-import { auth } from './auth'
-import { db } from './db'
-import { user } from './auth-schema'
-import { oauth, trustedOrigins } from './env'
-import { getState, replaceState, stateSummary } from './state-store'
-import { assertStateCaps, StateLimitError, stateSchema } from './state-schema'
-import { CONTENT_MANIFEST } from '../src/content/generated/manifest'
+import { auth } from './auth.js'
+import { db } from './db.js'
+import { user } from './auth-schema.js'
+import { oauth, trustedOrigins } from './env.js'
+import { getState, replaceState, stateSummary } from './state-store.js'
+import { assertStateCaps, StateLimitError, stateSchema } from './state-schema.js'
+import { CONTENT_MANIFEST } from '../src/content/generated/manifest.js'
 
 const moduleIds: Set<string> = new Set(CONTENT_MANIFEST.moduleIds)
 const cheatIds: Set<string> = new Set(CONTENT_MANIFEST.cheatIds)
@@ -79,7 +79,32 @@ export function createApp() {
     next()
   })
 
-  app.all('/api/auth/*splat', toNodeHandler(auth))
+  // Vercel's file-based API route only matches one segment. The rewrite in
+  // vercel.json sends the rest of the path here as __path; restore it before
+  // Express or Better Auth sees the request.
+  app.use((req, _res, next) => {
+    const raw = req.query.__path
+    if (typeof raw !== 'string') {
+      next()
+      return
+    }
+
+    const params = new URLSearchParams()
+    for (const [key, value] of Object.entries(req.query)) {
+      if (key === '__path' || value === undefined) continue
+      if (Array.isArray(value)) {
+        for (const item of value) params.append(key, String(item))
+      } else {
+        params.append(key, String(value))
+      }
+    }
+
+    const query = params.toString()
+    req.url = `/api/${raw}${query ? `?${query}` : ''}`
+    next()
+  })
+
+  app.all('/api/auth/{*any}', toNodeHandler(auth))
 
   app.get('/api/health', (_req, res) => {
     json(res, 200, { ok: true })

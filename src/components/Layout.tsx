@@ -12,7 +12,7 @@ import {
 } from 'lucide-react'
 import { ButtonLink } from '@/components/ui/Button'
 import { SyncBridge } from '@/components/SyncBridge'
-import { useSession } from '@/lib/auth-client'
+import { useSession } from '@/lib/session'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { site } from '@/lib/site'
 import { cx } from '@/lib/format'

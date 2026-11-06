@@ -179,7 +179,7 @@ entries:
       - A type assertion (`as`) silences the error without checking the value.
       - Narrowing is lost after an `await` if the variable could be reassigned.
     seeAlso: [ts-generics, ts-utility-types]
-    tool: { name: TypeScript, version: '6.0.3', verifiedOn: 2026-11-05 }
+    tool: { name: TypeScript, version: '7.0.2', verifiedOn: 2026-11-06 }
     sourceUrl: https://www.typescriptlang.org/docs/handbook/2/narrowing.html
     tags: [typescript, types, narrowing]
 
@@ -191,16 +191,19 @@ entries:
     snippets:
       - lang: ts
         caption: A generic helper and its inferred types
-        runnable: false
-        checked: docs
+        runnable: true
+        checked: executed
+        expectStdout: "101 a undefined"
         code: |
           function first<T>(items: readonly T[]): T | undefined {
             return items[0]
           }
 
           const id = first([101, 102])          // number | undefined
-          const name = first(['a', 'b'])        // string | undefined
+          const firstName = first(['a', 'b'])   // string | undefined
           const missing = first([] as string[]) // string | undefined
+
+          console.log(id, firstName, missing)
     notes:
       - Let TypeScript infer `T` from the argument; specify it only when inference cannot.
       - "Use a constraint such as `<T extends { id: string }>` when the body needs a field."
@@ -209,7 +212,7 @@ entries:
       - An unconstrained generic plus `as any` inside defeats the point.
       - A default type parameter can hide a caller's mistake.
     seeAlso: [ts-narrowing, ts-utility-types]
-    tool: { name: TypeScript, version: '6.0.3', verifiedOn: 2026-11-05 }
+    tool: { name: TypeScript, version: '7.0.2', verifiedOn: 2026-11-06 }
     sourceUrl: https://www.typescriptlang.org/docs/handbook/2/generics.html
     tags: [typescript, generics, types]
 
@@ -221,8 +224,9 @@ entries:
     snippets:
       - lang: ts
         caption: Pick, Omit, Partial and Record
-        runnable: false
-        checked: docs
+        runnable: true
+        checked: executed
+        expectStdout: "Ada"
         code: |
           type User = { id: string; name: string; email: string; createdAt: string }
 
@@ -231,6 +235,7 @@ entries:
           type UserMap = Record<string, User>
 
           const patch: UserPatch = { name: 'Ada' } // email is optional too
+          console.log(patch.name)
     notes:
       - "`Pick` keeps a subset; `Omit` removes a subset."
       - "`Partial` makes every remaining field optional."
@@ -239,7 +244,7 @@ entries:
       - "`Omit` on a union does not distribute over its members."
       - An index signature (`Record<string, T>`) allows any string key, including typos.
     seeAlso: [ts-generics, ts-narrowing]
-    tool: { name: TypeScript, version: '6.0.3', verifiedOn: 2026-11-05 }
+    tool: { name: TypeScript, version: '7.0.2', verifiedOn: 2026-11-06 }
     sourceUrl: https://www.typescriptlang.org/docs/handbook/utility-types.html
     tags: [typescript, types, utility]
 
@@ -278,8 +283,9 @@ entries:
     snippets:
       - lang: python
         caption: Built-in generics and an abstract input type
-        runnable: false
-        checked: docs
+        runnable: true
+        checked: executed
+        expectStdout: "3.0 ['Ada']"
         code: |
           from collections.abc import Iterable
 
@@ -290,6 +296,8 @@ entries:
 
           def names(users: Iterable[dict[str, str]]) -> list[str]:
               return [user["name"] for user in users]
+
+          print(average([2.0, 4.0]), names([{"name": "Ada"}]))
     notes:
       - Python 3.9+ supports `list[float]` and `dict[str, str]` without imports.
       - Accept the widest useful input; return the narrowest useful output.

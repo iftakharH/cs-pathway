@@ -6,6 +6,34 @@ import { CONTENT_MANIFEST as manifest } from '@/content/generated/manifest'
 const entries = [
   {
     date: '2026-11-06',
+    version: '0.4.0',
+    title: 'Accounts, Neon sync and a verified preview deployment',
+    changes: [
+      'Added email/password accounts with Better Auth 1.7.18, Neon Postgres, Drizzle migrations and a 14-table schema. Google and GitHub are wired but wait for provider credentials.',
+      'Added `/signin`, `/signup` and `/account`, with guest-import choices, debounced sync, session management, JSON export and account deletion.',
+      'Added a single Express function at `/api/index.ts` with a path-preserving Vercel rewrite, required by the 12-function Hobby limit.',
+      'Moved the session check to a small fetch-backed hook, keeping Better Auth out of the initial page bundle (123 KB → 112 KB gzip).',
+      'Converted four more cheatsheets to executed snippets: TypeScript generics, TypeScript utility types, Python typing and the retry delay schedule. The library now has 27 executed snippets.',
+      'Executed the Antigravity CLI quickstart with agy 1.5.2: a workspace skill and AGENTS.md were discovered in print mode.',
+      'Verified TypeScript 7.0.2 against the whole repository and PostgreSQL 18.6 against all seven SQL snippets on Neon. TypeScript stays at 6.0.3 in the dev toolchain because typescript-eslint requires <6.1.',
+    ],
+    verified: [
+      'Preview deployment: `/api/auth/ok`, sign-up, sign-in, session, state PUT/GET and account deletion all passed against the Vercel function and Neon.',
+      '`npm run test:auth`: cross-user isolation, export and delete passed.',
+      '`npm run e2e`: 49/49 passed, including the account journey and 21 axe routes in two themes.',
+      'TypeScript 7.0.2 typechecked the repository and the snippets; PostgreSQL 18.6 matched all seven SQL snippet outputs.',
+    ],
+    quarantined: [
+      'Google and GitHub OAuth are not live. No client IDs or secrets are configured, so no provider login is claimed.',
+    ],
+    deferred: [
+      'Docker 28 stays pinned. Docker 29.7.2 is installed but the daemon was unavailable, so the Dockerfile was not executed.',
+      'A production deployment has not run. The preview deployment is verified.',
+      'GitHub Actions has not run yet; the repository is being pushed now.',
+    ],
+  },
+  {
+    date: '2026-11-06',
     version: '0.3.0',
     title: 'Worldwide funding sources, a public verification page and spaced review',
     changes: [

@@ -4,7 +4,8 @@ import { PageHeader } from '@/components/ui/Section'
 import { Button } from '@/components/ui/Button'
 import { AuthProviders } from '@/components/AuthProviders'
 import { Field, TextInput } from '@/components/ui/Field'
-import { authClient, useSession } from '@/lib/auth-client'
+import { authClient } from '@/lib/auth-client'
+import { refreshSession, useSession } from '@/lib/session'
 import { safeNext } from '@/lib/auth-ui'
 
 export default function SignIn() {
@@ -29,6 +30,7 @@ export default function SignIn() {
       setBusy(false)
       return
     }
+    await refreshSession()
     navigate(next, { replace: true })
   }
 

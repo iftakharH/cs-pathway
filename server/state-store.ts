@@ -1,5 +1,5 @@
 import { asc, desc, eq } from 'drizzle-orm'
-import { db } from './db'
+import { db } from './db.js'
 import {
   activity,
   cheatPin,
@@ -11,8 +11,8 @@ import {
   quizAttempt,
   toolState,
   weeklyReview,
-} from './app-schema'
-import { type ServerState, stateSchema } from './state-schema'
+} from './app-schema.js'
+import { type ServerState, stateSchema } from './state-schema.js'
 
 export function emptyState(): ServerState {
   return {

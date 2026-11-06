@@ -251,7 +251,7 @@ entries:
       - Raw scores from different methods are not on the same scale.
       - A full-text index needs the language configuration to match the text.
     seeAlso: [rag-chunking, pgvector]
-    tool: { name: PostgreSQL full-text search, version: '17', verifiedOn: 2026-11-05 }
+    tool: { name: PostgreSQL full-text search, version: '18.6', verifiedOn: 2026-11-06 }
     sourceUrl: https://www.postgresql.org/docs/current/textsearch-controls.html
     tags: [rag, search, hybrid, postgres]
 
@@ -502,6 +502,17 @@ entries:
             }
             throw lastError
           }
+      - lang: ts
+        caption: The base delay before jitter, without waiting
+        runnable: true
+        checked: executed
+        expectStdout: "500,1000,2000"
+        code: |
+          const base = 500
+          const delays = [0, 1, 2].map((attempt) =>
+            Math.min(8_000, base * 2 ** attempt),
+          )
+          console.log(delays.join(','))
     notes:
       - Retry only idempotent work or work protected by an idempotency key.
       - Respect `Retry-After` when the provider sends it.

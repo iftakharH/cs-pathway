@@ -1,8 +1,8 @@
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
-import { db } from './db'
-import { authSchema } from './auth-schema'
-import { authSecret, authUrl, isProduction, oauth, trustedOrigins } from './env'
+import { db } from './db.js'
+import { authSchema } from './auth-schema.js'
+import { authSecret, authUrl, isProduction, oauth, trustedOrigins } from './env.js'
 
 const socialProviders = {
   ...(oauth.google ? { google: oauth.google } : {}),

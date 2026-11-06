@@ -218,7 +218,7 @@ entries:
       - Joining two one-to-many tables multiplies rows; aggregates then double-count.
       - A condition in `where` on the right table turns a left join into an inner join.
     seeAlso: [sql-group-having, sql-explained]
-    tool: { name: PostgreSQL, version: '17', verifiedOn: 2026-11-05 }
+    tool: { name: PostgreSQL, version: '18.6', verifiedOn: 2026-11-06 }
     sourceUrl: https://www.postgresql.org/docs/current/queries-table-expressions.html
     tags: [sql, join, aggregation]
 
@@ -250,7 +250,7 @@ entries:
       - Putting `where count(*) > 1` is invalid.
       - Grouping by a nullable column puts all nulls in one group.
     seeAlso: [sql-joins, sql-window]
-    tool: { name: PostgreSQL, version: '17', verifiedOn: 2026-11-05 }
+    tool: { name: PostgreSQL, version: '18.6', verifiedOn: 2026-11-06 }
     sourceUrl: https://www.postgresql.org/docs/current/queries-table-expressions.html#QUERIES-GROUP
     tags: [sql, group-by, having]
 
@@ -280,7 +280,7 @@ entries:
       - An unbounded recursive CTE runs until it hits a limit or memory.
       - A trailing comma before the main select is a syntax error.
     seeAlso: [sql-window, sql-joins]
-    tool: { name: PostgreSQL, version: '17', verifiedOn: 2026-11-05 }
+    tool: { name: PostgreSQL, version: '18.6', verifiedOn: 2026-11-06 }
     sourceUrl: https://www.postgresql.org/docs/current/queries-with.html
     tags: [sql, cte, recursion]
 
@@ -310,7 +310,7 @@ entries:
       - You cannot filter on a window result in the same `where`; wrap it in a CTE.
       - "`order by` inside `over` is separate from the final output order."
     seeAlso: [sql-group-having, sql-cte]
-    tool: { name: PostgreSQL, version: '17', verifiedOn: 2026-11-05 }
+    tool: { name: PostgreSQL, version: '18.6', verifiedOn: 2026-11-06 }
     sourceUrl: https://www.postgresql.org/docs/current/tutorial-window.html
     tags: [sql, window, ranking]
 
@@ -341,7 +341,7 @@ entries:
       - A failed statement inside a transaction aborts it until you `rollback`.
       - Autocommit is on outside an explicit transaction, so each statement stands alone.
     seeAlso: [sql-index, sql-explained]
-    tool: { name: PostgreSQL, version: '17', verifiedOn: 2026-11-05 }
+    tool: { name: PostgreSQL, version: '18.6', verifiedOn: 2026-11-06 }
     sourceUrl: https://www.postgresql.org/docs/current/tutorial-transactions.html
     tags: [sql, transaction, consistency]
 
@@ -372,7 +372,7 @@ entries:
       - "`where lower(email) = ...` cannot use an index on `email` unless the index uses the same expression."
       - Leading wildcards such as `like '%term'` usually prevent a B-tree index from helping.
     seeAlso: [sql-explained, sql-transactions]
-    tool: { name: PostgreSQL, version: '17', verifiedOn: 2026-11-05 }
+    tool: { name: PostgreSQL, version: '18.6', verifiedOn: 2026-11-06 }
     sourceUrl: https://www.postgresql.org/docs/current/indexes.html
     tags: [sql, index, performance]
 
@@ -401,6 +401,6 @@ entries:
       - EXPLAIN ANALYZE on an UPDATE or DELETE changes data unless it is in a rolled-back transaction.
       - Timings on a dev machine with a small table do not predict production.
     seeAlso: [sql-index, sql-transactions]
-    tool: { name: PostgreSQL, version: '17', verifiedOn: 2026-11-05 }
+    tool: { name: PostgreSQL, version: '18.6', verifiedOn: 2026-11-06 }
     sourceUrl: https://www.postgresql.org/docs/current/sql-explain.html
     tags: [sql, explain, performance, debugging]

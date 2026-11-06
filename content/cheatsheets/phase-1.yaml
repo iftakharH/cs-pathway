@@ -448,7 +448,7 @@ entries:
       - A unique constraint treats nulls as distinct unless you use `nulls not distinct`.
       - "`on delete cascade` can delete far more than intended; confirm the ownership."
     seeAlso: [pg-migrations, pg-relations]
-    tool: { name: PostgreSQL, version: '17', verifiedOn: 2026-11-05 }
+    tool: { name: PostgreSQL, version: '18.6', verifiedOn: 2026-11-06 }
     sourceUrl: https://www.postgresql.org/docs/current/ddl-constraints.html
     tags: [postgres, schema, constraints]
 
@@ -508,7 +508,7 @@ entries:
       - Joining two child tables multiplies rows; aggregate before joining or use separate queries.
       - A left join with a `where` on the child turns into an inner join.
     seeAlso: [sql-joins, pg-schema]
-    tool: { name: PostgreSQL, version: '17', verifiedOn: 2026-11-05 }
+    tool: { name: PostgreSQL, version: '18.6', verifiedOn: 2026-11-06 }
     sourceUrl: https://www.postgresql.org/docs/current/queries-table-expressions.html
     tags: [postgres, relations, joins, performance]
 
@@ -602,7 +602,7 @@ entries:
       - A JWT in localStorage is readable by any script on the page.
       - A long-lived JWT with no revocation path is a permanent key.
     seeAlso: [auth-oauth-flow, auth-cookies, auth-csrf]
-    tool: { name: Better Auth, version: '1.7.17', verifiedOn: 2026-11-05 }
+    tool: { name: Better Auth, version: '1.7.18', verifiedOn: 2026-11-06 }
     sourceUrl: https://www.better-auth.com/docs/concepts/session-management
     tags: [auth, sessions, jwt, cookies]
 
@@ -665,7 +665,7 @@ entries:
       - Disabling origin checks also disables CSRF protection in Better Auth.
       - Setting SameSite=None without Secure breaks the cookie and weakens it.
     seeAlso: [auth-sessions-vs-jwt, auth-cookies]
-    tool: { name: Better Auth, version: '1.7.17', verifiedOn: 2026-11-05 }
+    tool: { name: Better Auth, version: '1.7.18', verifiedOn: 2026-11-06 }
     sourceUrl: https://www.better-auth.com/docs/reference/security
     tags: [auth, csrf, security, cookies]
 
@@ -718,7 +718,7 @@ entries:
       - "`SameSite=None` must be paired with `Secure`, and it removes the default protection."
       - A cookie scoped to `/` is sent to every path, including static assets.
     seeAlso: [auth-csrf, auth-sessions-vs-jwt]
-    tool: { name: Better Auth, version: '1.7.17', verifiedOn: 2026-11-05 }
+    tool: { name: Better Auth, version: '1.7.18', verifiedOn: 2026-11-06 }
     sourceUrl: https://www.better-auth.com/docs/concepts/cookies
     tags: [auth, cookies, security, sessions]
 

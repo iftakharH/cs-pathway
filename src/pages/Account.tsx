@@ -4,7 +4,8 @@ import { Download, LogOut, Trash2, Upload } from 'lucide-react'
 import { PageHeader, Callout } from '@/components/ui/Section'
 import { Button } from '@/components/ui/Button'
 import { Field, SelectInput, TextInput } from '@/components/ui/Field'
-import { authClient, useSession } from '@/lib/auth-client'
+import { authClient } from '@/lib/auth-client'
+import { refreshSession, useSession } from '@/lib/session'
 import {
   deleteAccount,
   exportAccount,
@@ -75,6 +76,7 @@ export default function Account() {
     setError('')
     setMessage('')
     const result = await authClient.updateUser({ name })
+    await refreshSession()
     if (result.error) setError(result.error.message ?? 'Could not update your name.')
     else setMessage('Name updated.')
     setBusy('')
@@ -154,6 +156,7 @@ export default function Account() {
       await deleteAccount()
       resetGuestData()
       await authClient.signOut()
+      await refreshSession()
       navigate('/', { replace: true })
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Could not delete the account.')
@@ -182,6 +185,7 @@ export default function Account() {
             onClick={async () => {
               setSigningOut(true)
               await authClient.signOut()
+              await refreshSession()
               navigate('/', { replace: true })
             }}
           >
