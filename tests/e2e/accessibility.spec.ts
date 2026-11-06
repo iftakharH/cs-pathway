@@ -20,6 +20,8 @@ const routes = [
   ['/tools', 'tools'],
   ['/dashboard', 'dashboard'],
   ['/review', 'review'],
+  ['/signin', 'signin'],
+  ['/signup', 'signup'],
   ['/privacy', 'privacy'],
 ] as const
 

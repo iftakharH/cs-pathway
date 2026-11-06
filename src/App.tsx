@@ -51,6 +51,9 @@ const router = createBrowserRouter([
       { path: 'pins', lazy: async () => ({ Component: (await import('@/pages/Pins')).default }) },
       { path: 'notes', lazy: async () => ({ Component: (await import('@/pages/Notes')).default }) },
       { path: 'review', lazy: async () => ({ Component: (await import('@/pages/Review')).default }) },
+      { path: 'signin', lazy: async () => ({ Component: (await import('@/pages/SignIn')).default }) },
+      { path: 'signup', lazy: async () => ({ Component: (await import('@/pages/SignUp')).default }) },
+      { path: 'account', lazy: async () => ({ Component: (await import('@/pages/Account')).default }) },
       {
         path: 'glossary',
         lazy: async () => ({ Component: (await import('@/pages/Glossary')).default }),

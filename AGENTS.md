@@ -49,8 +49,10 @@ Rules enforced by `npm run validate` (the build fails when broken):
 - API: Express (or Hono) as a Vercel function under `/api/*`; Better Auth mounts at `/api/auth/*`.
 - Database: Neon Postgres via the **pooled** URL, Drizzle ORM, `drizzle-kit` migrations.
   The direct/unpooled URL is only for migrations.
-- Auth: Better Auth with the Drizzle adapter (`provider: "pg"`). Generate core tables with the
-  official Better Auth CLI. Pin the current stable version, never a beta.
+- Auth: Better Auth with the Drizzle adapter (`provider: "pg"`). Pin the current stable version,
+  never a beta. The 1.7.18 CLI emitted an invalid Drizzle file (`postgresTable`, `undefined`
+  columns), so the documented core schema is maintained in `server/auth-schema.ts`. Re-check the
+  CLI on every upgrade before trusting its output.
 - Content: YAML/Markdown in git, validated at build. No CMS, no content in the database.
 - Search: client-side (MiniSearch or Fuse) over modules, cheatsheets, claims, glossary.
 - No analytics, no third-party scripts, no tracking cookies. Only the session cookie.
@@ -67,7 +69,9 @@ Rules enforced by `npm run validate` (the build fails when broken):
   **Export my data**, **Delete my account**).
 - Keep Better Auth CSRF/origin checks and rate limiting **enabled**. Set `trustedOrigins` to the
   production domain and local dev only. Secure cookies in production. Sessions in the database.
-- Protected: `/dashboard`, `/account`, `/proof/*`, `/notes`, `/pins`. Everything else public.
+- Server-backed data requires a session. Guest-local `/dashboard`, `/notes` and `/pins` remain
+  readable without an account and read only from `localStorage`. Never expose server rows to a
+  guest or accept a `userId` from the client.
 - Guest mode works without login; on first sign-in offer to import guest progress without
   overwriting newer server data.
 - Privacy: only name, email/OAuth identity, and the app tables. Nothing sold or shared.

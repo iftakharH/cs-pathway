@@ -13,4 +13,20 @@ export default defineConfig({
   build: {
     target: 'es2022',
   },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://127.0.0.1:3101',
+        changeOrigin: false,
+      },
+    },
+  },
+  preview: {
+    proxy: {
+      '/api': {
+        target: 'http://127.0.0.1:3101',
+        changeOrigin: false,
+      },
+    },
+  },
 })

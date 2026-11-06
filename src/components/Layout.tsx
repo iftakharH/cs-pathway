@@ -8,8 +8,11 @@ import {
   Pin,
   Search,
   ShieldCheck,
+  UserRound,
 } from 'lucide-react'
 import { ButtonLink } from '@/components/ui/Button'
+import { SyncBridge } from '@/components/SyncBridge'
+import { useSession } from '@/lib/auth-client'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { site } from '@/lib/site'
 import { cx } from '@/lib/format'
@@ -48,6 +51,7 @@ function ScrollToTop() {
 
 function Header({ onOpenSearch }: { onOpenSearch: () => void }) {
   const { pathname } = useLocation()
+  const session = useSession()
 
   return (
     <header className="no-print sticky top-0 z-40 border-b border-line bg-bg/90 backdrop-blur-md">
@@ -107,8 +111,12 @@ function Header({ onOpenSearch }: { onOpenSearch: () => void }) {
           </button>
           <ThemeToggle />
           <div className="ml-1 hidden md:block">
-            <ButtonLink to="/dashboard" variant="secondary" size="sm">
-              My plan
+            <ButtonLink
+              to={session.data ? '/account' : '/signin'}
+              variant="secondary"
+              size="sm"
+            >
+              {session.data ? 'Account' : 'Sign in'}
             </ButtonLink>
           </div>
         </div>
@@ -123,13 +131,14 @@ function MobileNav() {
     { to: '/cheatsheets', label: 'Sheets', Icon: BookOpen },
     { to: '/dashboard', label: 'Plan', Icon: CalendarDays },
     { to: '/pins', label: 'Saved', Icon: Pin },
+    { to: '/account', label: 'Account', Icon: UserRound },
   ]
   return (
     <nav
       aria-label="Primary mobile"
       className="no-print fixed inset-x-0 bottom-0 z-40 border-t border-line bg-surface/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-md md:hidden"
     >
-      <ul className="grid grid-cols-4">
+      <ul className="grid grid-cols-5">
         {items.map((item) => (
           <li key={item.to}>
             <NavLink
@@ -197,6 +206,8 @@ function Footer() {
           <FooterColumn
             title="Project"
             links={[
+              { label: 'Sign in', to: '/signin' },
+              { label: 'Account', to: '/account' },
               { label: 'About', to: '/about' },
               { label: 'Privacy', to: '/privacy' },
               { label: 'Harnesses', to: '/harnesses' },
@@ -307,6 +318,7 @@ export function Layout() {
       </a>
       <ScrollToTop />
       <Header onOpenSearch={() => setSearchOpen(true)} />
+      <SyncBridge />
       <main id="main" className="flex-1 pb-24 md:pb-0">
         <Suspense fallback={<PageFallback />}>
           <div key={pathname}>

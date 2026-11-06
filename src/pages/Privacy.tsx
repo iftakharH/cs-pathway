@@ -3,9 +3,10 @@ import { PageHeader, Callout } from '@/components/ui/Section'
 import { ButtonLink } from '@/components/ui/Button'
 import { site } from '@/lib/site'
 
-const stored = [
-  ['Profile', 'Weekly hours, target phase, start date.'],
-  ['Placement', 'Your self-ratings, scenario answers, recommended phase and the date.'],
+const serverRows = [
+  ['Account', 'Name, email, hashed password, OAuth identity, profile image URL if the provider sends one.'],
+  ['Sessions', 'Session id, token, expiry, IP address, user agent and timestamps.'],
+  ['Profile', 'Weekly hours, target phase, start date, placement answers, optional streak setting.'],
   ['Progress', 'Module status (in progress, proof submitted, done, skipped) and timestamps.'],
   ['Quizzes', 'Score, total, answers and the date of the attempt.'],
   ['Notes', 'The text you write on a module or a cheatsheet, up to 5,000 characters per note.'],
@@ -13,48 +14,47 @@ const stored = [
   ['Pins', 'Cheatsheet ids and the date you pinned them.'],
   ['Tools', 'Interview log, outreach list, pricing and dilution inputs, pitch and 90-day plan.'],
   ['Review', 'Your weekly review answers and the last update date.'],
-  ['Activity', 'A short local log used for the optional streak.'],
+  ['Spaced review', 'Question ids, box, due date, last review date and miss count.'],
+  ['Activity', 'A short log used for the optional streak, trimmed to the most recent 200 records.'],
+]
+
+const localOnly = [
+  ['Theme', 'Light or dark, in localStorage.'],
+  ['Guest progress', 'The same records, in localStorage, only when you use the site without signing in.'],
+  ['Sync preference', 'Whether this browser syncs with the signed-in account.'],
 ]
 
 export default function Privacy() {
   return (
     <div className="container-page">
       <PageHeader
-        title="No account. No server copy. No tracking."
-        lede="This build has no authentication and no database. Everything you enter is stored in your browser's localStorage, on this device. It is not transmitted to cs-pathway."
+        title="Local by default. An account is optional."
+        lede="You can read and use the site without signing in. If you create an account, the records you choose to sync are stored in the connected Neon Postgres database. Nothing is sold, shared or sent to a model provider."
         breadcrumb={[{ label: 'Home', to: '/' }, { label: 'Privacy' }]}
-        actions={<ButtonLink to="/dashboard" variant="secondary">Manage my data</ButtonLink>}
+        actions={<ButtonLink to="/account" variant="secondary">Manage my data</ButtonLink>}
       />
 
       <div className="grid gap-8 py-8 lg:grid-cols-[1.2fr_0.8fr]">
         <div>
-          <h2 className="text-xl">What is stored</h2>
+          <h2 className="text-xl">What is stored on the server</h2>
           <p className="mt-2 text-sm leading-relaxed text-muted">
-            Two localStorage keys are used:
+            The Neon project connected to this deployment is in the provider's{' '}
+            <code className="rounded border border-line bg-surface-2 px-1.5 py-0.5 text-xs">us-east-1</code>{' '}
+            region. Rows are keyed to your user id and deleted with your account. Content pages
+            remain static and readable when the database is cold or unavailable.
           </p>
-          <ul className="mt-3 space-y-1.5 text-sm">
-            <li>
-              <code className="rounded border border-line bg-surface-2 px-1.5 py-0.5 text-xs">cs-pathway:v1</code>{' '}
-              — the data below.
-            </li>
-            <li>
-              <code className="rounded border border-line bg-surface-2 px-1.5 py-0.5 text-xs">cs-pathway:theme</code>{' '}
-              — light or dark.
-            </li>
-          </ul>
-
-          <div className="mt-5 overflow-x-auto rounded-lg border border-line">
+          <div className="mt-4 overflow-x-auto border-y border-line">
             <table className="w-full min-w-[34rem] text-left text-sm">
               <thead>
-                <tr className="border-b border-line bg-surface-2 text-xs text-faint">
-                  <th scope="col" className="px-3 py-2 font-medium">Record</th>
+                <tr className="border-b border-line text-[11px] text-faint">
+                  <th scope="col" className="py-2 pr-3 font-medium">Record</th>
                   <th scope="col" className="px-3 py-2 font-medium">What it contains</th>
                 </tr>
               </thead>
               <tbody>
-                {stored.map(([name, description]) => (
+                {serverRows.map(([name, description]) => (
                   <tr key={name} className="border-b border-line last:border-0">
-                    <th scope="row" className="px-3 py-2.5 text-left font-medium text-ink">{name}</th>
+                    <th scope="row" className="py-2.5 pr-3 text-left font-medium text-ink">{name}</th>
                     <td className="px-3 py-2.5 text-muted">{description}</td>
                   </tr>
                 ))}
@@ -62,29 +62,37 @@ export default function Privacy() {
             </table>
           </div>
 
+          <h2 className="mt-8 text-xl">What stays only in this browser</h2>
+          <ul className="mt-2 border-t border-line">
+            {localOnly.map(([name, description]) => (
+              <li key={name} className="border-b border-line py-2 text-sm">
+                <span className="font-medium text-ink">{name}</span>
+                <span className="text-muted"> — {description}</span>
+              </li>
+            ))}
+          </ul>
+
           <h2 className="mt-8 text-xl">What is not collected</h2>
           <ul className="mt-2 space-y-2 text-sm leading-relaxed text-muted">
             <li>— No analytics, session recording, heatmaps or advertising pixels.</li>
             <li>— No third-party scripts and no external font requests.</li>
-            <li>— No application cookies in this build. The theme is a localStorage value.</li>
-            <li>— No email address, phone number or real name is required.</li>
+            <li>— No tracking cookies. The only cookie is the Better Auth session cookie.</li>
             <li>— No data is sold, shared or sent to a model provider.</li>
           </ul>
 
           <h2 className="mt-8 text-xl">Export and deletion</h2>
           <p className="mt-2 text-sm leading-relaxed text-muted">
-            The dashboard has <strong className="text-ink">Export JSON</strong> and{' '}
-            <strong className="text-ink">Reset</strong>. Export downloads a complete copy of the
-            stored object. Reset deletes it from this browser. Clearing site data in your browser
-            has the same effect. Notes and pinned sheets can also be exported as Markdown.
+            The account page downloads a complete JSON copy of your account and state. It also
+            deletes the account and every attached row in the same request. Guests can export from
+            the dashboard and reset the local copy there. Clearing site data has the same effect
+            locally.
           </p>
 
-          <h2 className="mt-8 text-xl">If accounts are added later</h2>
+          <h2 className="mt-8 text-xl">Accounts and email</h2>
           <p className="mt-2 text-sm leading-relaxed text-muted">
-            This build has no sign-in and no server database, so there is nothing to delete on a
-            server. If accounts are added, this page must list the exact rows, the database region,
-            the retention period and the deletion path before they are enabled. The current policy
-            is that public content never sits behind a login.
+            Sign-in supports email and password, and Google or GitHub when those providers are
+            configured for the deployment. There is no email verification and no password reset in
+            v1, so no email is sent. Use a password manager, or sign in with an OAuth provider.
           </p>
 
           <h2 className="mt-8 text-xl">Contact</h2>
@@ -103,21 +111,21 @@ export default function Privacy() {
         </div>
 
         <aside className="space-y-4">
-          <Callout tone="accent" title="Your browser is the database, for now">
-            That means a new device sees an empty dashboard. Export the JSON before switching
-            devices and restore it from the dashboard.
+          <Callout tone="accent" title="Guests keep the local-only path">
+            Without an account, progress, notes and tools stay in this browser. A new device sees
+            an empty dashboard until you sign in and choose to sync.
           </Callout>
           <Callout tone="warn" title="Shared computers">
-            Anyone with access to this browser profile can read your notes and progress. Use Reset
-            before leaving a shared machine.
+            Anyone with access to this browser profile can read unsynced local data. Sign out and
+            clear site data before leaving a shared machine.
           </Callout>
-          <div className="card p-4">
-            <p className="eyebrow mb-2">Storage limits</p>
-            <ul className="space-y-1.5 text-xs leading-relaxed text-muted">
+          <div className="border-t border-line pt-4">
+            <p className="text-xs font-semibold text-ink">Storage limits</p>
+            <ul className="mt-2 space-y-1.5 text-xs leading-relaxed text-muted">
               <li>— Note: 5,000 characters.</li>
-              <li>— Proof note: 3,000 characters.</li>
-              <li>— Weekly review: 500 characters per field.</li>
-              <li>— Older activity is trimmed to the most recent 200 records.</li>
+              <li>— Notes per account: 200 KB total.</li>
+              <li>— Each tool state: 100 KB.</li>
+              <li>— Activity: most recent 200 records.</li>
             </ul>
           </div>
           <p className="text-xs leading-relaxed text-faint">

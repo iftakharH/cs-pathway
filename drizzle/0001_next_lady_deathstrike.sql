@@ -1,0 +1,1 @@
+ALTER TABLE "flashcard_state" ADD COLUMN "module_id" text NOT NULL;

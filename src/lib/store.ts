@@ -534,6 +534,13 @@ export function resetGuestData() {
   update(() => ({ ...EMPTY_STATE }))
 }
 
+export function replaceGuestState(next: GuestState): boolean {
+  const normalised = normaliseImport(next)
+  if (!normalised) return false
+  update(() => normalised)
+  return true
+}
+
 export function exportGuestJson(): string {
   ensureLoaded()
   return JSON.stringify(state, null, 2)
@@ -559,6 +566,7 @@ export function hasProgress(current: GuestState): boolean {
     Object.keys(current.notes).length > 0 ||
     Object.keys(current.proofs).length > 0 ||
     Object.keys(current.pins).length > 0 ||
+    Object.keys(current.reviews).length > 0 ||
     current.profile !== null
   )
 }

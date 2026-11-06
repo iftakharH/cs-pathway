@@ -70,6 +70,9 @@ Open `http://localhost:5173`. No environment variables are needed for the public
 | `npm run check:stale` | Fail when a claim is past `reviewAfter`. |
 | `npm run check:versions` | Compare tool stamps with npm, PyPI, endoflife.date and GitHub. `--strict` fails on drift. |
 | `npm run verify` | Lint, types, unit tests, snippets and build in one command. |
+| `npm run db:generate` | Generate a Drizzle migration from the auth and app schema. |
+| `npm run db:migrate` | Apply pending migrations to the unpooled Neon URL. |
+| `npm run test:auth` | Live sign-up, isolation, export and delete check against Neon. |
 
 ## Content: how to add a claim, module or cheatsheet
 
@@ -174,21 +177,28 @@ docs/maintenance.md       quarterly refresh checklist
   bundle at build time, so a database outage cannot take the public site down.
 - Search is client-side (MiniSearch), loaded only when the search dialog opens.
 - The guest store is a small `useSyncExternalStore` store persisted to `localStorage`, with a
-  hand-written import validator (no Zod in the initial bundle).
-- No API routes and no Express function in this build.
+  hand-written import validator.
+- The API is an Express 5 function at `api/index.ts`; `/api/auth/*` is Better Auth and `/api/state`
+  is the authenticated sync endpoint. Local development proxies `/api` to port 3101.
 
-## Accounts (planned)
+## Accounts
 
-Not implemented. The specification calls for Neon Postgres, Drizzle, Better Auth with Google,
-GitHub and email/password, and an `/api/auth/*` function on Vercel. Until that code exists,
-these items are **UNVERIFIED**:
+Accounts are implemented with Better Auth 1.7.18, Drizzle ORM and Neon Postgres:
 
-- sign-up, sign-in, sign-out, delete-account and data export on the server;
-- cross-user authorization tests;
-- CSRF, origin and rate-limit configuration in a live deployment;
-- guest-progress import on first sign-in.
+- email and password, plus Google/GitHub when the provider credentials are present;
+- `/signin`, `/signup` and `/account` with name, hours, target phase, sessions, export and delete;
+- `/dashboard`, `/notes` and `/pins` remain usable as guest-local views; server data is only
+  reachable with a session. No server endpoint accepts a `userId` from the client.
+- on first sign-in, the sync banner asks whether to import this browser, load the account, or
+  keep the account copy. It never overwrites both silently.
+- after a choice, changes sync with a debounce and flush on tab hide.
 
-The environment variable names are reserved in `.env.example`:
+The database has 14 tables: Better Auth's `user`, `session`, `account` and `verification`, plus
+`profile`, `module_progress`, `quiz_attempt`, `proof_submission`, `note`, `cheat_pin`,
+`flashcard_state`, `tool_state`, `activity` and `weekly_review`. Every app table cascades from
+`user.id`; notes are capped at 200 KB per account and each tool state at 100 KB.
+
+Environment variables (names only; never commit values):
 
 ```
 DATABASE_URL=            # Neon pooled
@@ -201,13 +211,30 @@ GITHUB_CLIENT_ID=
 GITHUB_CLIENT_SECRET=
 ```
 
-When implementing, follow the security reference at
-<https://www.better-auth.com/docs/reference/security>: keep CSRF and origin checks enabled,
-keep built-in rate limiting enabled, use database sessions, secure cookies in production, and
-never accept a `userId` from the client.
+OAuth redirect URIs:
 
-Google redirect URI: `<BETTER_AUTH_URL>/api/auth/callback/google`.
-GitHub callback: `<BETTER_AUTH_URL>/api/auth/callback/github`.
+```
+https://cs-pathway.vercel.app/api/auth/callback/google
+https://cs-pathway.vercel.app/api/auth/callback/github
+http://localhost:5173/api/auth/callback/google
+http://localhost:5173/api/auth/callback/github
+```
+
+Run `npm run db:migrate` after changing the schema, and `npm run test:auth` for the live
+cross-user authorization check. The auth E2E test is skipped when `DATABASE_URL` is absent.
+
+### Account verification status
+
+Verified on 6 Nov 2026 against the live Neon project:
+
+- email/password sign-up, sign-in, sign-out, state write, export and delete;
+- account A cannot read account B's state; B cannot overwrite A;
+- deleting an account removes its session, state and attached rows;
+- the Playwright account journey passes sign-up ? sync ? sign-out ? sign-in ? delete.
+
+**UNVERIFIED:** Google and GitHub OAuth against real provider credentials, a Vercel production
+deployment, and cold-start behaviour on the free Neon plan. The OAuth code path and redirect URIs
+are wired, but no client IDs/secrets are set on this deployment.
 
 ## Deploy to Vercel Hobby
 
@@ -291,8 +318,9 @@ because those rules cannot be stated accurately worldwide.
 | `npm test` | 60 tests pass |
 | `npm run test:snippets` | 23/23 executable snippets pass |
 | `npm run build` | Pass |
-| `npm run e2e` | 44/44 Playwright tests pass (6 journey + 38 axe: 19 routes × light/dark) |
-| axe-core | 0 serious/critical on 19 representative routes in both themes |
+| `npm run e2e` | 49/49 Playwright tests pass (1 account journey + 6 guest journeys + 42 axe: 21 routes × light/dark) |
+| axe-core | 0 serious/critical on 21 representative routes in both themes |
+| `npm run test:auth` | Pass: sign-up, state write, export, cross-user isolation and delete against Neon |
 | Lighthouse mobile | Performance: home 92–100, other four 99–100; accessibility 100 on all five |
 | `npm run check:links` | 198/200 reachable; 2 bot-blocked (OpenAI docs and pricing return 403) |
 | `npm run check:stale` | No claims past review on 6 Nov 2026 |
@@ -303,14 +331,16 @@ Home's score varies with cold-run main-thread time. The slower runs show a 3.3 s
 font files arrive in under 40 ms, so the delay is JavaScript execution on a throttled mobile CPU,
 not a late font swap.
 
-Not run or not verified on that date: a signed-in flow, live OAuth, a live Neon database,
-GitHub Actions (no remote yet), and Antigravity CLI behaviour on a real machine. Its documentation
-was read; the entry is a docs claim, not an executed test.
+Not run or not verified on that date: Google/GitHub OAuth with real provider credentials, a Vercel
+production deployment, GitHub Actions (no remote yet), and Antigravity CLI behaviour on a real
+machine. Its documentation was read; the entry is a docs claim, not an executed test.
 
 ## Known gaps
 
-- Accounts, Neon, Better Auth and OAuth are deferred. The schema and env names are reserved, but
-  no server code exists.
+- Email/password accounts and Neon sync are live. Google and GitHub OAuth are wired but disabled
+  until their client IDs and secrets are set; no provider login has been executed.
+- A Vercel production deployment has not been tested. The project is linked and the Neon resource
+  is connected, but no production deploy has run with the auth environment.
 - Gemini CLI is marked legacy and Antigravity CLI is covered for skills, MCP and rules. Feature
   parity across the Antigravity app, CLI and IDE can change; the row records what the docs said on
   6 Nov 2026.
