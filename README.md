@@ -51,7 +51,9 @@ npm ci
 npm run dev
 ```
 
-Open `http://localhost:5173`. No environment variables are needed for the public build.
+Open `http://localhost:5173`. Public pages need no environment variables. Accounts need a
+`.env.local` copied from `.env.example` plus one `npm run db:migrate`; the local API runs on port
+3101 and Vite proxies `/api` to it.
 
 ## Commands
 
