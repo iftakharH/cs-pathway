@@ -27,17 +27,21 @@ A quarterly refresh, plus a weekly automated check once the repository has a rem
 3. Re-check cheatsheet tool versions. If the upstream release changed a command, update the
    entry, the `tool.version` and `verifiedOn`.
 4. Re-run `npm run test:snippets` after any snippet change.
-5. Check the harness table against vendor docs for the current version. Add a row only when
-   the docs were read. For Antigravity, re-check the skills, MCP and rules pages together.
-6. Re-check the worldwide funding sources (`src-kpmg-venture-pulse`, `src-gem-2026`) and replace
+5. Re-test the Vercel preview for sign-up, sign-in, state write, export and delete. Keep the API
+   as one function at `api/index.ts`: Hobby allows 12 functions and its file matcher only covers
+   one path segment. The `/api?__path=...` rewrite is intentional.
+6. Check the harness table against vendor docs for the current version. Add a row only when
+   the docs were read. For Antigravity, re-check the skills, MCP and rules pages together, then run
+   one workspace skill and one AGENTS.md check with `agy`.
+7. Re-check the worldwide funding sources (`src-kpmg-venture-pulse`, `src-gem-2026`) and replace
    the quarterly KPMG figure with the latest completed quarter. Do not add a single-country
    programme without its own official page and policy-cycle review date.
-7. Read the quarantine folder. Restore an item only with a new source record.
-8. Add a dated `changelog` entry for every change that affects what a page claims.
-9. Re-run Lighthouse mobile on the public pages and record the result in the final report.
-10. Confirm the Vercel Hobby plan is still non-commercial and the Neon Free limits still match
+8. Read the quarantine folder. Restore an item only with a new source record.
+9. Add a dated `changelog` entry for every change that affects what a page claims.
+10. Re-run Lighthouse mobile on the public pages and record the result in the final report.
+11. Confirm the Vercel Hobby plan is still non-commercial and the Neon Free limits still match
     `content/claims.yaml` (N1, V1).
-11. Check `npm audit`. Production dependencies were clean on 5 Nov 2026; the dev-only
+12. Check `npm audit`. Production dependencies were clean on 5 Nov 2026; the dev-only
     `typescript-eslint` chain reported 10 moderate advisories at that time.
 
 ## If a source dies
@@ -46,3 +50,8 @@ A quarterly refresh, plus a weekly automated check once the repository has a rem
   source or remove the claim from every page that uses it.
 - A 403 to bots but a working page in a browser: record it as a link-check exception in the
   README; do not silently remove the URL.
+
+## OAuth
+
+Google and GitHub remain disabled until the steps in `docs/oauth-setup.md` are completed. Do not
+claim a provider login without a real redirect and a session on `/account`.

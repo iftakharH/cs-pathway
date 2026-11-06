@@ -153,8 +153,8 @@ to hide a mistake; it is moved and dated.
 - A claim past `reviewAfter` shows “Needs re-check” instead of quietly staying authoritative.
 - Cheatsheet snippets are either executed in CI or explicitly marked “Checked against docs,
   not executed”.
-- The weekly workflow checks links and stale claims and opens a GitHub issue. It does not edit
-  content automatically.
+- The weekly workflow checks links, stale claims and tool versions, then opens a GitHub issue. It
+  does not edit content automatically.
 
 Read `/methodology`, `/claims` and `/sources` in the app for the public version.
 
@@ -330,7 +330,7 @@ because those rules cannot be stated accurately worldwide.
 | axe-core | 0 serious/critical on 21 representative routes in both themes |
 | `npm run test:auth` | Pass: sign-up, state write, export, cross-user isolation and delete against Neon |
 | Vercel preview | Pass: `/api/auth/ok`, sign-up, sign-in, session, state PUT/GET and account deletion |
-| Lighthouse mobile | Performance: home 100, module 99, harnesses 100, sign-in 100, verification 100; accessibility 100 on all five |
+| Lighthouse mobile | Performance 99-100 and accessibility 100 on home, module, harnesses, sign-in and verification |
 | `npm run check:links` | 198/200 reachable; 2 bot-blocked (OpenAI docs and pricing return 403) |
 | `npm run check:stale` | No claims past review on 6 Nov 2026 |
 | `npm run check:versions` | 15 current, 1 behind, 2 intentional baselines, 40 manual review |
@@ -349,6 +349,9 @@ chunks; the global session check is a small fetch-backed hook.
   until their client IDs and secrets are set; no provider login has been executed.
 - A Vercel production deployment has not been tested. The project is linked and the Neon resource
   is connected, but no production deploy has run with the auth environment.
+- Guest `/dashboard`, `/notes` and `/pins` are local-only views. They are not redirected to sign-in;
+  a signed-in user still needs a session for server data. If strict route protection is required,
+  change the router guards and rewrite the guest e2e tests.
 - Gemini CLI is marked legacy and Antigravity CLI is covered for skills, MCP and rules. Feature
   parity across the Antigravity app, CLI and IDE can change; the row records what the docs said on
   6 Nov 2026.
@@ -358,7 +361,8 @@ chunks; the global session check is a small fetch-backed hook.
 - Two links are blocked to automated checkers; both are valid pages in a browser.
 - `npm audit` reports 10 moderate dev-only advisories in the `typescript-eslint` chain. Production
   dependencies are clean.
-- The GitHub Actions workflows exist but have not run in CI because the repository has no remote.
+- CI and the weekly workflow have run on GitHub. The weekly run opened issue #1 because Docker 28
+  is behind; that is a real drift, not a workflow bug. Dependabot is enabled by GitHub.
 
 ## License and ownership
 
