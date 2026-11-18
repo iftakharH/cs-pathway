@@ -339,7 +339,7 @@ because those rules cannot be stated accurately worldwide.
 | axe-core | 0 serious/critical on 22 representative routes in both themes |
 | `npm run test:auth` | Pass: sign-up, state write, export, cross-user isolation and delete against Neon |
 | Vercel preview | Pass: `/api/auth/ok`, sign-up, sign-in, session, state PUT/GET and account deletion |
-| Lighthouse mobile | Performance 99-100 and accessibility 100 on home, module, harnesses, sign-in and verification |
+| Lighthouse mobile | 6 Nov 2026: Performance 99-100 and accessibility 100 on home, module, harnesses, sign-in and verification |
 | `npm run check:links` | 198/200 reachable on 6 Nov 2026; 2 bot-blocked (OpenAI docs and pricing return 403) |
 | `npm run check:stale` | No claims past review (last run 19 Nov 2026) |
 | `npm run check:versions` | 12 current, 2 behind, 3 intentional baselines, 42 manual review |
