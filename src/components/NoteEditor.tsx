@@ -75,7 +75,7 @@ export function NoteEditor({
       {message ? (
         <p
           role="status"
-          className={`mt-3 rounded-md border px-3 py-2 text-sm ${
+          className={`mt-3 rounded-sm border px-3 py-2 text-sm ${
             message.tone === 'ok'
               ? 'border-accent/30 bg-accent-soft text-ink'
               : 'border-danger/30 bg-danger-soft text-danger'

@@ -74,7 +74,7 @@ export function CodeBlock({
   }
 
   return (
-    <figure className={cx('overflow-hidden rounded-lg border border-line bg-surface-2/60', className)}>
+    <figure className={cx('overflow-hidden rounded-sm border border-line bg-surface-2/60', className)}>
       <div className="flex items-center justify-between gap-3 border-b border-line px-3 py-2">
         <figcaption className="min-w-0">
           <span className="mono text-[10px] uppercase tracking-wider text-faint">
@@ -88,7 +88,7 @@ export function CodeBlock({
         <button
           type="button"
           onClick={onCopy}
-          className="no-print inline-flex min-h-9 shrink-0 items-center gap-1.5 rounded-md border border-line bg-surface px-2.5 text-xs font-medium text-muted hover:border-line-strong hover:text-ink"
+          className="no-print inline-flex min-h-9 shrink-0 items-center gap-1.5 rounded-sm border border-line bg-surface px-2.5 text-xs font-medium text-muted hover:border-line-strong hover:text-ink"
           aria-label={copied ? 'Copied' : 'Copy code'}
         >
           {copied ? <Check size={13} aria-hidden="true" /> : <Copy size={13} aria-hidden="true" />}

@@ -103,7 +103,7 @@ export default function Cheatsheets() {
             type="button"
             onClick={() => setParam('phase', 'all')}
             className={cx(
-              'mono min-h-9 rounded-md border px-2.5 text-[10px] uppercase tracking-wider',
+              'min-h-9 rounded-sm border px-3 text-xs',
               phase === 'all' ? 'border-accent bg-accent-soft text-accent' : 'border-line bg-surface text-muted hover:text-ink',
             )}
           >
@@ -115,7 +115,7 @@ export default function Cheatsheets() {
               type="button"
               onClick={() => setParam('phase', item.id)}
               className={cx(
-                'mono min-h-9 rounded-md border px-2.5 text-[10px] uppercase tracking-wider',
+                'min-h-9 rounded-sm border px-3 text-xs',
                 phase === item.id
                   ? 'border-accent bg-accent-soft text-accent'
                   : 'border-line bg-surface text-muted hover:text-ink',
@@ -142,7 +142,7 @@ export default function Cheatsheets() {
               value={q}
               onChange={(event) => setParam('q', event.target.value)}
               placeholder="Search titles, notes, tags…"
-              className="min-h-11 w-full rounded-lg border border-line bg-surface pl-9 pr-3 text-sm text-ink placeholder:text-faint focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+              className="min-h-11 w-full rounded-sm border border-line bg-surface pl-9 pr-3 text-sm text-ink placeholder:text-faint focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
             />
           </div>
           <div>
@@ -153,7 +153,7 @@ export default function Cheatsheets() {
               id="topic-filter"
               value={topic}
               onChange={(event) => setTopic(event.target.value)}
-              className="min-h-11 w-full rounded-lg border border-line bg-surface px-3 pr-8 text-sm text-ink focus:border-accent focus:outline-none"
+              className="min-h-11 w-full rounded-sm border border-line bg-surface px-3 pr-8 text-sm text-ink focus:border-accent focus:outline-none"
             >
               <option value="all">All topics</option>
               {allTopics().map((item) => (
@@ -171,7 +171,7 @@ export default function Cheatsheets() {
               id="tag-filter"
               value={tag}
               onChange={(event) => setParam('tag', event.target.value)}
-              className="min-h-11 w-full rounded-lg border border-line bg-surface px-3 pr-8 text-sm text-ink focus:border-accent focus:outline-none"
+              className="min-h-11 w-full rounded-sm border border-line bg-surface px-3 pr-8 text-sm text-ink focus:border-accent focus:outline-none"
             >
               <option value="all">All tags</option>
               {allTags().map((item) => (
@@ -211,7 +211,7 @@ export default function Cheatsheets() {
               <button
                 type="button"
                 onClick={clearFilters}
-                className="inline-flex min-h-11 items-center rounded-lg border border-line bg-surface px-4 text-sm font-medium text-ink hover:bg-surface-2"
+                className="inline-flex min-h-11 items-center rounded-sm border border-line bg-surface px-4 text-sm font-medium text-ink hover:bg-surface-2"
               >
                 Clear filters
               </button>
@@ -228,37 +228,41 @@ export default function Cheatsheets() {
                   {plural(entries.length, 'entry', 'entries')}
                 </span>
               </div>
-              <ul className="grid gap-2 md:grid-cols-2">
+              <ul className="border-t border-line">
                 {entries.map((entry) => (
-                  <li key={entry.id}>
-                    <article className="card flex h-full flex-col p-4">
-                      <div className="flex items-start justify-between gap-2">
-                        <Link
-                          to={`/cheatsheet/${entry.id}`}
-                          className="text-sm font-medium leading-snug text-ink hover:text-accent"
-                        >
-                          {entry.title}
-                        </Link>
-                        <PinButton cheatId={entry.id} compact />
-                      </div>
-                      <p className="mt-1.5 flex-1 text-xs leading-relaxed text-muted">{entry.whenToUse}</p>
-                      <div className="mt-3 flex flex-wrap items-center gap-2">
-                        <PhaseBadge phase={entry.phase} />
-                        {entry.tags.slice(0, 3).map((item) => (
-                          <button
-                            key={item}
-                            type="button"
-                            onClick={() => setParam('tag', item)}
-                            className="mono rounded border border-line bg-surface-2 px-1.5 py-0.5 text-[9px] text-faint hover:text-accent"
+                  <li key={entry.id} className="border-b border-line">
+                    <div className="flex items-start gap-4 py-4">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+                          <Link
+                            to={`/cheatsheet/${entry.id}`}
+                            className="text-[0.95rem] font-medium leading-snug text-ink hover:text-accent"
                           >
-                            {item}
-                          </button>
-                        ))}
-                        <span className="mono ml-auto text-[9px] text-faint">
-                          {entry.tool.name} {entry.tool.version}
-                        </span>
+                            {entry.title}
+                          </Link>
+                          <span className="mono shrink-0 text-[10px] text-faint">
+                            {entry.tool.name} {entry.tool.version}
+                          </span>
+                        </div>
+                        <p className="mt-1 max-w-[68ch] text-sm leading-relaxed text-muted">
+                          {entry.whenToUse}
+                        </p>
+                        <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-faint">
+                          <PhaseBadge phase={entry.phase} />
+                          {entry.tags.slice(0, 4).map((item) => (
+                            <button
+                              key={item}
+                              type="button"
+                              onClick={() => setParam('tag', item)}
+                              className="hover:text-accent"
+                            >
+                              {item}
+                            </button>
+                          ))}
+                        </div>
                       </div>
-                    </article>
+                      <PinButton cheatId={entry.id} compact />
+                    </div>
                   </li>
                 ))}
               </ul>

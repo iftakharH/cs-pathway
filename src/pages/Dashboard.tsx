@@ -10,14 +10,11 @@ import {
   Upload,
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { PageHeader, ProgressBar, Callout } from '@/components/ui/Section'
+import { PageHeader, ProgressBar } from '@/components/ui/Section'
 import { Button, ButtonLink } from '@/components/ui/Button'
 import { PhaseBadge } from '@/components/ui/Badge'
 import { Field, TextArea, Toggle } from '@/components/ui/Field'
-import {
-  getCheat,
-  getModule,
-} from '@/lib/content'
+import { getCheat, getModule } from '@/lib/content'
 import { moduleSummaries } from '@/lib/catalog'
 import { phases } from '@/lib/phases'
 import { todayIso } from '@/lib/dates'
@@ -129,48 +126,65 @@ export default function Dashboard() {
           lede="This page becomes your weekly view: what to do next, what you have proved, and what is blocked. It needs one input first — your starting point."
           breadcrumb={[{ label: 'Home', to: '/' }, { label: 'Dashboard' }]}
         />
-        <div className="grid gap-4 py-10 md:grid-cols-3">
+
+        <ol className="mt-2 border-t border-ink">
           {[
             {
-              step: '01',
+              step: '1',
               title: 'Place yourself',
-              body: 'Five scenario questions and a self-rating. No account, no score shared anywhere.',
+              body: 'Five scenario questions and a self-rating. No score is shared anywhere.',
               to: '/start',
               cta: 'Take the check',
             },
             {
-              step: '02',
+              step: '2',
               title: 'Set the pace',
               body: 'Choose weekly hours and a target phase. The planner turns them into weeks.',
               to: '/plan',
               cta: 'Build a plan',
             },
             {
-              step: '03',
+              step: '3',
               title: 'Do the first module',
               body: 'Take the quiz, write a note, then submit the proof. Progress is measured by evidence.',
               to: '/module/f-git',
               cta: 'Open a module',
             },
           ].map((item) => (
-            <div key={item.step} className="card p-5">
-              <p className="mono mb-4 text-[10px] uppercase tracking-[0.14em] text-faint">{item.step}</p>
-              <h2 className="text-lg">{item.title}</h2>
-              <p className="mt-2 text-sm leading-relaxed text-muted">{item.body}</p>
-              <Link to={item.to} className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-accent">
+            <li
+              key={item.step}
+              className="grid gap-3 border-b border-line py-5 sm:grid-cols-[3rem_1fr_auto] sm:items-baseline sm:gap-6"
+            >
+              <span className="serif text-3xl leading-none text-accent">{item.step}</span>
+              <div>
+                <h2 className="text-xl">{item.title}</h2>
+                <p className="mt-1 max-w-xl text-sm leading-relaxed text-muted">{item.body}</p>
+              </div>
+              <Link
+                to={item.to}
+                className="inline-flex items-center gap-1 text-sm font-medium text-accent"
+              >
                 {item.cta}
                 <ArrowRight size={14} aria-hidden="true" />
               </Link>
-            </div>
+            </li>
           ))}
-        </div>
+        </ol>
 
-        <Callout title="Saved in this browser, not on a server">
-          There are no accounts in this build. Progress, notes and proofs live in localStorage on
-          this device. You can export everything as JSON from this dashboard once you start, and
-          the <Link to="/privacy" className="text-accent link-underline">privacy page</Link> lists
-          exactly what is stored.
-        </Callout>
+        <div className="mt-6 flex flex-wrap items-start justify-between gap-4 border-t border-line pt-4">
+          <p className="max-w-2xl text-sm leading-relaxed text-muted">
+            This browser is the database until you sign in. Create an account to sync the same
+            records across devices, or export the JSON whenever you want a copy.
+          </p>
+          <div className="flex gap-2">
+            <ButtonLink to="/signup" size="sm" variant="secondary">
+              Create an account
+            </ButtonLink>
+            <ButtonLink to="/start" size="sm">
+              Start
+            </ButtonLink>
+          </div>
+        </div>
       </div>
     )
   }
@@ -178,10 +192,10 @@ export default function Dashboard() {
   return (
     <div className="container-page">
       <PageHeader
-        title={next ? `Next: ${next.title}` : 'You have finished every module in range'}
+        title={next ? next.title : 'You have finished every module in range'}
         lede={
           next
-            ? 'One module at a time. The proof is what moves the phase, not the page view.'
+            ? 'Your next module. The proof is what moves the phase, not the page view.'
             : 'Submit a proof for anything you skipped, or move the target to the startup phase.'
         }
         breadcrumb={[{ label: 'Home', to: '/' }, { label: 'Dashboard' }]}
@@ -204,17 +218,21 @@ export default function Dashboard() {
         }
       />
 
-      <div className="grid gap-3 py-6 sm:grid-cols-2 lg:grid-cols-4">
-        <Metric label="Modules with evidence" value={`${evidenceCount}/${moduleSummaries.length}`} />
-        <Metric label="Quizzes taken" value={String(quizCount)} />
-        <Metric label="Due reviews" value={String(dueReviews)} />
-        <Metric label="Proofs submitted" value={String(proofCount)} />
-      </div>
+      <dl className="grid grid-cols-2 gap-x-6 gap-y-5 border-y border-line py-5 sm:grid-cols-4">
+        <Stat label="Modules with evidence" value={`${evidenceCount}/${moduleSummaries.length}`} />
+        <Stat label="Quizzes taken" value={String(quizCount)} />
+        <Stat
+          label="Due reviews"
+          value={String(dueReviews)}
+          hint={dueReviews > 0 ? 'Questions from missed answers' : 'Nothing due'}
+        />
+        <Stat label="Proofs submitted" value={String(proofCount)} />
+      </dl>
 
       {dueReviews > 0 ? (
-        <div className="flex flex-wrap items-center justify-between gap-3 border-y border-line py-3">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line py-3">
           <p className="text-sm text-muted">
-            {plural(dueReviews, 'question')} from missed quiz answers are due today.
+            {plural(dueReviews, 'question')} from missed quiz answers {dueReviews === 1 ? 'is' : 'are'} due today.
           </p>
           <Link to="/review" className="inline-flex items-center gap-1 text-sm font-medium text-accent">
             Start review
@@ -223,28 +241,34 @@ export default function Dashboard() {
         </div>
       ) : null}
 
-      <div className="grid gap-6 pb-10 lg:grid-cols-[1.1fr_0.9fr]">
-        <div className="space-y-6">
-          <section className="card overflow-hidden">
-            <div className="border-b border-line px-5 py-3">
-              <p className="eyebrow">This week</p>
-              {plan ? (
-                <p className="mt-1 text-xs text-faint">
-                  {plan.weeks[0]?.hours ?? 0} h planned · {plural(plan.weeks[0]?.modules.length ?? 0, 'module')}
-                </p>
-              ) : (
-                <p className="mt-1 text-xs text-faint">Set a pace in the planner.</p>
-              )}
-            </div>
+      <div className="grid gap-10 py-8 lg:grid-cols-[minmax(0,1fr)_21rem] lg:gap-14">
+        <div className="space-y-10">
+          <section aria-labelledby="this-week">
+            <SectionRule
+              id="this-week"
+              title="This week"
+              aside={
+                plan
+                  ? `${plan.weeks[0]?.hours ?? 0} h planned · ${plural(plan.weeks[0]?.modules.length ?? 0, 'module')}`
+                  : 'No pace set'
+              }
+            />
             {plan && plan.weeks[0] ? (
-              <ul className="divide-y divide-line">
+              <ul className="border-t border-line">
                 {plan.weeks[0].modules.map(({ module, hours }) => (
-                  <li key={module.id}>
-                    <Link to={`/module/${module.id}`} className="flex items-center gap-3 px-5 py-3 hover:bg-surface-2">
+                  <li key={module.id} className="border-b border-line">
+                    <Link
+                      to={`/module/${module.id}`}
+                      className="group flex items-center gap-3 py-3 transition-colors hover:text-accent"
+                    >
                       <PhaseBadge phase={module.phase} />
                       <span className="min-w-0 flex-1">
-                        <span className="block truncate text-sm text-ink">{module.title}</span>
-                        <span className="mono block text-[10px] text-faint">{hours.toFixed(1)} h</span>
+                        <span className="block text-sm leading-snug text-ink group-hover:text-accent">
+                          {module.title}
+                        </span>
+                        <span className="mt-0.5 block text-[11px] text-faint">
+                          {module.estHours.min}–{module.estHours.max} h · {hours.toFixed(1)} h this week
+                        </span>
                       </span>
                       <ArrowRight size={14} className="shrink-0 text-faint" aria-hidden="true" />
                     </Link>
@@ -252,32 +276,41 @@ export default function Dashboard() {
                 ))}
               </ul>
             ) : (
-              <div className="px-5 py-6 text-sm text-muted">
+              <p className="border-b border-line py-4 text-sm text-muted">
                 Every module in your range already has evidence.{' '}
                 <Link to="/plan" className="text-accent link-underline">
                   Change the target
                 </Link>
                 .
-              </div>
+              </p>
+            )}
+            {plan ? (
+              <p className="mt-2 text-xs text-faint">
+                Built from {state.profile?.hoursPerWeek} h/week, starting at phase {startPhase}.
+              </p>
+            ) : (
+              <p className="mt-3 text-sm text-muted">
+                <Link to="/plan" className="text-accent link-underline">
+                  Set weekly hours and a target
+                </Link>{' '}
+                to turn the path into a week-by-week plan.
+              </p>
             )}
           </section>
 
-          <section className="card p-5">
-            <div className="mb-4 flex items-center justify-between gap-3">
-              <h2 className="text-lg">Progress by phase</h2>
-              <span className="mono text-[10px] uppercase tracking-wider text-faint">by evidence</span>
-            </div>
-            <div className="space-y-4">
+          <section aria-labelledby="progress-by-phase">
+            <SectionRule id="progress-by-phase" title="Progress by phase" aside="By evidence" />
+            <div className="border-t border-line">
               {phases.map((phase) => {
                 const stats = phaseCompletion(moduleSummaries, state.progress, state.quizzes, phase.id)
                 return (
-                  <div key={phase.id}>
-                    <div className="mb-1.5 flex items-center justify-between gap-3">
+                  <div key={phase.id} className="border-b border-line py-4">
+                    <div className="mb-2 flex items-baseline justify-between gap-3">
                       <Link to={`/phase/${phase.id}`} className="text-sm text-ink hover:text-accent">
                         <span className="mono mr-2 text-[10px] text-faint">{phase.id}</span>
                         {phase.name}
                       </Link>
-                      <span className="mono text-[10px] text-faint">
+                      <span className="mono tabular text-[10px] text-faint">
                         {stats.done}/{stats.total}
                       </span>
                     </div>
@@ -293,45 +326,51 @@ export default function Dashboard() {
             </div>
           </section>
 
-          <section className="card p-5">
-            <div className="mb-3 flex items-center justify-between gap-3">
-              <h2 className="text-lg">Weekly review</h2>
-              <span className="mono text-[10px] uppercase tracking-wider text-faint">one honest paragraph</span>
+          <section aria-labelledby="weekly-review">
+            <SectionRule id="weekly-review" title="Weekly review" aside="One honest paragraph" />
+            <div className="border-t border-line pt-4">
+              <ReviewForm />
             </div>
-            <ReviewForm />
           </section>
         </div>
 
-        <div className="space-y-6">
-          <section className="card p-5">
-            <h2 className="text-lg">Next proof</h2>
+        <aside className="space-y-8">
+          <section aria-labelledby="next-proof" className="border-t border-ink pt-4">
+            <h2 id="next-proof" className="text-2xl">
+              Next proof
+            </h2>
             {next ? (
               <>
-                <p className="mt-2 text-sm text-muted">{next.proofTitle}</p>
-                <p className="mt-2 line-clamp-4 text-xs leading-relaxed text-faint">{next.proofBrief}</p>
-                <div className="mt-4">
-                  <ButtonLink to={`/module/${next.id}#proof`} size="sm">
-                    Read the rubric
-                  </ButtonLink>
-                </div>
+                <p className="mt-1 text-sm text-muted">{next.proofTitle}</p>
+                <p className="mt-3 text-sm leading-relaxed text-ink">{next.proofBrief}</p>
+                <ButtonLink to={`/module/${next.id}#proof`} size="sm" variant="secondary" className="mt-4">
+                  Read the rubric
+                </ButtonLink>
               </>
             ) : (
-              <p className="mt-2 text-sm text-muted">Nothing pending. Choose a target phase in the planner.</p>
+              <p className="mt-2 text-sm text-muted">
+                Nothing pending. Choose a target phase in the planner.
+              </p>
             )}
           </section>
 
-          <section className="card p-5">
-            <h2 className="text-lg">Quiz history</h2>
+          <section aria-labelledby="quiz-history" className="border-t border-line pt-4">
+            <h2 id="quiz-history" className="text-xl">
+              Quiz history
+            </h2>
             {recentQuizzes.length === 0 ? (
               <p className="mt-2 text-sm text-muted">No quizzes yet. Each module has five sourced questions.</p>
             ) : (
-              <ul className="mt-3 space-y-2">
+              <ul className="mt-2">
                 {recentQuizzes.map(([moduleId, record]) => {
                   const module = getModule(moduleId)
                   const ratio = record.score / Math.max(1, record.total)
                   return (
-                    <li key={moduleId} className="flex items-center justify-between gap-3 text-sm">
-                      <Link to={`/module/${moduleId}`} className="min-w-0 truncate text-muted hover:text-accent">
+                    <li
+                      key={moduleId}
+                      className="flex items-center justify-between gap-3 border-b border-line py-2.5 text-sm last:border-0"
+                    >
+                      <Link to={`/module/${moduleId}`} className="min-w-0 text-muted hover:text-accent">
                         {module?.title ?? moduleId}
                       </Link>
                       <span
@@ -347,7 +386,7 @@ export default function Dashboard() {
               </ul>
             )}
             {weakModules.length > 0 ? (
-              <p className="mt-3 border-t border-line pt-3 text-xs text-muted">
+              <p className="mt-3 text-xs leading-relaxed text-muted">
                 Review:{' '}
                 {weakModules.map(([moduleId], index) => {
                   const module = getModule(moduleId)
@@ -364,9 +403,11 @@ export default function Dashboard() {
             ) : null}
           </section>
 
-          <section className="card p-5">
-            <div className="flex items-center justify-between gap-3">
-              <h2 className="text-lg">Pinned sheets</h2>
+          <section aria-labelledby="pinned-sheets" className="border-t border-line pt-4">
+            <div className="flex items-baseline justify-between gap-3">
+              <h2 id="pinned-sheets" className="text-xl">
+                Pinned sheets
+              </h2>
               <Link to="/pins" className="text-xs font-medium text-accent">
                 All pins
               </Link>
@@ -380,15 +421,15 @@ export default function Dashboard() {
                 and it appears here.
               </p>
             ) : (
-              <ul className="mt-3 space-y-2">
+              <ul className="mt-2">
                 {pinned.map((entry) => (
-                  <li key={entry.id}>
+                  <li key={entry.id} className="border-b border-line last:border-0">
                     <Link
                       to={`/cheatsheet/${entry.id}`}
-                      className="flex items-center gap-2 text-sm text-muted hover:text-accent"
+                      className="flex items-center gap-2 py-2.5 text-sm text-muted hover:text-accent"
                     >
                       <Pin size={12} aria-hidden="true" />
-                      <span className="truncate">{entry.title}</span>
+                      <span>{entry.title}</span>
                     </Link>
                   </li>
                 ))}
@@ -396,26 +437,12 @@ export default function Dashboard() {
             )}
           </section>
 
-          <section className="card p-5">
-            <h2 className="text-lg">Optional streak</h2>
+          <section aria-labelledby="your-data" className="border-t border-line pt-4">
+            <h2 id="your-data" className="text-xl">
+              Your data
+            </h2>
             <p className="mt-1 text-xs leading-relaxed text-muted">
-              Off by default. A streak measures activity, not progress. Missing a day is not a
-              failure.
-            </p>
-            <div className="mt-3">
-              <Toggle
-                checked={state.streakEnabled}
-                onChange={setStreakEnabled}
-                label={state.streakEnabled ? `${streak}-day streak` : 'Show a streak'}
-                description="Counts consecutive days with a saved quiz, note or proof."
-              />
-            </div>
-          </section>
-
-          <section className="card p-5">
-            <h2 className="text-lg">Your data</h2>
-            <p className="mt-1 text-xs leading-relaxed text-muted">
-              Everything is local to this browser. Export before clearing site data.
+              Local to this browser by default. Export before clearing site data, or sign in to sync.
             </p>
             <div className="mt-3 flex flex-wrap gap-2">
               <Button variant="secondary" size="sm" onClick={onExport}>
@@ -440,11 +467,19 @@ export default function Dashboard() {
               onChange={(event) => void onImport(event.target.files?.[0])}
             />
             {dataMessage ? (
-              <p role="status" className="mt-3 rounded-md border border-line bg-surface-2 px-3 py-2 text-xs text-muted">
+              <p role="status" className="mt-3 text-xs text-muted">
                 {dataMessage}
               </p>
             ) : null}
-            <div className="mt-3 flex flex-wrap gap-3 border-t border-line pt-3 text-xs">
+            <div className="mt-4 border-t border-line pt-3">
+              <Toggle
+                checked={state.streakEnabled}
+                onChange={setStreakEnabled}
+                label={state.streakEnabled ? `${streak}-day streak` : 'Show a streak'}
+                description="Optional. Counts consecutive days with a saved quiz, note or proof. A missed day is not a failure."
+              />
+            </div>
+            <div className="mt-4 flex flex-wrap gap-3 border-t border-line pt-3 text-xs">
               <Link to="/notes" className="inline-flex items-center gap-1 text-accent">
                 <BookOpen size={12} aria-hidden="true" />
                 {plural(Object.keys(state.notes).length, 'note')}
@@ -459,17 +494,37 @@ export default function Dashboard() {
               </Link>
             </div>
           </section>
-        </div>
+        </aside>
       </div>
     </div>
   )
 }
 
-function Metric({ label, value }: { label: string; value: string }) {
+function Stat({ label, value, hint }: { label: string; value: string; hint?: string }) {
   return (
-    <div className="card p-4">
-      <p className="eyebrow mb-1">{label}</p>
-      <p className="mono tabular text-xl text-ink">{value}</p>
+    <div>
+      <dt className="text-xs text-faint">{label}</dt>
+      <dd className="mono tabular mt-1 text-2xl leading-none text-ink">{value}</dd>
+      {hint ? <p className="mt-1 text-[11px] text-faint">{hint}</p> : null}
+    </div>
+  )
+}
+
+function SectionRule({
+  id,
+  title,
+  aside,
+}: {
+  id: string
+  title: string
+  aside?: string
+}) {
+  return (
+    <div className="flex flex-wrap items-baseline justify-between gap-2 pb-2">
+      <h2 id={id} className="text-2xl">
+        {title}
+      </h2>
+      {aside ? <span className="text-xs text-faint">{aside}</span> : null}
     </div>
   )
 }

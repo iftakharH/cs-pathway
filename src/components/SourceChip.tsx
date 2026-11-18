@@ -80,14 +80,14 @@ export function ClaimDrawer({
         <div>
           <h3 className="mb-3 text-xs font-semibold text-ink">Sources ({sources.length})</h3>
           {sources.length === 0 ? (
-            <p className="flex items-start gap-2 rounded-lg border border-line bg-surface-2 p-3 text-sm text-muted">
+            <p className="flex items-start gap-2 rounded-sm border border-line bg-surface-2 p-3 text-sm text-muted">
               <ShieldAlert size={16} className="mt-0.5 shrink-0" aria-hidden="true" />
               This is an editorial claim. It is labelled as opinion and is not presented as data.
             </p>
           ) : (
             <ul className="space-y-3">
               {sources.map((source) => (
-                <li key={source.id} className="rounded-lg border border-line bg-surface p-3">
+                <li key={source.id} className="rounded-sm border border-line bg-surface p-3">
                   <div className="flex flex-wrap items-center gap-2">
                     <TierBadge tier={source.tier} />
                     {source.publishedAt ? (

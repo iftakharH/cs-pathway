@@ -56,11 +56,13 @@ export function PageHeader({
           </ol>
         </nav>
       ) : null}
-      <div className="flex flex-wrap items-end justify-between gap-5">
-        <h1 className="max-w-3xl text-3xl leading-[1.1] sm:text-4xl md:text-5xl">{title}</h1>
+      <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+        <div className="min-w-0">
+          <h1 className="max-w-3xl text-3xl leading-[1.1] sm:text-4xl md:text-5xl">{title}</h1>
+          {lede ? <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted">{lede}</p> : null}
+        </div>
         {actions ? <div className="flex flex-wrap gap-2 no-print">{actions}</div> : null}
       </div>
-      {lede ? <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted">{lede}</p> : null}
     </header>
   )
 }
@@ -114,7 +116,7 @@ export function EmptyState({
   action?: ReactNode
 }) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-line px-6 py-12 text-center">
+    <div className="flex flex-col items-center justify-center rounded-sm border border-dashed border-line px-6 py-12 text-center">
       {icon ? <div className="mb-3 text-faint">{icon}</div> : null}
       <h3 className="text-lg">{title}</h3>
       <p className="mt-1 max-w-md text-sm text-muted">{body}</p>
@@ -139,7 +141,7 @@ export function Callout({
         ? 'border-warn/30 bg-warn-soft'
         : 'border-line bg-surface-2'
   return (
-    <div className={cx('rounded-lg border p-4', classes)}>
+    <div className={cx('rounded-sm border p-4', classes)}>
       {title ? <p className="mb-1 text-sm font-semibold text-ink">{title}</p> : null}
       <div className="text-sm leading-relaxed text-muted">{children}</div>
     </div>

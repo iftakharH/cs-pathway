@@ -62,15 +62,16 @@ export default function About() {
             The public pages do not need a database.
           </p>
           <p>
-            Accounts are not enabled in this build. Progress saves in the browser and can be
-            exported as JSON. If accounts are added, the privacy page will list exactly what is
-            stored on the server before they are switched on.
+            Accounts are optional. Guests keep progress in this browser; a signed-in account syncs
+            the same records to Neon Postgres. Email and password works; Google and GitHub appear
+            only when their credentials are configured. The privacy page lists every stored row and
+            the deletion path.
           </p>
         </div>
 
         <aside className="space-y-4">
-          <div className="card p-5">
-            <p className="eyebrow mb-3">At a glance</p>
+          <div className="border-t border-ink pt-3">
+            <p className="mb-3 text-xs font-semibold text-ink">At a glance</p>
             <dl className="space-y-2 text-sm">
               <div className="flex justify-between gap-3">
                 <dt className="text-faint">Started</dt>
@@ -98,7 +99,7 @@ export default function About() {
                 href={site.ownerUrl}
                 target="_blank"
                 rel="noreferrer noopener"
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-line bg-surface px-3 text-sm font-medium text-ink hover:bg-surface-2"
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-sm border border-line bg-surface px-3 text-sm font-medium text-ink hover:bg-surface-2"
               >
                 <ExternalLink size={15} aria-hidden="true" />
                 GitHub

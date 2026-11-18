@@ -72,7 +72,7 @@ export function ProofWorkflow({ module }: { module: Module }) {
       </div>
 
       {status === 'done' ? (
-        <div className="mb-4 flex items-start gap-2 rounded-lg border border-accent/30 bg-accent-soft px-3 py-2.5 text-sm text-ink">
+        <div className="mb-4 flex items-start gap-2 rounded-sm border border-accent/30 bg-accent-soft px-3 py-2.5 text-sm text-ink">
           <CircleCheck size={16} className="mt-0.5 shrink-0 text-accent" aria-hidden="true" />
           You marked this module done. The proof stays editable if you improve it.
         </div>
@@ -80,7 +80,7 @@ export function ProofWorkflow({ module }: { module: Module }) {
 
       <div className="card p-4 sm:p-5">
         <p className="text-sm leading-relaxed text-muted">{module.proof.brief}</p>
-        <p className="mt-3 rounded-md border border-line bg-surface-2 px-3 py-2 text-xs leading-relaxed text-muted">
+        <p className="mt-3 rounded-sm border border-line bg-surface-2 px-3 py-2 text-xs leading-relaxed text-muted">
           <span className="font-medium text-ink">What a reviewer looks for:</span>{' '}
           {module.proof.evidence}
         </p>
@@ -92,7 +92,7 @@ export function ProofWorkflow({ module }: { module: Module }) {
               {total}/{max} · self-scored
             </span>
           </div>
-          <div className="overflow-x-auto rounded-lg border border-line">
+          <div className="overflow-x-auto rounded-sm border border-line">
             <table className="w-full min-w-[46rem] text-left text-xs">
               <caption className="sr-only">
                 Rubric for {module.proof.title}. Choose a level from 0 to 3 for each criterion.
@@ -121,7 +121,7 @@ export function ProofWorkflow({ module }: { module: Module }) {
                         <td key={level} className="px-2 py-2 align-top">
                           <label
                             className={cx(
-                              'flex h-full cursor-pointer gap-2 rounded-md border p-2 leading-snug',
+                              'flex h-full cursor-pointer gap-2 rounded-sm border p-2 leading-snug',
                               selected
                                 ? 'border-accent bg-accent-soft text-ink'
                                 : 'border-transparent text-muted hover:border-line',
@@ -205,12 +205,12 @@ export function ProofWorkflow({ module }: { module: Module }) {
         </div>
 
         {error ? (
-          <p role="alert" className="mt-3 rounded-md border border-danger/30 bg-danger-soft px-3 py-2 text-sm text-danger">
+          <p role="alert" className="mt-3 rounded-sm border border-danger/30 bg-danger-soft px-3 py-2 text-sm text-danger">
             {error}
           </p>
         ) : null}
         {saved ? (
-          <p role="status" className="mt-3 rounded-md border border-accent/30 bg-accent-soft px-3 py-2 text-sm text-ink">
+          <p role="status" className="mt-3 rounded-sm border border-accent/30 bg-accent-soft px-3 py-2 text-sm text-ink">
             {saved}
           </p>
         ) : null}
@@ -235,7 +235,7 @@ export function ProofWorkflow({ module }: { module: Module }) {
         ) : null}
       </div>
 
-      <div className="mt-4 flex items-start gap-2 rounded-lg border border-line bg-surface-2 px-3 py-2.5 text-xs leading-relaxed text-muted">
+      <div className="mt-4 flex items-start gap-2 rounded-sm border border-line bg-surface-2 px-3 py-2.5 text-xs leading-relaxed text-muted">
         <Info size={15} className="mt-0.5 shrink-0" aria-hidden="true" />
         <p>
           Nothing here is sent to a server. The links and self-scores stay in this browser, and you

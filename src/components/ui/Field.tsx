@@ -2,7 +2,7 @@ import type { InputHTMLAttributes, ReactNode, SelectHTMLAttributes, TextareaHTML
 import { cx } from '@/lib/format'
 
 export const inputClass =
-  'min-h-11 w-full rounded-lg border border-line bg-surface px-3 text-[0.9375rem] text-ink ' +
+  'min-h-11 w-full rounded-sm border border-line bg-surface px-3 text-[0.9375rem] text-ink ' +
   'placeholder:text-faint focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent'
 
 export function Field({

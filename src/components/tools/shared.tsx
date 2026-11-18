@@ -103,7 +103,7 @@ export function Result({
   note?: string
 }) {
   return (
-    <div className="rounded-lg border border-line bg-surface-2/60 p-4">
+    <div className="rounded-sm border border-line bg-surface-2/60 p-4">
       <p className="eyebrow mb-1">{label}</p>
       <p className="mono tabular text-2xl text-ink">{value}</p>
       {note ? <p className="mt-1 text-xs leading-relaxed text-muted">{note}</p> : null}
@@ -113,7 +113,7 @@ export function Result({
 
 export function Formula({ children }: { children: ReactNode }) {
   return (
-    <p className="mono rounded-md border border-line bg-surface px-3 py-2 text-[11px] leading-relaxed text-muted">
+    <p className="mono rounded-sm border border-line bg-surface px-3 py-2 text-[11px] leading-relaxed text-muted">
       {children}
     </p>
   )

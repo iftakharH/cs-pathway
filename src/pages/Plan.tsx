@@ -129,7 +129,7 @@ export default function Plan() {
                 type="date"
                 value={deadline}
                 onChange={(event) => setDeadline(event.target.value)}
-                className="min-h-11 w-full rounded-lg border border-line bg-surface px-3 text-sm text-ink focus:border-accent focus:outline-none"
+                className="min-h-11 w-full rounded-sm border border-line bg-surface px-3 text-sm text-ink focus:border-accent focus:outline-none"
               />
             </Field>
           </div>
@@ -154,7 +154,7 @@ export default function Plan() {
 
         <div>
           {plan.empty ? (
-            <div className="rounded-xl border border-dashed border-line px-6 py-14 text-center">
+            <div className="rounded-sm border border-dashed border-line px-6 py-14 text-center">
               <CalendarDays size={24} className="mx-auto mb-3 text-faint" aria-hidden="true" />
               <h2 className="text-xl">Nothing left in this range</h2>
               <p className="mx-auto mt-2 max-w-md text-sm text-muted">
@@ -185,7 +185,7 @@ export default function Plan() {
 
               {deadlineCheck ? (
                 <div
-                  className={`mt-4 rounded-lg border px-4 py-3 text-sm ${
+                  className={`mt-4 rounded-sm border px-4 py-3 text-sm ${
                     deadlineCheck.onTrack
                       ? 'border-accent/30 bg-accent-soft text-ink'
                       : 'border-warn/30 bg-warn-soft text-warn'

@@ -19,7 +19,7 @@ export function PinButton({
       aria-pressed={pinned}
       onClick={() => togglePin(cheatId)}
       className={cx(
-        'inline-flex min-h-9 items-center gap-1.5 rounded-md border px-2.5 text-xs font-medium transition-colors',
+        'inline-flex min-h-9 items-center gap-1.5 rounded-sm border px-2.5 text-xs font-medium transition-colors',
         pinned
           ? 'border-accent/40 bg-accent-soft text-accent'
           : 'border-line bg-surface text-muted hover:border-line-strong hover:text-ink',

@@ -123,7 +123,7 @@ export default function Start() {
                 </span>
               </div>
               <p className="mt-4 text-sm leading-relaxed text-muted">{phase?.description}</p>
-              <p className="mt-4 rounded-lg border border-line bg-surface-2 p-3 text-sm text-ink">
+              <p className="mt-4 rounded-sm border border-line bg-surface-2 p-3 text-sm text-ink">
                 <strong className="font-medium">The gate:</strong> {phase?.gate}
               </p>
             </div>
@@ -197,7 +197,7 @@ export default function Start() {
             </div>
             <p className="flex items-start gap-2 text-xs leading-relaxed text-faint">
               <Check size={14} className="mt-0.5 shrink-0 text-accent" aria-hidden="true" />
-              Saved in this browser. No account, no email, no tracking.
+              Saved in this browser. No account needed, no email, no tracking.
             </p>
           </div>
         </div>
@@ -209,7 +209,7 @@ export default function Start() {
     <div className="container-page">
       <PageHeader
         title="Find your first module in about three minutes"
-        lede="Five scenario questions and a quick self-rating. There is no pass or fail, no account, and you can change the answer later."
+        lede="Five scenario questions and a quick self-rating. There is no pass or fail, no account needed, and you can change the answer later."
         breadcrumb={[{ label: 'Home', to: '/' }, { label: 'Placement' }]}
       />
 
@@ -223,7 +223,7 @@ export default function Start() {
             <a
               key={step.href}
               href={step.href}
-              className="mono rounded-md border border-line bg-surface px-2.5 py-1.5 text-[10px] uppercase tracking-wider text-muted hover:border-accent hover:text-accent"
+              className="mono rounded-sm border border-line bg-surface px-2.5 py-1.5 text-[10px] uppercase tracking-wider text-muted hover:border-accent hover:text-accent"
             >
               {step.label}
             </a>
@@ -263,7 +263,7 @@ export default function Start() {
               <label
                 key={option.id}
                 className={cx(
-                  'flex cursor-pointer items-start gap-3 rounded-lg border p-3.5 transition-colors',
+                  'flex cursor-pointer items-start gap-3 rounded-sm border p-3.5 transition-colors',
                   target === option.id
                     ? 'border-accent bg-accent-soft'
                     : 'border-line bg-surface hover:border-line-strong',
@@ -293,7 +293,7 @@ export default function Start() {
           </p>
           <div className="mt-5 space-y-4">
             {phases.map((phase) => (
-              <fieldset key={phase.id} className="rounded-lg border border-line bg-surface p-4">
+              <fieldset key={phase.id} className="rounded-sm border border-line bg-surface p-4">
                 <legend className="px-1">
                   <PhaseBadge phase={phase.id} showName />
                 </legend>
@@ -302,7 +302,7 @@ export default function Start() {
                     <label
                       key={label}
                       className={cx(
-                        'flex min-h-11 cursor-pointer items-center gap-2 rounded-md border px-2.5 py-2 text-xs',
+                        'flex min-h-11 cursor-pointer items-center gap-2 rounded-sm border px-2.5 py-2 text-xs',
                         ratings[phase.id] === level
                           ? 'border-accent bg-accent-soft text-ink'
                           : 'border-line bg-surface text-muted hover:border-line-strong',
@@ -345,7 +345,7 @@ export default function Start() {
                 <fieldset
                   key={scenario.id}
                   id={`scenario-${scenario.id}`}
-                  className="scroll-mt-24 rounded-lg border border-line bg-surface p-4"
+                  className="scroll-mt-24 rounded-sm border border-line bg-surface p-4"
                 >
                   <legend className="flex flex-wrap items-center gap-2 px-1">
                     <PhaseBadge phase={scenario.phase} />
@@ -359,7 +359,7 @@ export default function Start() {
                       <label
                         key={option}
                         className={cx(
-                          'flex min-h-11 cursor-pointer items-start gap-2.5 rounded-md border px-3 py-2.5 text-sm',
+                          'flex min-h-11 cursor-pointer items-start gap-2.5 rounded-sm border px-3 py-2.5 text-sm',
                           answers[scenario.id] === index
                             ? 'border-accent bg-accent-soft text-ink'
                             : 'border-line text-muted hover:border-line-strong',
@@ -384,7 +384,7 @@ export default function Start() {
           </div>
 
           {error ? (
-            <p role="alert" className="mt-4 rounded-lg border border-danger/30 bg-danger-soft px-3 py-2 text-sm text-danger">
+            <p role="alert" className="mt-4 rounded-sm border border-danger/30 bg-danger-soft px-3 py-2 text-sm text-danger">
               {error}
             </p>
           ) : null}
@@ -396,7 +396,7 @@ export default function Start() {
             </Button>
             <p className="flex items-center gap-2 text-xs text-faint">
               <Info size={14} aria-hidden="true" />
-              No account. Saved in this browser.
+              No account needed. Saved in this browser.
             </p>
           </div>
         </section>

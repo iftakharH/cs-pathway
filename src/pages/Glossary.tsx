@@ -39,7 +39,7 @@ export default function Glossary() {
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Search a term or definition…"
-            className="min-h-11 w-full rounded-lg border border-line bg-surface pl-9 pr-3 text-sm text-ink placeholder:text-faint focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+            className="min-h-11 w-full rounded-sm border border-line bg-surface pl-9 pr-3 text-sm text-ink placeholder:text-faint focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
           />
         </div>
         <p className="mt-2 text-xs text-faint" aria-live="polite">

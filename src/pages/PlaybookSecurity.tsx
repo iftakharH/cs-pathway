@@ -58,7 +58,7 @@ export default function PlaybookSecurity() {
         {rules.map((rule, index) => (
           <section key={rule.title} className="card p-5">
             <div className="mb-3 flex items-center gap-3">
-              <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-line bg-surface-2 text-accent">
+              <span className="inline-flex h-9 w-9 items-center justify-center rounded-sm border border-line bg-surface-2 text-accent">
                 <rule.Icon size={16} aria-hidden="true" />
               </span>
               <span className="mono text-[10px] uppercase tracking-wider text-faint">

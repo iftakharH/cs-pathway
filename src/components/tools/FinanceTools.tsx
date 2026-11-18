@@ -52,7 +52,7 @@ export function DilutionTool() {
           value={ownership === null ? '—' : percent(ownership, 2)}
           note={ownership === null ? 'Enter a cap above zero.' : 'Before later rounds and option-pool dilution.'}
         />
-        <div className="rounded-lg border border-line bg-surface p-4">
+        <div className="rounded-sm border border-line bg-surface p-4">
           <p className="mb-2 text-xs font-semibold text-ink">An illustrative conversion</p>
           <p className="text-sm leading-relaxed text-muted">
             $500,000 at a $10M post-money cap implies 5% ownership before later rounds.

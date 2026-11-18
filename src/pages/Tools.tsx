@@ -48,7 +48,7 @@ export default function Tools() {
                   type="button"
                   onClick={() => setParams({ tool: tool.id }, { replace: true })}
                   className={cx(
-                    'flex min-h-11 w-full items-center gap-2 rounded-lg border px-3 text-sm',
+                    'flex min-h-11 w-full items-center gap-2 rounded-sm border px-3 text-sm',
                     active === tool.id
                       ? 'border-accent bg-accent-soft text-ink'
                       : 'border-line bg-surface text-muted hover:text-ink',

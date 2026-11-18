@@ -191,7 +191,7 @@ export function InterviewTool() {
         </ul>
       ) : null}
 
-      <div className="mt-5 rounded-lg border border-line bg-surface-2/60 p-3">
+      <div className="mt-5 rounded-sm border border-line bg-surface-2/60 p-3">
         <p className="eyebrow mb-2">Questions that avoid false praise</p>
         <ul className="space-y-1 text-xs leading-relaxed text-muted">
           {interviewPrompts.map((prompt) => (

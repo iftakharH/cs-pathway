@@ -92,7 +92,7 @@ export default function Claims() {
               </option>
             ))}
           </FilterSelect>
-          <label className="flex min-h-11 cursor-pointer items-center gap-2 rounded-lg border border-line bg-surface px-3 text-sm text-muted">
+          <label className="flex min-h-11 cursor-pointer items-center gap-2 rounded-sm border border-line bg-surface px-3 text-sm text-muted">
             <input
               type="checkbox"
               checked={staleOnly}
@@ -198,7 +198,7 @@ function FilterSelect({
         id={id}
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="min-h-11 w-full rounded-lg border border-line bg-surface px-3 text-sm text-ink focus:border-accent focus:outline-none"
+        className="min-h-11 w-full rounded-sm border border-line bg-surface px-3 text-sm text-ink focus:border-accent focus:outline-none"
       >
         {children}
       </select>

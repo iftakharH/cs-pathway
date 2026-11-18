@@ -81,7 +81,7 @@ export function Quiz({ module }: { module: Module }) {
                     <div
                       key={choice}
                       className={cx(
-                        'flex items-start gap-2 rounded-md border transition-colors',
+                        'flex items-start gap-2 rounded-sm border transition-colors',
                         !revealed && 'border-line',
                         revealed && isAnswer && 'border-accent bg-accent-soft',
                         revealed && isChosen && !isAnswer && 'border-danger/50 bg-danger-soft',
@@ -129,7 +129,7 @@ export function Quiz({ module }: { module: Module }) {
               {revealed ? (
                 <div
                   className={cx(
-                    'mt-3 rounded-md border p-3 text-sm leading-relaxed',
+                    'mt-3 rounded-sm border p-3 text-sm leading-relaxed',
                     correct ? 'border-accent/30 bg-accent-soft' : 'border-warn/30 bg-warn-soft',
                   )}
                 >
@@ -155,7 +155,7 @@ export function Quiz({ module }: { module: Module }) {
       {complete ? (
         <div
           role="status"
-          className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-accent/30 bg-accent-soft px-4 py-3"
+          className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-sm border border-accent/30 bg-accent-soft px-4 py-3"
         >
           <div>
             <p className="text-sm font-medium text-ink">

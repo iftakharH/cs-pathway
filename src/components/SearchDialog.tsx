@@ -125,7 +125,7 @@ export default function SearchDialog({ onClose }: { onClose: () => void }) {
         role="dialog"
         aria-modal="true"
         aria-label="Search cs-pathway"
-        className="relative w-full max-w-xl overflow-hidden rounded-xl border border-line bg-surface shadow-2xl"
+        className="relative w-full max-w-xl overflow-hidden rounded-sm border border-line bg-surface shadow-2xl"
       >
         <div className="flex items-center gap-3 border-b border-line px-4">
           <Search size={18} className="shrink-0 text-faint" aria-hidden="true" />
@@ -147,7 +147,7 @@ export default function SearchDialog({ onClose }: { onClose: () => void }) {
           <button
             type="button"
             onClick={onClose}
-            className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-faint hover:bg-surface-2 hover:text-ink"
+            className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-sm text-faint hover:bg-surface-2 hover:text-ink"
             aria-label="Close search"
           >
             <X size={16} aria-hidden="true" />
@@ -163,7 +163,7 @@ export default function SearchDialog({ onClose }: { onClose: () => void }) {
                   key={term}
                   type="button"
                   onClick={() => setQuery(term)}
-                  className="rounded-md border border-line bg-surface-2 px-2.5 py-1.5 text-xs text-muted hover:border-accent hover:text-accent"
+                  className="rounded-sm border border-line bg-surface-2 px-2.5 py-1.5 text-xs text-muted hover:border-accent hover:text-accent"
                 >
                   {term}
                 </button>

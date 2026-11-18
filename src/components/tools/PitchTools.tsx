@@ -64,7 +64,7 @@ export function PitchTool() {
               Print
             </Button>
           </div>
-          <article className="rounded-lg border border-line bg-surface p-5">
+          <article className="rounded-sm border border-line bg-surface p-5">
             <p className="mono mb-3 text-[10px] uppercase tracking-[0.14em] text-faint">
               One-page pitch
             </p>
@@ -163,7 +163,7 @@ export function Plan90Tool() {
               Print
             </Button>
           </div>
-          <article className="rounded-lg border border-line bg-surface p-5">
+          <article className="rounded-sm border border-line bg-surface p-5">
             <p className="mono mb-3 text-[10px] uppercase tracking-[0.14em] text-faint">90-day plan</p>
             <ol className="space-y-3">
               {([

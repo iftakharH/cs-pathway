@@ -75,7 +75,7 @@ export default function Methodology() {
           least one free resource, one official resource, five quiz questions with a source URL and
           a proof rubric.
         </p>
-        <div className="not-prose my-4 rounded-lg border border-line bg-surface p-4">
+        <div className="not-prose my-4 rounded-sm border border-line bg-surface p-4">
           <p className="eyebrow mb-2">Also enforced</p>
           <ul className="space-y-1.5 text-sm text-muted">
             <li>— Unique ids across claims, modules, cheatsheets and sources.</li>

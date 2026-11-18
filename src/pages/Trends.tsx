@@ -47,7 +47,7 @@ export default function Trends() {
                       <h3 className="text-lg leading-snug">{trend.title}</h3>
                       <p className="mt-2 flex-1 text-sm leading-relaxed text-muted">{trend.body}</p>
                       {trend.falsifiedBy ? (
-                        <p className="mt-3 rounded-md border border-warn/30 bg-warn-soft px-3 py-2 text-xs leading-relaxed text-warn">
+                        <p className="mt-3 rounded-sm border border-warn/30 bg-warn-soft px-3 py-2 text-xs leading-relaxed text-warn">
                           What would prove this wrong: {trend.falsifiedBy}
                         </p>
                       ) : null}

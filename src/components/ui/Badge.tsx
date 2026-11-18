@@ -61,7 +61,7 @@ export function EvidenceBadge({ kind }: { kind: ClaimKind }) {
   return (
     <span
       className={cx(
-        'inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-[11px] font-medium',
+        'inline-flex items-center gap-1.5 rounded-sm border px-2 py-1 text-[11px] font-medium',
         style.className,
       )}
     >
@@ -73,7 +73,7 @@ export function EvidenceBadge({ kind }: { kind: ClaimKind }) {
 
 export function StaleBadge() {
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-md border border-warn/40 bg-warn-soft px-2 py-1 text-[11px] font-medium text-warn">
+    <span className="inline-flex items-center gap-1.5 rounded-sm border border-warn/40 bg-warn-soft px-2 py-1 text-[11px] font-medium text-warn">
       <AlertTriangle size={12} aria-hidden="true" />
       Needs re-check
     </span>
