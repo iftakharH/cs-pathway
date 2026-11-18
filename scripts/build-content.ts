@@ -119,6 +119,7 @@ function main() {
     '/sources',
     '/methodology',
     '/verification',
+    '/for-agents',
     '/changelog',
     '/corrections',
     '/about',
@@ -137,6 +138,67 @@ function main() {
     '',
   ].join('\n')
   writeFileSync(join(process.cwd(), 'public', 'sitemap.xml'), sitemap, 'utf8')
+
+  const llmsIntro = [
+    '# cs-pathway',
+    '',
+    '> A source-verified roadmap, tracker and cheatsheet library for computer-science students',
+    '> heading into 2027. Public content is readable without an account. Every factual claim has a',
+    '> source and a review date. The paths below are canonical.',
+    '',
+    '## Start here',
+    `- [The path](${base}/path): five phases, ${manifest.counts.modules} modules and a proof at the end of every phase.`,
+    `- [Verification](${base}/verification): every claim, source, harness row and tool stamp with dates.`,
+    `- [Methodology](${base}/methodology): how evidence is graded and when it is re-checked.`,
+    `- [For agents](${base}/for-agents): prompts and rules for using this library with an AI agent.`,
+    `- [Full index](${base}/llms-full.txt): every module and cheatsheet with descriptions.`,
+    '',
+  ]
+  const llmsPhases = [
+    '## Phases',
+    ...content.phases.map(
+      (phase) =>
+        `- [${phase.id} - ${phase.name}](${base}/phase/${phase.id}): ${phase.description}`,
+    ),
+    '',
+  ]
+  const llmsTrust = [
+    '## Trust',
+    `- [Claims](${base}/claims): ${content.claims.length} claims with kind, confidence and review date.`,
+    `- [Sources](${base}/sources): ${content.sources.length} source records with retrieval dates.`,
+    `- [Harnesses](${base}/harnesses): seven agent harnesses checked against vendor docs.`,
+    '',
+    'Do not treat a forecast as data. If a page says a claim needs re-check, say so before using it.',
+    '',
+  ]
+  const llmsModules = [
+    '## Modules',
+    ...content.modules.map(
+      (module) =>
+        `- [${module.title}](${base}/module/${module.id}): ${module.summary} ` +
+        `(${module.quiz.length} sourced questions; proof: ${module.proof.title})`,
+    ),
+    '',
+  ]
+  const llmsCheatsheets = [
+    '## Cheatsheets',
+    ...content.cheatsheets.map(
+      (entry) =>
+        `- [${entry.title}](${base}/cheatsheet/${entry.id}): ${entry.whenToUse} ` +
+        `(${entry.topic}; ${entry.tool.name} ${entry.tool.version})`,
+    ),
+    '',
+  ]
+  const llmsShort = [...llmsIntro, ...llmsPhases, ...llmsTrust].join('\n')
+  const llmsFull = [
+    ...llmsIntro,
+    ...llmsPhases,
+    ...llmsModules,
+    ...llmsCheatsheets,
+    ...llmsTrust,
+  ].join('\n')
+  writeFileSync(join(process.cwd(), 'public', 'llms.txt'), llmsShort, 'utf8')
+  writeFileSync(join(process.cwd(), 'public', 'llms-full.txt'), llmsFull, 'utf8')
 
   console.log(
     `content: ${manifest.counts.modules} modules · ${manifest.counts.cheatsheets} cheatsheets · ` +

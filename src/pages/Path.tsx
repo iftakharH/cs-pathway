@@ -44,6 +44,19 @@ export default function Path() {
         ) : null}
       </div>
 
+      <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1 border-b border-line py-3 text-sm text-muted">
+        <span className="text-xs font-semibold text-ink">The 2027 lens</span>
+        <Link to="/module/p1-agents" className="text-accent hover:underline">
+          build with agents
+        </Link>
+        <Link to="/module/p2-evals" className="text-accent hover:underline">
+          evaluate output
+        </Link>
+        <Link to="/module/p1-ship" className="text-accent hover:underline">
+          ship a small product
+        </Link>
+      </div>
+
       <div className="py-8">
         <PhaseExplorer />
       </div>

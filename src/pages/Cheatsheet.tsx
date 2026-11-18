@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { AlertTriangle, Check, ExternalLink, Link2, Printer, ShieldCheck } from 'lucide-react'
+import { AlertTriangle, Bot, Check, ExternalLink, Link2, Printer, ShieldCheck } from 'lucide-react'
 import { PageHeader } from '@/components/ui/Section'
 import { Button, ButtonLink } from '@/components/ui/Button'
 import { PhaseBadge } from '@/components/ui/Badge'
@@ -15,11 +15,11 @@ export default function Cheatsheet() {
   const { id } = useParams()
   const entry = getCheat(id)
   const [linkCopied, setLinkCopied] = useState(false)
+  const [briefCopied, setBriefCopied] = useState(false)
 
   if (!entry) {
     return (
       <div className="container-page py-20">
-        <p className="eyebrow mb-3">Not found</p>
         <h1 className="text-3xl">That cheatsheet entry does not exist.</h1>
         <p className="mt-2 text-muted">Browse the library to find one that does.</p>
         <div className="mt-6">
@@ -28,6 +28,8 @@ export default function Cheatsheet() {
       </div>
     )
   }
+
+  const current = entry
 
   const related = entry.seeAlso.flatMap((relatedId) => {
     const relatedEntry = getCheat(relatedId)
@@ -41,6 +43,37 @@ export default function Cheatsheet() {
       window.setTimeout(() => setLinkCopied(false), 1800)
     } catch {
       setLinkCopied(false)
+    }
+  }
+
+  async function copyBrief() {
+    const snippets = current.snippets
+      .map((snippet) => `\`\`\`${snippet.lang}\n${snippet.code.trim()}\n\`\`\``)
+      .join('\n\n')
+    const brief = [
+      `# ${current.title}`,
+      '',
+      current.whenToUse,
+      '',
+      `Source: ${current.sourceUrl}`,
+      `Checked: ${current.tool.name} ${current.tool.version} on ${formatDate(current.tool.verifiedOn)}`,
+      '',
+      snippets,
+      '',
+      '## Do',
+      ...current.notes.map((note) => `- ${note}`),
+      '',
+      '## Avoid',
+      ...current.gotchas.map((gotcha) => `- ${gotcha}`),
+      '',
+      'Use only the facts above. Do not add a version or command that is not in this brief.',
+    ].join('\n')
+    try {
+      await navigator.clipboard.writeText(brief)
+      setBriefCopied(true)
+      window.setTimeout(() => setBriefCopied(false), 2200)
+    } catch {
+      setBriefCopied(false)
     }
   }
 
@@ -68,6 +101,10 @@ export default function Cheatsheet() {
             <Button variant="ghost" size="sm" onClick={copyPermalink}>
               <Link2 size={14} aria-hidden="true" />
               {linkCopied ? 'Link copied' : 'Copy link'}
+            </Button>
+            <Button variant="ghost" size="sm" onClick={copyBrief}>
+              <Bot size={14} aria-hidden="true" />
+              {briefCopied ? 'Brief copied' : 'Copy brief for an agent'}
             </Button>
           </div>
 
@@ -121,10 +158,9 @@ export default function Cheatsheet() {
             </section>
           ) : null}
 
-          <section className="mt-8 rounded-lg border border-line bg-surface p-4">
+          <section className="mt-8 border-y border-line py-4">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
-                <p className="eyebrow mb-1">Source</p>
                 <p className="text-sm text-ink">
                   Checked against the official documentation for {entry.tool.name}{' '}
                   {entry.tool.version}.
@@ -137,7 +173,7 @@ export default function Cheatsheet() {
                 href={entry.sourceUrl}
                 target="_blank"
                 rel="noreferrer noopener"
-                className="inline-flex min-h-9 items-center gap-1.5 rounded-md border border-line bg-surface px-2.5 text-xs font-medium text-accent hover:border-accent"
+                className="inline-flex min-h-9 items-center gap-1.5 text-xs font-medium text-accent link-underline"
               >
                 Open the docs
                 <ExternalLink size={12} aria-hidden="true" />
@@ -148,17 +184,15 @@ export default function Cheatsheet() {
           {related.length > 0 ? (
             <section className="mt-8">
               <h2 className="mb-2 text-lg">See also</h2>
-              <ul className="grid gap-2 sm:grid-cols-2">
+              <ul className="border-t border-line">
                 {related.map((relatedEntry) => (
-                  <li key={relatedEntry.id}>
+                  <li key={relatedEntry.id} className="border-b border-line">
                     <Link
                       to={`/cheatsheet/${relatedEntry.id}`}
-                      className="flex items-center justify-between gap-2 rounded-lg border border-line bg-surface px-3 py-2.5 text-sm text-muted hover:border-accent hover:text-ink"
+                      className="flex items-center justify-between gap-3 py-2.5 text-sm text-muted hover:text-accent"
                     >
                       <span>{relatedEntry.title}</span>
-                      <span className="mono shrink-0 text-[9px] uppercase tracking-wider text-faint">
-                        {relatedEntry.topic}
-                      </span>
+                      <span className="text-[10px] text-faint">{relatedEntry.topic}</span>
                     </Link>
                   </li>
                 ))}
@@ -172,46 +206,57 @@ export default function Cheatsheet() {
               storageKey={`cheat:${entry.id}`}
               title="Your note on this entry"
               description="A project-specific detail, a version quirk, or the command you always forget. Saved in this browser."
-              placeholder="On our Postgres 17 cluster, this needs…"
+              placeholder="On our Postgres 18 cluster, this needs…"
             />
           </section>
         </article>
 
-        <aside className="space-y-4 no-print lg:sticky lg:top-24 lg:self-start">
-          <div className="card p-4">
-            <p className="eyebrow mb-2">Version stamp</p>
-            <p className="text-sm font-medium text-ink">
+        <aside className="no-print lg:sticky lg:top-24 lg:self-start">
+          <div className="border-t border-ink pt-3">
+            <h2 className="text-xs font-semibold text-ink">Version stamp</h2>
+            <p className="mt-2 text-sm font-medium text-ink">
               {entry.tool.name} {entry.tool.version}
             </p>
-            <p className="mt-1 text-xs text-muted">
-              Verified {formatDate(entry.tool.verifiedOn)}
-            </p>
+            <p className="mt-1 text-xs text-muted">Verified {formatDate(entry.tool.verifiedOn)}</p>
           </div>
-          <div className="card p-4">
-            <p className="eyebrow mb-2">Phase</p>
-            <PhaseBadge phase={entry.phase} showName />
+
+          <div className="mt-5 border-t border-line pt-3">
+            <h2 className="text-xs font-semibold text-ink">Phase</h2>
+            <div className="mt-2">
+              <PhaseBadge phase={entry.phase} showName />
+            </div>
           </div>
-          <div className="card p-4">
-            <p className="eyebrow mb-2">Tags</p>
-            <div className="flex flex-wrap gap-1">
+
+          <div className="mt-5 border-t border-line pt-3">
+            <h2 className="text-xs font-semibold text-ink">Tags</h2>
+            <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs">
               {entry.tags.map((tag) => (
                 <Link
                   key={tag}
                   to={`/cheatsheets?tag=${encodeURIComponent(tag)}`}
-                  className="mono rounded border border-line bg-surface-2 px-1.5 py-0.5 text-[9px] text-faint hover:text-accent"
+                  className="text-muted hover:text-accent"
                 >
                   {tag}
                 </Link>
               ))}
             </div>
           </div>
-          <div className="card p-4">
-            <p className="eyebrow mb-2">Trust</p>
-            <p className="flex items-start gap-2 text-xs leading-relaxed text-muted">
+
+          <div className="mt-5 border-t border-line pt-3">
+            <h2 className="text-xs font-semibold text-ink">Trust</h2>
+            <p className="mt-2 flex items-start gap-2 text-xs leading-relaxed text-muted">
               <ShieldCheck size={14} className="mt-0.5 shrink-0 text-accent" aria-hidden="true" />
               Every snippet is either executed in CI or marked as checked against docs only.
             </p>
           </div>
+
+          <Link
+            to="/for-agents"
+            className="mt-5 inline-flex items-center gap-1 border-t border-line pt-3 text-xs font-medium text-accent"
+          >
+            <Bot size={13} aria-hidden="true" />
+            Use this library with an agent
+          </Link>
         </aside>
       </div>
     </div>

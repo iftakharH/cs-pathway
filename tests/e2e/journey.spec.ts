@@ -154,3 +154,17 @@ test('startup tools calculate and persist', async ({ page }) => {
   await page.getByRole('button', { name: 'Add conversation' }).click()
   await expect(page.getByText('Loses track of invoices')).toBeVisible()
 })
+
+test('agent page exposes the machine index and a copyable study brief', async ({ page, context }) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write'])
+  await page.goto('/for-agents')
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('Use an agent')
+  await expect(page.getByRole('link', { name: /llms\.txt/ }).first()).toBeVisible()
+
+  await page.goto('/module/f-git')
+  await page.getByRole('button', { name: 'Copy study brief' }).click()
+  await expect(page.getByRole('button', { name: 'Brief copied' })).toBeVisible()
+  const brief = await page.evaluate(() => navigator.clipboard.readText())
+  expect(brief).toContain('Quiz me one question at a time')
+  expect(brief).toContain('git-scm.com/book')
+})

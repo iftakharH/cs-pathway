@@ -16,6 +16,7 @@ const routes = [
   ['/trends', 'trends'],
   ['/methodology', 'methodology'],
   ['/verification', 'verification'],
+  ['/for-agents', 'for agents'],
   ['/harnesses', 'harnesses'],
   ['/tools', 'tools'],
   ['/dashboard', 'dashboard'],

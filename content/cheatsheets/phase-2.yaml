@@ -554,3 +554,33 @@ entries:
     tool: { name: OWASP LLM Top 10, version: 'current', verifiedOn: 2026-11-05 }
     sourceUrl: https://genai.owasp.org/llm-top-10/
     tags: [security, prompt-injection, agents, owasp]
+
+  - id: ai-2027-brief
+    phase: "2"
+    topic: AI engineering
+    title: The 2027 readiness checklist
+    whenToUse: When you are deciding what to learn next and want evidence of ability, not another tutorial list.
+    snippets:
+      - lang: text
+        caption: Six checks that survive a model change
+        runnable: false
+        checked: docs
+        code: |
+          [ ] Ship one feature with an agent and review every diff.
+          [ ] Build an eval with a held-out set and a written pass rule.
+          [ ] Add retrieval that cites the source and can refuse.
+          [ ] Measure cost and latency per request.
+          [ ] Read the provider changelog before changing a model.
+          [ ] Put the result in a repo with tests, a README and a demo.
+    notes:
+      - The 2027 framing is editorial. The skills map (August 2026) and the 2026 survey are the dated evidence behind it.
+      - A portfolio proof is stronger than a certificate.
+      - Keep a dated note of the model and provider version you tested.
+    gotchas:
+      - A demo that only works on your machine is not evidence.
+      - An eval you tuned on is not a held-out test.
+      - A model upgrade can change tone, latency and refusal behaviour without changing your code.
+    seeAlso: [agent-loop, eval-golden-set, prompt-injection]
+    tool: { name: AI Engineering Skills Map, version: '2026-08-14', verifiedOn: 2026-11-05 }
+    sourceUrl: https://www.deeplearning.ai/the-batch/the-ai-engineering-skills-map
+    tags: [ai-engineering, '2027', portfolio, agents, evals]

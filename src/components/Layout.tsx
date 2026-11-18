@@ -100,7 +100,7 @@ function Header({ onOpenSearch }: { onOpenSearch: () => void }) {
           <button
             type="button"
             onClick={onOpenSearch}
-            className="inline-flex h-11 items-center gap-2 rounded-lg px-2.5 text-sm text-muted hover:bg-surface-2 hover:text-ink sm:px-3"
+            className="inline-flex h-11 items-center gap-2 rounded-sm px-2.5 text-sm text-muted hover:bg-surface-2 hover:text-ink sm:px-3"
             aria-label="Search"
           >
             <Search size={17} aria-hidden="true" />
@@ -187,6 +187,7 @@ function Footer() {
               { label: 'Startup phase', to: '/startup' },
               { label: 'Startup tools', to: '/tools' },
               { label: 'Review due', to: '/review' },
+              { label: 'For agents', to: '/for-agents' },
               { label: 'Playbook', to: '/playbook' },
               { label: 'Glossary', to: '/glossary' },
             ]}
@@ -312,7 +313,7 @@ export function Layout() {
     <div className="flex min-h-screen flex-col">
       <a
         href="#main"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-surface focus:px-4 focus:py-2 focus:text-sm focus:text-ink focus:shadow-lg"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-sm focus:bg-surface focus:px-4 focus:py-2 focus:text-sm focus:text-ink focus:shadow-lg"
       >
         Skip to content
       </a>

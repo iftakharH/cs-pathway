@@ -16,6 +16,8 @@ test-results
 lighthouse-*.json
 src/content/generated
 public/sitemap.xml
+public/llms.txt
+public/llms-full.txt
 
 .vercel
 .env*

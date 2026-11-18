@@ -344,7 +344,7 @@ modules:
         lastVerifiedAt: 2026-11-05
         officialVendor: true
         why: The portable folder contract for packaging instructions and scripts.
-    cheatsheetIds: [agent-loop, mcp-server, prompt-injection]
+    cheatsheetIds: [agent-loop, mcp-server, prompt-injection, ai-2027-brief]
     quiz:
       - id: p2-agent-q1
         question: When is a deterministic workflow better than an agent?

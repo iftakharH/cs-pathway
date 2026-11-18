@@ -1,4 +1,5 @@
-import { ArrowLeft, ArrowRight, Clock3, ExternalLink, FileText, ShieldCheck } from 'lucide-react'
+import { useState } from 'react'
+import { ArrowLeft, ArrowRight, Bot, Clock3, ExternalLink, FileText, ShieldCheck } from 'lucide-react'
 import { Link, useParams } from 'react-router-dom'
 import { PageHeader, Callout } from '@/components/ui/Section'
 import { Button, ButtonLink } from '@/components/ui/Button'
@@ -29,6 +30,7 @@ export default function ModulePage() {
   const module = getModule(id)
   const state = useGuestState()
   const activeSection = useActiveSection(SECTION_IDS)
+  const [briefCopied, setBriefCopied] = useState(false)
 
   if (!module) {
     return (
@@ -54,6 +56,47 @@ export default function ModulePage() {
     return entry ? [entry] : []
   })
 
+  async function copyStudyBrief() {
+    if (!module) return
+    const rubric = module.proof.rubric.flatMap((criterion) => [
+      `- ${criterion.criterion}`,
+      ...Object.entries(criterion.levels).map(([level, text]) => `  ${level}: ${text}`),
+    ])
+    const brief = [
+      `# ${module.title}`,
+      '',
+      module.summary,
+      '',
+      `Phase: ${module.phase}${phase ? ` - ${phase.name}` : ''}`,
+      '',
+      '## Objectives',
+      ...module.objectives.map((objective) => `- ${objective}`),
+      '',
+      '## Resources',
+      ...module.resources.map((resource) => `- ${resource.title} (${resource.publisher}): ${resource.url}`),
+      '',
+      '## Quiz questions',
+      ...module.quiz.map((question, index) => `${index + 1}. ${question.question}`),
+      '',
+      `## Proof: ${module.proof.title}`,
+      module.proof.brief,
+      '',
+      '### Rubric',
+      ...rubric,
+      '',
+      'Quiz me one question at a time. Use only these questions and the linked sources.',
+      'Do not reveal an answer before I answer. Do not add a fact that is not on this page.',
+    ].join('\n')
+
+    try {
+      await navigator.clipboard.writeText(brief)
+      setBriefCopied(true)
+      window.setTimeout(() => setBriefCopied(false), 2200)
+    } catch {
+      setBriefCopied(false)
+    }
+  }
+
   return (
     <div className="container-page">
       <PageHeader
@@ -68,6 +111,10 @@ export default function ModulePage() {
         actions={
           <>
             <StatusBadge status={status} />
+            <Button variant="ghost" size="sm" onClick={copyStudyBrief}>
+              <Bot size={14} aria-hidden="true" />
+              {briefCopied ? 'Brief copied' : 'Copy study brief'}
+            </Button>
             <Button
               variant={status === 'in_progress' ? 'secondary' : 'primary'}
               size="sm"
