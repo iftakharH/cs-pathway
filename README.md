@@ -305,7 +305,8 @@ Three findings matter more than the table:
 
 `npm run check:versions` compares every stamped tool with its registry. The current result is
 12 current, 2 behind, 3 intentional baselines and 42 manual. Docker 29.7.2 built and ran the exact
-cheatsheet Dockerfile on `node:24-alpine`; 29.10.0 is newer and flagged for a re-check. TypeScript
+cheatsheet Dockerfile on `node:24-alpine` on 18 Nov 2026 (UTC); 29.10.0 is newer and flagged for a
+re-check. TypeScript
 snippets are stamped 7.0.2 after the whole repository and every snippet typechecked with it; the
 dev compiler stays at 6.0.3 because `typescript-eslint` requires `<6.1`. PostgreSQL is stamped
 18.6 after all seven SQL snippets matched on Neon; 18.7 is newer and treated as a baseline.

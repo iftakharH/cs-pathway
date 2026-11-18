@@ -762,7 +762,7 @@ entries:
       - COPY . . after npm ci can overwrite node_modules if .dockerignore is missing.
       - A floating base tag makes the image change without a commit. Node 24 is the LTS base used here.
     seeAlso: [docker-compose, gh-actions]
-    tool: { name: Docker, version: '29.7.2', verifiedOn: 2026-11-19 }
+    tool: { name: Docker, version: '29.7.2', verifiedOn: 2026-11-18 }
     sourceUrl: https://docs.docker.com/reference/dockerfile/
     tags: [docker, build, deploy, security]
 
