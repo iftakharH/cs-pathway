@@ -16,9 +16,10 @@ This repository contains the **credential-free public core and the complete gues
 placement check → weekly plan → module → quiz → proof → dashboard, plus the cheatsheet library,
 startup tools and trust pages.
 
-**Accounts are not enabled in this build.** There is no server database, no sign-in and no API
-function yet. Progress, notes, proofs and tools are stored in `localStorage`. See
-[Accounts (planned)](#accounts-planned) for what remains and the exact environment variables.
+**Accounts are optional.** Email and password sign-in is live against Neon Postgres; Google and
+GitHub appear only when their client IDs and secrets are set. Guests keep progress, notes, proofs
+and tools in `localStorage`; a signed-in account syncs the app tables. See [Accounts](#accounts)
+for the routes, environment variables and deletion path.
 
 ## What is in the build
 
@@ -27,7 +28,7 @@ function yet. Progress, notes, proofs and tools are stored in `localStorage`. Se
 | Phases | 5 (F, 1, 2, 3, S) |
 | Modules | 31 |
 | Quiz questions | 155, each with a source page |
-| Cheatsheets | 108 |
+| Cheatsheets | 109 |
 | Executable snippets | 27 |
 | Claims | 14 |
 | Sources | 12 (all primary) |
@@ -36,6 +37,11 @@ function yet. Progress, notes, proofs and tools are stored in `localStorage`. Se
 | Startup tools | 8 |
 
 The counts come from `src/content/generated/manifest.ts`, produced by the content build.
+
+Every module and cheatsheet has a **Copy study brief** or **Copy brief for an agent** action. The
+content build also writes `/llms.txt` (short index), `/llms-full.txt` (every module and cheatsheet)
+and `/sitemap.xml`. `/for-agents` documents four prompts and the rule that an agent is not a
+source.
 
 `/verification` is the public audit trail: every claim and review date, every source and retrieval
 date, the seven harness checks, the tool stamps, and the commands that reproduce them. `/review`
@@ -298,11 +304,12 @@ Three findings matter more than the table:
   skill and `AGENTS.md` were discovered in print mode.
 
 `npm run check:versions` compares every stamped tool with its registry. The current result is
-15 current, 1 behind and 2 intentional baselines. Docker 28 remains pinned: Docker 29.7.2 is
-installed, but the daemon was unavailable, so the Dockerfile was not executed. TypeScript snippets
-are stamped 7.0.2 after the whole repository and every snippet typechecked with it; the dev
-toolchain stays at 6.0.3 because `typescript-eslint` requires `<6.1`. PostgreSQL is stamped 18.6
-after all seven SQL snippets matched on the live Neon database.
+12 current, 2 behind, 3 intentional baselines and 42 manual. Docker 29.7.2 built and ran the exact
+cheatsheet Dockerfile on `node:24-alpine`; 29.10.0 is newer and flagged for a re-check. TypeScript
+snippets are stamped 7.0.2 after the whole repository and every snippet typechecked with it; the
+dev compiler stays at 6.0.3 because `typescript-eslint` requires `<6.1`. PostgreSQL is stamped
+18.6 after all seven SQL snippets matched on Neon; 18.7 is newer and treated as a baseline.
+Transformers 5.22.1 is also flagged against 5.23.0.
 
 ## Worldwide startup sources
 
@@ -318,24 +325,24 @@ uses an illustrative post-money conversion, not a named accelerator's terms. Com
 tax and payment rules are explicitly left to the official page for the reader's jurisdiction,
 because those rules cannot be stated accurately worldwide.
 
-## Verification (6 Nov 2026)
+## Verification (19 Nov 2026)
 
 | Check | Result |
 | --- | --- |
-| `npm run validate` | 31 modules, 108 cheatsheets, 155 questions, 14 claims, 12 sources, 7 harnesses |
+| `npm run validate` | 31 modules, 109 cheatsheets, 155 questions, 14 claims, 12 sources, 7 harnesses |
 | `npm run lint` | Pass, 0 warnings |
 | `npm run typecheck` | Pass, strict |
 | `npm test` | 60 tests pass |
 | `npm run test:snippets` | 27/27 executable snippets pass |
 | `npm run build` | Pass |
 | `npm run e2e` | 49/49 Playwright tests pass (1 account journey + 6 guest journeys + 42 axe: 21 routes × light/dark) |
-| axe-core | 0 serious/critical on 21 representative routes in both themes |
+| axe-core | 0 serious/critical on 22 representative routes in both themes |
 | `npm run test:auth` | Pass: sign-up, state write, export, cross-user isolation and delete against Neon |
 | Vercel preview | Pass: `/api/auth/ok`, sign-up, sign-in, session, state PUT/GET and account deletion |
 | Lighthouse mobile | Performance 99-100 and accessibility 100 on home, module, harnesses, sign-in and verification |
-| `npm run check:links` | 198/200 reachable; 2 bot-blocked (OpenAI docs and pricing return 403) |
-| `npm run check:stale` | No claims past review on 6 Nov 2026 |
-| `npm run check:versions` | 15 current, 1 behind, 2 intentional baselines, 40 manual review |
+| `npm run check:links` | 198/200 reachable on 6 Nov 2026; 2 bot-blocked (OpenAI docs and pricing return 403) |
+| `npm run check:stale` | No claims past review (last run 19 Nov 2026) |
+| `npm run check:versions` | 12 current, 2 behind, 3 intentional baselines, 42 manual review |
 | `npm audit` | 4 moderate dev-only advisories in drizzle-kit's esbuild chain; no runtime dependency reported |
 
 Not run or not verified on that date: Google/GitHub OAuth with real provider credentials and a
@@ -357,15 +364,16 @@ chunks; the global session check is a small fetch-backed hook.
 - Gemini CLI is marked legacy and Antigravity CLI is covered for skills, MCP and rules. Feature
   parity across the Antigravity app, CLI and IDE can change; the row records what the docs said on
   6 Nov 2026.
-- `check:versions` still flags Docker 28. Docker 29.7.2 is installed, but the daemon was
-  unavailable so no image build was executed. Keep the pin until the Dockerfile runs on 29.
+- `check:versions` flags Docker 29.7.2 against 29.10.0 and Transformers 5.22.1 against 5.23.0.
+  Docker was built and run successfully; the stamp moves only after the newer tag is checked.
 - Email verification and password reset are out of scope until a free sender is confirmed.
 - Two links are blocked to automated checkers; both are valid pages in a browser.
 - `npm audit` reports 4 moderate dev-only advisories in drizzle-kit's esbuild chain. Dependabot's
   minimatch/esbuild update path is blocked by an eslint peer resolution; no production dependency
   is reported.
-- CI and the weekly workflow have run on GitHub. The weekly run opened issue #1 because Docker 28
-  is behind; that is a real drift, not a workflow bug. Dependabot is enabled by GitHub.
+- CI and the weekly workflow have run on GitHub. Issue #1 tracks the original Docker 28 drift;
+  Docker 29.7.2 is now built and run, but the issue is still open because the current GitHub token
+  cannot write issues. Close it after reviewing the build. Dependabot is enabled.
 
 ## License and ownership
 

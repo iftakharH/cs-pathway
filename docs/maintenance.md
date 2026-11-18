@@ -17,7 +17,7 @@ A quarterly refresh, plus a weekly automated check once the repository has a rem
   bot-blocked counts are recorded in the README's verification table.
 - `npm run check:stale` — fails when a claim passes its `reviewAfter` date.
 - `npm run check:versions -- --strict` — fails when a non-baseline tool stamp is behind its
-  registry. Docker 28 and TypeScript 6.0.3 were flagged on 6 Nov 2026.
+  registry. Docker 29.7.2 and Transformers 5.22.1 were flagged on 19 Nov 2026.
 - The workflow opens an issue with the output. It does not edit content.
 
 ## Every quarter (manual)

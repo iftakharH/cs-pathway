@@ -5,6 +5,33 @@ import { CONTENT_MANIFEST as manifest } from '@/content/generated/manifest'
 
 const entries = [
   {
+    date: '2026-11-19',
+    version: '0.5.0',
+    title: 'A reading-first redesign and an agent-ready library',
+    changes: [
+      'Rebuilt the dashboard as a ledger and ruled sections instead of six stacked cards. The next proof is now the focal block.',
+      'Rebuilt the cheatsheet index as a dense ruled index with title, when-to-use, phase, tags and version stamp in one row.',
+      'Refined the cheatsheet detail rail, squared the corners across the UI, and moved page actions below the lede on mobile.',
+      'Added `/for-agents`, `llms.txt` and `llms-full.txt`, plus a copyable study brief on every module and cheatsheet.',
+      'Added a 2027 readiness cheatsheet and a 2027 lens on the path page.',
+      'Built and ran the exact Dockerfile on Docker 29.7.2 and `node:24-alpine`; the image ran non-root and returned the test response.',
+    ],
+    verified: [
+      'The Docker image built and ran successfully on 29.7.2; Docker 29.10.0 remains a review item.',
+      'TypeScript 7.0.2 typechecked the repository and snippets; the dev compiler remains 6.0.3 for typescript-eslint compatibility.',
+      'PostgreSQL 18.6 matched all seven SQL snippets on Neon; 18.7 remains a baseline review item.',
+      'Lighthouse mobile: home 100, module 99, harnesses 100, sign-in 100, verification 100; accessibility 100.',
+      'The Vercel preview accepted sign-up, sign-in, state PUT/GET and account deletion.',
+    ],
+    quarantined: [
+      'Google and GitHub OAuth remain disabled until provider credentials are configured.',
+    ],
+    deferred: [
+      'A Vercel production deployment is not promoted. The preview is verified.',
+      'The strict protected-route policy is still a product decision; guest dashboard, notes and pins stay local-only.',
+    ],
+  },
+  {
     date: '2026-11-06',
     version: '0.4.0',
     title: 'Accounts, Neon sync and a verified preview deployment',

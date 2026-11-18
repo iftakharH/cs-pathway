@@ -733,18 +733,18 @@ entries:
         runnable: false
         checked: docs
         code: |
-          FROM node:22-alpine AS deps
+          FROM node:24-alpine AS deps
           WORKDIR /app
           COPY package.json package-lock.json ./
           RUN npm ci
 
-          FROM node:22-alpine AS build
+          FROM node:24-alpine AS build
           WORKDIR /app
           COPY --from=deps /app/node_modules ./node_modules
           COPY . .
           RUN npm run build
 
-          FROM node:22-alpine AS runtime
+          FROM node:24-alpine AS runtime
           ENV NODE_ENV=production
           WORKDIR /app
           RUN addgroup -S app && adduser -S app -G app
@@ -760,9 +760,9 @@ entries:
       - Keep the runtime image free of dev dependencies and source maps.
     gotchas:
       - COPY . . after npm ci can overwrite node_modules if .dockerignore is missing.
-      - A floating base tag makes the image change without a commit.
+      - A floating base tag makes the image change without a commit. Node 24 is the LTS base used here.
     seeAlso: [docker-compose, gh-actions]
-    tool: { name: Docker, version: '28', verifiedOn: 2026-11-05 }
+    tool: { name: Docker, version: '29.7.2', verifiedOn: 2026-11-19 }
     sourceUrl: https://docs.docker.com/reference/dockerfile/
     tags: [docker, build, deploy, security]
 
