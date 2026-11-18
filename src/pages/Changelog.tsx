@@ -14,10 +14,10 @@ const entries = [
       'Refined the cheatsheet detail rail, squared the corners across the UI, and moved page actions below the lede on mobile.',
       'Added `/for-agents`, `llms.txt` and `llms-full.txt`, plus a copyable study brief on every module and cheatsheet.',
       'Added a 2027 readiness cheatsheet and a 2027 lens on the path page.',
-      'Built and ran the exact Dockerfile on Docker 29.7.2 and `node:24-alpine`; the image ran non-root and returned the test response.',
+      'Built and ran the cheatsheet Dockerfile against a minimal Node app on Docker 29.7.2 and `node:24-alpine`; the container ran non-root and returned the test response.',
     ],
     verified: [
-      'The Docker image built and ran successfully on 29.7.2; Docker 29.10.0 remains a review item.',
+      'The Docker image built and ran successfully on 29.7.2 against a minimal Node app; Docker 29.10.0 remains a review item.',
       'TypeScript 7.0.2 typechecked the repository and snippets; the dev compiler remains 6.0.3 for typescript-eslint compatibility.',
       'PostgreSQL 18.6 matched all seven SQL snippets on Neon; 18.7 remains a baseline review item.',
       'Lighthouse mobile: home 100, module 99, harnesses 100, sign-in 100, verification 100; accessibility 100.',
